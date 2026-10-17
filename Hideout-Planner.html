@@ -621,6 +621,30 @@ function planReverse(id,f,c){const a=S.rooms.find(x=>x.id===id);if(!a)return nul
     const mine=mv.find(m=>m.o.id===id);if(!mine)continue;
     return {f:mine.f,c:mine.c,moves:mv.filter(m=>m.o.id!==id).concat([{o:big,f:a.f,c:cb}])}}
   return null}
+/* clear rules for dropping:
+   - on another room: the two rooms swap places as whole rooms (wherever on it you let go)
+   - on an empty cell: the room goes there, nudged sideways only as much as needed to fit */
+function freeExcept(f,c,sz,ids){if(f<0||f>=S.floors||c<0||c+sz>S.cols)return false;for(let i=c;i<c+sz;i++){const o=occupant(f,i);if(o&&!ids.includes(o.id))return false}return true}
+function planRoomSwap(aId,bId){const A=S.rooms.find(x=>x.id===aId),B=S.rooms.find(x=>x.id===bId);if(!A||!B||A===B)return null;
+  const sA=typeOf(A.t).size,sB=typeOf(B.t).size;
+  if(A.f===B.f){const f=A.f,lo=Math.min(A.c,B.c),hi=Math.max(A.c+sA,B.c+sB);
+    const units=[];for(let i=lo;i<hi;){const o=occupant(f,i);if(o){units.push(o);i=o.c+typeOf(o.t).size}else{units.push(null);i++}}
+    const ia=units.indexOf(A),ib=units.indexOf(B);units[ia]=B;units[ib]=A;
+    let x=lo,res=null;const moves=[];units.forEach(u=>{if(u){if(u===A)res={f,c:x};else if(u.c!==x)moves.push({o:u,f,c:x});x+=typeOf(u.t).size}else x++});
+    return {f:res.f,c:res.c,moves}}
+  /* different floors: the bigger room's strip is swapped as a whole, so smaller rooms around it travel together */
+  const strip=(f,c,len)=>{if(c<0||c+len>S.cols)return null;const ins=S.rooms.filter(o=>o.f===f&&o.c<c+len&&o.c+typeOf(o.t).size>c);
+    return ins.every(o=>o.c>=c&&o.c+typeOf(o.t).size<=c+len)?ins:null};
+  const order=(base,lo,hi)=>{const a=[];for(let c=lo;c<=hi;c++)a.push(c);return a.sort((x,y)=>Math.abs(x-base)-Math.abs(y-base))};
+  if(sA>=sB){for(const st of order(B.c,B.c-(sA-sB),B.c)){const ins=strip(B.f,st,sA);if(!ins)continue;
+      return {f:B.f,c:st,moves:ins.map(o=>({o,f:A.f,c:A.c+(o.c-st)}))}}return null}
+  const pref=A.c-((typeof dropCell==='number'?dropCell:B.c)-B.c);
+  for(const st of order(pref,A.c-(sB-sA),A.c)){const ins=strip(A.f,st,sB);if(!ins)continue;
+    const mine=ins.find(o=>o.id===A.id);return {f:B.f,c:B.c+(mine.c-st),moves:[{o:B,f:A.f,c:st}].concat(ins.filter(o=>o.id!==A.id).map(o=>({o,f:B.f,c:B.c+(o.c-st)})))}}
+  return null}
+let dropCell=null;
+function nearestFit(type,f,want,cur,ignore){const sz=typeOf(type).size;const cands=[];for(let c=cur-sz+1;c<=cur;c++)cands.push(c);
+  cands.sort((x,y)=>Math.abs(x-want)-Math.abs(y-want));return cands.find(c=>fits(type,f,c,ignore))}
 function boostInfo(){const boosted=new Set(),gens=[];
   S.rooms.filter(r=>typeOf(r.t).isGen).forEach(g=>{const L=occupant(g.f,g.c-1),R=occupant(g.f,g.c+typeOf(g.t).size);
     const lOk=!!(L&&typeOf(L.t).boost),rOk=!!(R&&typeOf(R.t).boost);if(lOk)boosted.add(L.id);if(rOk)boosted.add(R.id);gens.push({g,lOk,rOk})});
@@ -749,9 +773,12 @@ function onMove(e){if(!drag)return;if(drag.started)autoScroll(e.clientY);if(!dra
   drag.ghost.style.transform='translate('+(e.clientX-drag.grabPx)+'px,'+(e.clientY-drag.grabPy)+'px) rotate(-2deg)';
   clearHi();if(drag.target&&drag.target.plan)previewPlan(null);drag.target=null;const el=document.elementFromPoint(e.clientX,e.clientY);if(!el)return;
   if(el.closest('#trash')||el.closest('#palette')){drag.target={trash:true};$('trash').classList.add('hot');return}
-  const cell=el.closest('.cell');if(!cell)return;const f=+cell.dataset.f,c=+cell.dataset.c-drag.grabCells,sz=typeOf(drag.type).size;
-  let ok=fits(drag.type,f,c,drag.roomId),plan=null,tf=f,tc=c;if(!ok&&drag.roomId){plan=planSwap(drag.roomId,f,c);ok=!!plan;
-    if(!ok){const rv=planReverse(drag.roomId,f,+cell.dataset.c);if(rv){plan=rv.moves;tf=rv.f;tc=rv.c;ok=true}}}
+  const cell=el.closest('.cell');if(!cell)return;const f=+cell.dataset.f,cur=+cell.dataset.c,sz=typeOf(drag.type).size;
+  let ok=false,plan=null,tf=f,tc=cur-drag.grabCells;const under=occupant(f,cur);
+  if(under&&under.id!==drag.roomId){
+    if(drag.roomId){dropCell=cur;const sw=planRoomSwap(drag.roomId,under.id);if(sw){ok=true;plan=sw.moves;tf=sw.f;tc=sw.c}else{tc=under.c}}
+    else tc=under.c}
+  else{const c=nearestFit(drag.type,f,cur-drag.grabCells,cur,drag.roomId);if(c!=null){ok=true;tc=c}else tc=Math.max(0,Math.min(S.cols-sz,cur-drag.grabCells))}
   drag.target={f:tf,c:tc,ok,plan};previewPlan(plan);
   for(let i=Math.max(0,tc);i<Math.min(S.cols,tc+sz);i++){const ce=document.querySelector('.cell[data-f="'+tf+'"][data-c="'+i+'"]');if(ce)ce.classList.add(ok?'ok':'bad')}}
 /* live preview: rooms that will be swapped slide toward their new spot while you hover */
