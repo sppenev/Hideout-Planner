@@ -484,9 +484,10 @@ body.tray-open .scroller{padding-bottom:280px!important}
 
       <details class="panel">
         <summary>Сподели с отбора</summary>
-        <p class="hint">Всичко се пази автоматично в този браузър. За съотборник: копирай кода, прати му го, той го поставя тук и натиска „Зареди“. Кодът носи всички варианти и имената на стаите.</p>
-        <textarea id="io" aria-label="Код на подредбата"></textarea>
-        <div class="btns"><button class="btn" id="copyBtn" type="button">Копирай кода</button><button class="btn" id="loadBtn" type="button">Зареди</button></div>
+        <p class="hint">Подредбата се пази сама в този браузър. За да я пратиш: „Копирай линка“. Който го отвори, вижда точно нея. Кодът е същото, само по-кратко, за да си го пазиш.</p>
+        <div class="btns"><button class="btn primary" id="linkBtn" type="button">Копирай линка</button><button class="btn" id="copyBtn" type="button">Копирай кода</button></div>
+        <input type="text" id="io" aria-label="Код или линк на подредба" placeholder="Постави код или линк тук" autocomplete="off" spellcheck="false" style="margin-top:10px">
+        <div class="btns"><button class="btn" id="loadBtn" type="button">Зареди</button></div>
       </details>
     </aside>
   </div>
@@ -912,10 +913,24 @@ $('typeForm').addEventListener('submit',e=>{e.preventDefault();const size=+$('tS
   const id='c'+Date.now().toString(36);D.custom[id]={name,size,limit,cat:$('tCat').value,boost:$('tBoost').checked,isGen:false,icon:ic,desc:$('tDesc').value.trim()};applyImg(id);
   say('Създадена е стая „'+name+'“. Влачи я от списъка.');resetForm();render()});
 
-$('copyBtn').onclick=()=>{const v=btoa(unescape(encodeURIComponent(JSON.stringify(toData(true)))));$('io').value=v;
-  try{navigator.clipboard.writeText(v).then(()=>say('Кодът е копиран. Прати го на съотборника.'),()=>{$('io').select();say('Кодът е маркиран в полето. Копирай го ръчно.')})}catch(err){$('io').select()}};
-$('loadBtn').onclick=()=>{const v=$('io').value.trim();if(!v){say('Полето е празно. Постави код от съотборник.',true);return}
-  try{D=fromData(JSON.parse(decodeURIComponent(escape(atob(v)))));S=D.layouts[D.active];saveImgs();applyScene();selId=null;say('Подредбата е заредена.');render()}catch(err){say('Кодът не може да се прочете. Провери дали е копиран целият.',true)}};
+/* short share code: floors split by "~", each floor lists its rooms left to right by id, "_" is an empty cell */
+function layoutCode(L){const out=[];for(let f=0;f<L.floors;f++){const row=[];let c=0;
+    while(c<L.cols){const r=L.rooms.find(x=>x.f===f&&x.c===c);if(r){row.push(r.t);c+=Math.max(1,typeOf(r.t)?typeOf(r.t).size:1)}else{row.push('_');c++}}
+    while(row.length&&row[row.length-1]==='_')row.pop();out.push(row.join('.'))}return out.join('~')}
+function codeLayout(code,name){const fl=code.split('~');if(!fl.length||fl.length>40)return null;const keep=S;
+  const L={name,cols:5,floors:fl.length,rooms:[]};S=L;
+  fl.forEach((row,f)=>{let c=0;row.split('.').filter(Boolean).forEach(t=>{if(t==='_'){c++;return}const ty=typeOf(t);if(!ty||D.hidden[t]){c++;return}
+    if(fits(t,f,c))L.rooms.push({id:uid++,t,f,c});c+=ty.size})});S=keep;return L}
+function shareLink(){return location.origin+location.pathname+'#p='+layoutCode(S)}
+function flash(btn,txt){const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent=txt;clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=o},1800)}
+function copyText(v,btn,ok){$('io').value=v;try{navigator.clipboard.writeText(v).then(()=>flash(btn,ok),()=>{$('io').select();flash(btn,'Копирай от полето')})}catch(err){$('io').select();flash(btn,'Копирай от полето')}}
+$('linkBtn').onclick=()=>copyText(shareLink(),$('linkBtn'),'Линкът е копиран ✓');
+$('copyBtn').onclick=()=>copyText(layoutCode(S),$('copyBtn'),'Кодът е копиран ✓');
+function addShared(L){D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;render()}
+$('loadBtn').onclick=()=>{let v=$('io').value.trim();if(!v){flash($('loadBtn'),'Полето е празно');return}
+  const m=v.match(/#p=(.*)$/);if(m)v=decodeURIComponent(m[1]);
+  if(/^[A-Za-z0-9_.~-]*$/.test(v)){const L=codeLayout(v,'Зареден '+(D.layouts.length+1));if(L){addShared(L);flash($('loadBtn'),'Зареден ✓');$('io').value='';return}}
+  try{D=fromData(JSON.parse(decodeURIComponent(escape(atob(v)))));D.imgs={};S=D.layouts[D.active];selId=null;render();flash($('loadBtn'),'Зареден ✓')}catch(err){flash($('loadBtn'),'Кодът не става')}};
 
 /* scene pictures: the area above the base (top) and the underground background (bg) */
 function readImg(file,max,cb){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const cv=document.createElement('canvas');
@@ -952,7 +967,11 @@ function repairLayouts(){const keep=S;D.layouts.forEach(L=>{S=L;const all=L.room
   all.forEach(r=>{if(typeOf(r.t)&&!D.hidden[r.t]&&fits(r.t,r.f,r.c))L.rooms.push(r);else if(typeOf(r.t)&&!D.hidden[r.t])later.push(r)});
   later.forEach(r=>{for(let f=0;f<L.floors;f++)for(let c=0;c<L.cols;c++)if(fits(r.t,f,c)){r.f=f;r.c=c;L.rooms.push(r);return}})});S=keep||D.layouts[D.active]}
 repairLayouts();
-S=D.layouts[D.active];resetForm();render();applyScene();applyEmpty();
+S=D.layouts[D.active];
+/* opened from a shared link: add that layout as a new variant (yours stay untouched), then clean the address bar */
+{const m=location.hash.match(/^#p=(.*)$/);if(m){const L=codeLayout(decodeURIComponent(m[1]),'Споделен '+(D.layouts.length+1));if(L){D.layouts.push(L);D.active=D.layouts.length-1;S=L}
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}}
+resetForm();render();applyScene();applyEmpty();
 
 /* rooms drawer: arrows to scroll left/right, and the mouse wheel scrolls it sideways */
 (()=>{const pal=$('palette');const wrap=document.createElement('div');wrap.className='palwrap';pal.parentNode.insertBefore(wrap,pal);wrap.appendChild(pal);
