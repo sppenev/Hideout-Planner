@@ -35,7 +35,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .list{display:flex;flex-direction:column;gap:8px}
 .row{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start;background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:10px}
 .thumb{width:100%;aspect-ratio:542/305;background:var(--panel-2);border-radius:6px;position:relative;overflow:hidden;display:grid;place-items:center;color:var(--hint);font-size:11px;text-align:center}
-.fields{display:grid;grid-template-columns:130px minmax(140px,1fr) auto 70px;gap:10px 12px;align-items:end}
+.fields{display:grid;grid-template-columns:minmax(140px,1fr) auto 70px;gap:10px 12px;align-items:end}
 .fields>.wide{grid-column:1/-1}
 .fields>.foot{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:10px}
 /* long rooms: same frame, image fills its height; hover pans across so the whole room can be seen */
@@ -133,7 +133,7 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
       <section class="pane" id="sec-rooms">
         <h2 class="sec">Стаи</h2>
         <p class="hint">„Запази в сайта“ записва промените направо в GitHub и до около минута се виждат на сайта.</p>
-        <div class="search"><input type="search" id="q" placeholder="Търси стая по име или файл..." autocomplete="off" aria-label="Търси стая"><span class="tag" id="qInfo"></span></div>
+        <div class="search"><input type="search" id="q" placeholder="Търси стая по име или описание..." autocomplete="off" aria-label="Търси стая"><span class="tag" id="qInfo"></span></div>
         <p class="hint" id="qNone" hidden>Няма такава стая. Добави я с „+ Нова стая“ горе.</p>
         <div class="list" id="list"></div>
         <div class="btns"><button class="btn danger" id="reset" type="button">Започни отначало от сайта</button></div>
@@ -222,9 +222,8 @@ function thumbImg(el,id,i=0){if(i>=EXTS.length){el.querySelector('img')?.remove(
   im.onerror=()=>thumbImg(el,id,i+1);im.src='images/'+id+'.'+EXTS[i]}
 function rowHTML(r,i){const isNew=!!r._new;
   return '<div class="row" data-i="'+i+'">'+
-   '<div class="thumb w'+r.size+'">images/'+esc(r.id)+'.png<label class="upover"><span>Смени картинката</span><input type="file" accept="image/*" data-up aria-label="Картинка за '+esc(r.name)+'"></label></div>'+
+   '<div class="thumb w'+r.size+'">Няма картинка<label class="upover"><span>Смени картинката</span><input type="file" accept="image/*" data-up aria-label="Картинка за '+esc(r.name)+'"></label></div>'+
    '<div class="fields">'+
-   '<label>Име на файла<input type="text" data-k="id" value="'+esc(r.id)+'"'+(isNew?'':' readonly title="Името на файла не се сменя, за да не се загубят подредбите"')+' maxlength="24"><span class="err" data-err></span></label>'+
    '<label>Име<input type="text" data-k="name" maxlength="40" value="'+esc(r.name)+'"></label>'+
    '<div><div class="tag">Клетки</div><div class="seg">'+[1,2,3,4].map(n=>'<button type="button" data-size="'+n+'"'+(r.size===n?' class="on"':'')+'>'+n+'</button>').join('')+'</div></div>'+
    '<label>Лимит<input type="number" data-k="limit" min="1" max="20" value="'+r.limit+'"></label>'+
