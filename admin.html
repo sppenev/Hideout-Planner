@@ -78,6 +78,9 @@ textarea{height:56px;resize:vertical}
 .thumb .upover input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .thumb.busy .upover{opacity:1}
 .foot .btns{display:flex;gap:8px}.foot .btns>*{flex:1}
+.foot .btns>.delbtn{flex:none;width:44px;padding:0;display:grid;place-items:center}
+.delbtn svg{width:20px;height:20px}
+.foot .btns>.delbtn.armed{width:auto;padding:0 12px;background:#d8301f;color:#fff}
 .sc .btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .sc .tag b{color:var(--paper)}
 /* side menu: same look as the settings drawer on the site */
@@ -229,7 +232,7 @@ function rowHTML(r,i){const isNew=!!r._new;
    '<label>Лимит<input type="number" data-k="limit" min="1" max="20" value="'+r.limit+'"></label>'+
    '<label class="wide">Описание (в тултипа)<textarea data-k="desc" maxlength="240">'+esc(r.desc)+'</textarea></label>'+
    '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+
-   '<div class="btns"><span class="btn upbtn">Качи картинка<input type="file" accept="image/*" data-up aria-label="Качи картинка за '+esc(r.name)+'"></span><button class="btn danger" type="button" data-del>Изтрий</button></div></div>'+
+   '<div class="btns"><span class="btn upbtn">Качи картинка<input type="file" accept="image/*" data-up aria-label="Качи картинка за '+esc(r.name)+'"></span><button class="btn danger delbtn" type="button" data-del title="Изтрий стаята" aria-label="Изтрий стаята"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'+
    '</div></div>'}
 function render(){$('list').innerHTML=rooms.map(rowHTML).join('');document.querySelectorAll('.row').forEach(row=>{const r=rooms[+row.dataset.i];thumbImg(row.querySelector('.thumb'),r.id)});filterRooms()}
 function filterRooms(){const q=$('q').value.trim().toLowerCase();let n=0;
@@ -257,7 +260,7 @@ $('list').addEventListener('change',async e=>{if(!e.target.matches('[data-up]'))
 $('list').addEventListener('change',e=>{const row=e.target.closest('.row');if(!row)return;const r=rooms[+row.dataset.i];if(e.target.dataset.k==='boost'){r.boost=e.target.checked;keep()}});
 $('list').addEventListener('click',e=>{const row=e.target.closest('.row');if(!row)return;const i=+row.dataset.i,r=rooms[i];
   const sb=e.target.closest('[data-size]');if(sb){r.size=+sb.dataset.size;keep();render();return}
-  const del=e.target.closest('[data-del]');if(del){if(!del.classList.contains('armed')){del.classList.add('armed');del.textContent='Сигурен ли си?';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.textContent='Изтрий'}},3000);return}
+  const del=e.target.closest('[data-del]');if(del){if(!del.classList.contains('armed')){del.classList.add('armed');const ico=del.innerHTML;del.textContent='Изтрий?';del.title='Натисни пак за изтриване';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.innerHTML=ico;del.title='Изтрий стаята'}},3000);return}
     rooms.splice(i,1);keep('Стаята е изтрита. Не забравяй да свалиш rooms.js.');render()}});
 $('add').onclick=()=>{showSec('rooms');$('q').value='';let n=1;while(rooms.some(r=>r.id==='room'+n))n++;rooms.push({id:'room'+n,name:'Нова стая',size:1,limit:1,boost:false,gen:false,desc:'',cat:'cus',_new:true});keep();render();
   const row=$('list').lastElementChild;row.scrollIntoView({block:'center',behavior:'smooth'});const inp=row.querySelector('[data-k="name"]');inp.focus();inp.select()};
