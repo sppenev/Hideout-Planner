@@ -76,7 +76,7 @@ window.ROOMS_CONFIG={
    "id": "atk",
    "name": "Атак-о-бото Фабрика",
    "size": 1,
-   "limit": 1,
+   "limit": 2,
    "boost": true,
    "gen": false,
    "desc": "Произвежда атакуващи ботове за нападения на чужди скривалища.",
