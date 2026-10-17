@@ -221,26 +221,6 @@ window.ROOMS_CONFIG={
    "gen": false,
    "desc": "Позволява вдигане на умения с монети на по-ниска цена.",
    "cat": "sup"
-  },
-  {
-   "id": "room",
-   "name": "Нова стая",
-   "size": 1,
-   "limit": 1,
-   "boost": false,
-   "gen": false,
-   "desc": "",
-   "cat": "cus"
-  },
-  {
-   "id": "room2",
-   "name": "Нова стая",
-   "size": 1,
-   "limit": 1,
-   "boost": false,
-   "gen": false,
-   "desc": "",
-   "cat": "cus"
   }
  ]
 };
