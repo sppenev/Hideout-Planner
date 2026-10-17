@@ -277,7 +277,7 @@ window.ROOMS_CONFIG={
    "name": "Продукция с дубльор за каскади",
    "size": 2,
    "limit": 1,
-   "boost": false,
+   "boost": true,
    "gen": false,
    "desc": "Произвежда дубльори за каскади",
    "cat": "cus"
