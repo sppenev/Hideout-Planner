@@ -247,7 +247,7 @@ window.ROOMS_CONFIG={
    "name": "Фабрика за медицински комплекти",
    "size": 2,
    "limit": 1,
-   "boost": false,
+   "boost": true,
    "gen": false,
    "desc": "Произвежда медицински комплекти",
    "cat": "cus"
@@ -267,7 +267,7 @@ window.ROOMS_CONFIG={
    "name": "Фабрика за ракетни бустери",
    "size": 2,
    "limit": 1,
-   "boost": false,
+   "boost": true,
    "gen": false,
    "desc": "Произвежда ракетни бустери от предмети, които вече не ти трявбат",
    "cat": "cus"
