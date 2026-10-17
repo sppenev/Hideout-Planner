@@ -347,6 +347,16 @@ body.tray-open .scroller{padding-bottom:280px!important}
 /* rooms that reached their limit are hidden from the drawer */
 .side-l .pal-item.full{display:none}
 .pal-done{align-self:center;color:var(--hint);font-size:13px;padding:0 12px;white-space:nowrap}
+
+/* drawer arrows and mouse-wheel scrolling */
+.palwrap{position:relative;flex:1;min-width:0;display:flex}
+.palwrap .palette{flex:1;scroll-behavior:smooth}
+.palarrow{position:absolute;top:50%;z-index:3;width:40px;height:40px;margin-top:-23px;border-radius:50%;border:2px solid var(--ink);background:var(--hero);color:var(--hero-ink);
+  display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:opacity .2s,transform .15s}
+.palarrow:hover{transform:scale(1.08)}
+.palarrow svg{width:20px;height:20px}
+.palarrow.l{left:4px}.palarrow.r{right:4px}
+.palarrow[disabled]{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -929,6 +939,20 @@ function repairLayouts(){const keep=S;D.layouts.forEach(L=>{S=L;const all=L.room
   later.forEach(r=>{for(let f=0;f<L.floors;f++)for(let c=0;c<L.cols;c++)if(fits(r.t,f,c)){r.f=f;r.c=c;L.rooms.push(r);return}})});S=keep||D.layouts[D.active]}
 repairLayouts();
 S=D.layouts[D.active];resetForm();render();applyScene();applyEmpty();
+
+/* rooms drawer: arrows to scroll left/right, and the mouse wheel scrolls it sideways */
+(()=>{const pal=$('palette');const wrap=document.createElement('div');wrap.className='palwrap';pal.parentNode.insertBefore(wrap,pal);wrap.appendChild(pal);
+  const mk=(cls,d,label)=>{const b=document.createElement('button');b.type='button';b.className='palarrow '+cls;b.setAttribute('aria-label',label);
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="'+d+'"/></svg>';wrap.appendChild(b);return b};
+  const L=mk('l','M15 5l-7 7 7 7','Наляво'),R=mk('r','M9 5l7 7-7 7','Надясно');
+  const step=()=>Math.max(200,pal.clientWidth*0.8);
+  L.onclick=()=>pal.scrollBy({left:-step()});R.onclick=()=>pal.scrollBy({left:step()});
+  const upd=()=>{L.disabled=pal.scrollLeft<=2;R.disabled=pal.scrollLeft+pal.clientWidth>=pal.scrollWidth-2};
+  pal.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);new MutationObserver(()=>requestAnimationFrame(upd)).observe(pal,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  document.body.addEventListener('transitionend',upd);
+  pal.addEventListener('wheel',e=>{if(pal.scrollWidth<=pal.clientWidth)return;const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(!d)return;e.preventDefault();
+    pal.style.scrollBehavior='auto';pal.scrollLeft+=d*(e.deltaMode===1?40:1);pal.style.scrollBehavior=''},{passive:false});
+  requestAnimationFrame(upd)})();
 </script>
 
 </body>
