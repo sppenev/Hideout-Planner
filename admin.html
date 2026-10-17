@@ -78,7 +78,8 @@ textarea{height:56px;resize:vertical}
 .thumb .upover input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .thumb.busy .upover{opacity:1}
 .foot .btns{display:flex;gap:8px}.foot .btns>*{flex:1}
-.foot .btns>.delbtn{flex:none;width:44px;padding:0;display:grid;place-items:center}
+.foot .btns>.delbtn{flex:none;width:44px;padding:0;display:grid;place-items:center;background:#d8301f;color:#fff;border-color:var(--ink)}
+.foot .btns>.delbtn:hover{background:#ef4433;color:#fff}
 .delbtn svg{width:20px;height:20px}
 .foot .btns>.delbtn.armed{width:auto;padding:0 12px;background:#d8301f;color:#fff}
 .sc .btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
@@ -228,7 +229,7 @@ function rowHTML(r,i){const isNew=!!r._new;
    '<div class="thumb w'+r.size+'">Няма картинка<label class="upover"><span>Смени картинката</span><input type="file" accept="image/*" data-up aria-label="Картинка за '+esc(r.name)+'"></label></div>'+
    '<div class="fields">'+
    '<label>Име<input type="text" data-k="name" maxlength="40" value="'+esc(r.name)+'"></label>'+
-   '<div><div class="tag">Клетки</div><div class="seg">'+[1,2,3,4].map(n=>'<button type="button" data-size="'+n+'"'+(r.size===n?' class="on"':'')+'>'+n+'</button>').join('')+'</div></div>'+
+   '<div><div class="tag">Клетки</div><div class="seg">'+[1,2,3].map(n=>'<button type="button" data-size="'+n+'"'+(r.size===n?' class="on"':'')+'>'+n+'</button>').join('')+'</div></div>'+
    '<label>Лимит<input type="number" data-k="limit" min="1" max="20" value="'+r.limit+'"></label>'+
    '<label class="wide">Описание (в тултипа)<textarea data-k="desc" maxlength="240">'+esc(r.desc)+'</textarea></label>'+
    '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+

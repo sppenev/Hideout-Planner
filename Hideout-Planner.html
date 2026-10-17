@@ -481,7 +481,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
         <form id="typeForm">
           <label>Име<input type="text" id="tName" maxlength="32" placeholder="напр. Склад за трофеи" required></label>
           <div class="two">
-            <label>Размер (слота)<select id="tSize"><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+            <label>Размер (слота)<select id="tSize"><option>1</option><option>2</option><option>3</option></select></label>
             <label>Лимит (бр.)<input type="number" id="tLimit" min="1" max="20" value="1"></label>
           </div>
           <label>Вид<select id="tCat"></select></label>
@@ -625,7 +625,7 @@ const DESC={
 /* rooms.js (made with admin.html) defines the room list; when it is present nobody can change room types from this page */
 const LOCKED=!!(window.ROOMS_CONFIG&&Array.isArray(window.ROOMS_CONFIG.rooms));
 if(LOCKED){Object.keys(BASE_TYPES).forEach(k=>delete BASE_TYPES[k]);Object.keys(DESC).forEach(k=>delete DESC[k]);
-  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:r.name||r.id,size:Math.max(1,Math.min(4,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=r.desc||''})}
+  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:r.name||r.id,size:Math.max(1,Math.min(3,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=r.desc||''})}
 const KEY='hz-hideout-planner-v2';
 const SAMPLE_ROOMS=[
  {t:'base',f:0,c:0},{t:'gen',f:0,c:3},{t:'stone',f:0,c:4},
