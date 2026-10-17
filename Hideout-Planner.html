@@ -375,7 +375,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
     </div>
     <div class="toolbar">
       <div class="step"><span>Нива</span><button id="fMinus" aria-label="Махни ниво">−</button><b id="fVal">4</b><button id="fPlus" aria-label="Добави ниво">+</button></div>
-      <div class="step"><span>Слотове</span><button id="cMinus" aria-label="По-малко слотове">−</button><b id="cVal">5</b><button id="cPlus" aria-label="Повече слотове">+</button></div>
+      <div class="step" hidden><span>Слотове</span><button id="cMinus" aria-label="По-малко слотове">−</button><b id="cVal">5</b><button id="cPlus" aria-label="Повече слотове">+</button></div>
       <button class="btn" id="sampleBtn">Пример</button>
       <button class="btn danger" id="clearBtn">Изчисти</button>
     </div>
@@ -610,7 +610,8 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(toData(false)))}catc
 function saveImgs(){try{localStorage.setItem(KEY+'-img',JSON.stringify(D.imgs))}catch(e){say('Картинката е сложена, но браузърът няма място да я запомни. Използвай папката images.',true)}}
 function load(){let d=null;try{const v=localStorage.getItem(KEY);if(v)d=fromData(JSON.parse(v))}catch(e){}
   if(!d)d={over:{},custom:{},hidden:{},imgs:{},bgSize:300,layouts:[sampleLayout('Основна')],active:0};
-  try{const im=localStorage.getItem(KEY+'-img');if(im)d.imgs=JSON.parse(im)||{}}catch(e){}return d}
+  /* scene pictures now come only from the site's images folder (set in the admin), same for everyone */
+  d.imgs={};d.bgSize=300;return d}
 function catColor(cat){return 'var('+(CATS[cat]||CATS.cus)[1]+')'}
 function count(t){return S.rooms.filter(r=>r.t===t).length}
 function say(msg,err){const s=$('status');s.textContent=msg||'';s.className=err?'err':''}
@@ -853,7 +854,7 @@ $('trayBtn').onclick=()=>setTray(!document.body.classList.contains('tray-open'))
   const em=document.createElement('div');em.className='scene-ctl';em.innerHTML='<span class="btn filebtn">Празна клетка<input type="file" id="emptyFile" accept="image/*" aria-label="Картинка за празните клетки"></span><button class="btn" type="button" id="emptyNo" hidden>Махни</button>';sc.appendChild(em);
   const el=document.createElement('div');el.className='scene-ctl';el.innerHTML='<span class="btn filebtn">Асансьор<input type="file" id="elvFile" accept="image/*" aria-label="Картинка за асансьора"></span><button class="btn" type="button" id="elvNo" hidden>Махни</button>';sc.appendChild(el);
   sc.querySelector('.hint').textContent='Или сложи top.png, bg.png, elevator.png и empty.png в папката images.';
-  head.after(box,vt,sc)})();
+  sc.hidden=true;head.after(box,vt,sc)})();
 $('drawerClose').onclick=()=>setDrawer(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drag)setDrawer(false)});
 $('fMinus').onclick=()=>{if(S.floors<=1)return;if(S.rooms.some(r=>r.f===S.floors-1)){say('Най-долното ниво не е празно. Махни стаите от него първо.',true);return}S.floors--;render()};
