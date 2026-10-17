@@ -46,6 +46,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .thumb:hover img{object-position:100% 50%}
 .thumb.w1:hover img{object-position:50% 50%}
 label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--hint);font-weight:500}
+.search{position:sticky;top:76px;z-index:5;display:flex;align-items:center;gap:12px;background:var(--bg);padding:6px 0}
+.search input{flex:1;max-width:460px;font:inherit;font-size:14px;color:var(--paper);background:var(--panel-2);border:2px solid var(--ink);border-radius:8px;padding:9px 12px}
+.search input:focus{outline:2px solid var(--hero);outline-offset:1px}
 label.check{flex-direction:row;align-items:center;gap:6px;font-size:12.5px;color:var(--paper)}
 input[type=text],input[type=number],textarea{font:inherit;font-size:13px;color:var(--paper);background:var(--panel-2);border:2px solid var(--ink);border-radius:7px;padding:6px 8px;width:100%}
 input[readonly]{opacity:.7}
@@ -124,6 +127,8 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
       <section class="pane" id="sec-rooms">
         <h2 class="sec">Стаи</h2>
         <p class="hint">„Запази в сайта“ записва промените направо в GitHub и до около минута се виждат на сайта.</p>
+        <div class="search"><input type="search" id="q" placeholder="Търси стая по име или файл..." autocomplete="off" aria-label="Търси стая"><span class="tag" id="qInfo"></span></div>
+        <p class="hint" id="qNone" hidden>Няма такава стая. Добави я с „+ Нова стая“ горе.</p>
         <div class="list" id="list"></div>
         <div class="btns"><button class="btn danger" id="reset" type="button">Започни отначало от сайта</button></div>
       </section>
@@ -221,7 +226,11 @@ function rowHTML(r,i){const isNew=!!r._new;
    '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+
    '<button class="btn danger" type="button" data-del>Изтрий</button></div>'+
    '</div></div>'}
-function render(){$('list').innerHTML=rooms.map(rowHTML).join('');document.querySelectorAll('.row').forEach(row=>{const r=rooms[+row.dataset.i];thumbImg(row.querySelector('.thumb'),r.id)})}
+function render(){$('list').innerHTML=rooms.map(rowHTML).join('');document.querySelectorAll('.row').forEach(row=>{const r=rooms[+row.dataset.i];thumbImg(row.querySelector('.thumb'),r.id)});filterRooms()}
+function filterRooms(){const q=$('q').value.trim().toLowerCase();let n=0;
+  document.querySelectorAll('#list .row').forEach(row=>{const r=rooms[+row.dataset.i];const hit=!q||[r.name,r.id,r.desc].some(x=>String(x||'').toLowerCase().includes(q));row.hidden=!hit;if(hit)n++});
+  $('qInfo').textContent=q?'Намерени: '+n+' от '+rooms.length:'Общо стаи: '+rooms.length;$('qNone').hidden=!q||n>0}
+$('q').addEventListener('input',filterRooms);
 $('list').addEventListener('input',e=>{const row=e.target.closest('.row');if(!row)return;const r=rooms[+row.dataset.i],k=e.target.dataset.k;
   if(k==='name')r.name=e.target.value;
   else if(k==='desc')r.desc=e.target.value;
@@ -236,7 +245,7 @@ $('list').addEventListener('click',e=>{const row=e.target.closest('.row');if(!ro
   const sb=e.target.closest('[data-size]');if(sb){r.size=+sb.dataset.size;keep();render();return}
   const del=e.target.closest('[data-del]');if(del){if(!del.classList.contains('armed')){del.classList.add('armed');del.textContent='Сигурен ли си?';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.textContent='Изтрий'}},3000);return}
     rooms.splice(i,1);keep('Стаята е изтрита. Не забравяй да свалиш rooms.js.');render()}});
-$('add').onclick=()=>{showSec('rooms');let n=1;while(rooms.some(r=>r.id==='room'+n))n++;rooms.push({id:'room'+n,name:'Нова стая',size:1,limit:1,boost:false,gen:false,desc:'',cat:'cus',_new:true});keep();render();
+$('add').onclick=()=>{showSec('rooms');$('q').value='';let n=1;while(rooms.some(r=>r.id==='room'+n))n++;rooms.push({id:'room'+n,name:'Нова стая',size:1,limit:1,boost:false,gen:false,desc:'',cat:'cus',_new:true});keep();render();
   const row=$('list').lastElementChild;row.scrollIntoView({block:'center',behavior:'smooth'});const inp=row.querySelector('[data-k="name"]');inp.focus();inp.select()};
 {let k='rooms';try{k=localStorage.getItem('hz-admin-sec')||'rooms'}catch(e){}showSec(k)}
 ghShow();renderScene();
