@@ -376,8 +376,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
     <div class="toolbar">
       <div class="step"><span>Нива</span><button id="fMinus" aria-label="Махни ниво">−</button><b id="fVal">4</b><button id="fPlus" aria-label="Добави ниво">+</button></div>
       <div class="step" hidden><span>Слотове</span><button id="cMinus" aria-label="По-малко слотове">−</button><b id="cVal">5</b><button id="cPlus" aria-label="Повече слотове">+</button></div>
-      <button class="btn" id="sampleBtn">Пример</button>
-      <button class="btn danger" id="clearBtn">Изчисти</button>
+      <button class="btn danger" id="clearBtn">Махни всички стаи</button>
     </div>
   </header>
 
@@ -860,10 +859,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drag)setDrawer(fal
 $('fMinus').onclick=()=>{if(S.floors<=1)return;if(S.rooms.some(r=>r.f===S.floors-1)){say('Най-долното ниво не е празно. Махни стаите от него първо.',true);return}S.floors--;render()};
 $('cPlus').onclick=()=>{if(S.cols>=12)return;S.cols++;render()};
 $('cMinus').onclick=()=>{if(S.cols<=3)return;if(S.rooms.some(r=>r.c+typeOf(r.t).size>S.cols-1)){say('Има стаи в последния слот. Премести ги първо.',true);return}S.cols--;render()};
-$('sampleBtn').onclick=()=>{const L=sampleLayout('Пример');D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;say('Примерът е добавен като нов вариант.');render()};
 let clearArmed=false;
-$('clearBtn').onclick=()=>{if(!clearArmed){clearArmed=true;$('clearBtn').textContent='Натисни пак';setTimeout(()=>{clearArmed=false;$('clearBtn').textContent='Изчисти'},3000);return}
-  clearArmed=false;$('clearBtn').textContent='Изчисти';S.rooms=[];selId=null;say('Вариантът е изчистен.');render()};
+$('clearBtn').onclick=()=>{if(!clearArmed){clearArmed=true;$('clearBtn').textContent='Натисни пак';setTimeout(()=>{clearArmed=false;$('clearBtn').textContent='Махни всички стаи'},3000);return}
+  clearArmed=false;$('clearBtn').textContent='Махни всички стаи';S.rooms=[];selId=null;say('Всички стаи са махнати.');render()};
 
 /* create and edit room types */
 Object.keys(CATS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=CATS[k][0];$('tCat').appendChild(o)});
