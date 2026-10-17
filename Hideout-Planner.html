@@ -334,6 +334,15 @@ body.dragging .fdel{display:none}
 .floors .room .rdel:hover{transform:scale(1.1)}
 @media (hover:none){.floors .room .rdel{opacity:.9;transform:none}}
 body.dragging .floors .room .rdel{display:none}
+
+/* rooms drawer: bigger cards, picture on top, name under it */
+.side-l .pal-item{width:210px;flex-direction:column;align-items:stretch;gap:6px;padding:6px}
+.side-l .pal-ico{width:100%;height:auto;aspect-ratio:542/305;border-radius:6px}
+.side-l .pal-ico svg{width:46%;height:auto}
+.side-l .pal-ico img.pic{object-position:0% 50%}
+.side-l .pal-name{-webkit-line-clamp:1;display:block;white-space:nowrap;text-overflow:ellipsis}
+@media (max-width:600px){.side-l .pal-item{width:170px}}
+body.tray-open .scroller{padding-bottom:280px!important}
 </style>
 </head>
 <body>
