@@ -209,7 +209,7 @@ window.ROOMS_CONFIG={
    "limit": 1,
    "boost": false,
    "gen": false,
-   "desc": "Увеличава монетите от мисиите.",
+   "desc": "Увеличава наградите в монети от мисиите.",
    "cat": "sup"
   },
   {
