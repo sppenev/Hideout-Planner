@@ -343,6 +343,10 @@ body.dragging .floors .room .rdel{display:none}
 .side-l .pal-name{-webkit-line-clamp:1;display:block;white-space:nowrap;text-overflow:ellipsis}
 @media (max-width:600px){.side-l .pal-item{width:170px}}
 body.tray-open .scroller{padding-bottom:280px!important}
+
+/* rooms that reached their limit are hidden from the drawer */
+.side-l .pal-item.full{display:none}
+.pal-done{align-self:center;color:var(--hint);font-size:13px;padding:0 12px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -710,6 +714,7 @@ function renderPalette(){const p=$('palette');p.innerHTML='';
     it.addEventListener('pointerdown',e=>{if(full){say('Лимитът за „'+t.name+'“ е достигнат ('+t.limit+').',true);return}beginPaletteDrag(e,id)});
     it.addEventListener('keydown',e=>{if(e.key==='Enter'&&!full)autoPlace(id)});
     p.appendChild(it)});
+  if(!p.querySelector('.pal-item:not(.full)')){const d=document.createElement('div');d.className='pal-done';d.textContent='Всички стаи са сложени.';p.appendChild(d)}
   const lg=$('legend');lg.innerHTML='';Object.keys(CATS).forEach(k=>{const s=document.createElement('span');s.innerHTML='<i></i>'+CATS[k][0];s.querySelector('i').style.background=catColor(k);lg.appendChild(s)})}
 
 function renderStats(boosted,gens){let used=0;S.rooms.forEach(r=>used+=typeOf(r.t).size);
