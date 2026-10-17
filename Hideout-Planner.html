@@ -363,6 +363,14 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .pal-ico:has(img.pic){background:var(--panel-2)!important}
 .topside.loading{height:min(480px,30vw);background:#16120f}
 .topside.loading>svg{display:none}
+
+/* add-floor button: big glossy orange pill so it can't be missed */
+.addfloor{display:flex;align-items:center;gap:10px;margin:22px auto 0;padding:10px 26px 10px 12px;border:3px solid #2a1400;border-radius:999px;
+  background:linear-gradient(#ffc260,#ff8a1a 55%,#d45a00);color:#fff;font:inherit;font-size:17px;font-weight:800;letter-spacing:.02em;text-shadow:0 2px 0 #7a3300;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 5px 0 #2a1400,0 10px 22px rgba(0,0,0,.55);cursor:pointer;transition:transform .12s,box-shadow .12s,filter .12s}
+.addfloor:hover{background:linear-gradient(#ffc260,#ff8a1a 55%,#d45a00);filter:brightness(1.08);transform:translateY(-2px);box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 7px 0 #2a1400,0 14px 26px rgba(0,0,0,.6)}
+.addfloor:active{transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 2px 0 #2a1400,0 6px 12px rgba(0,0,0,.5)}
+.addfloor .plus{width:30px;height:30px;border-radius:50%;background:#fff;color:#d45a00;display:grid;place-items:center;font-size:24px;line-height:1;text-shadow:none;box-shadow:inset 0 -2px 0 #d9dde3,0 0 0 2px #7a3300}
 </style>
 </head>
 <body>
@@ -710,7 +718,7 @@ function render(){
       g.appendChild(el)});
     row.appendChild(g);fl.appendChild(row)}
   const ev=document.createElement('div');ev.className='elevator';ev.id='elevator';fl.appendChild(ev);
-  let ab=document.getElementById('addFloor');if(!ab){ab=document.createElement('button');ab.id='addFloor';ab.type='button';ab.className='addfloor';ab.textContent='+ Добави етаж';
+  let ab=document.getElementById('addFloor');if(!ab){ab=document.createElement('button');ab.id='addFloor';ab.type='button';ab.className='addfloor';ab.innerHTML='<span class="plus" aria-hidden="true">+</span>Добави етаж';
     ab.onclick=()=>{if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}S.floors++;say('Добавен е етаж '+S.floors+'.');render()};fl.after(ab)}placeElevator();applyElevator();
   renderTabs();renderPalette();renderStats(boosted,gens);renderSel();save()}
 
@@ -784,12 +792,13 @@ function showTip(html,x,y){const tp=$('tip');if(!html){hideTip();return}tp.inner
   const r=tp.getBoundingClientRect(),W=innerWidth,H=innerHeight;let L=x+16,T=y+18;if(L+r.width>W-8)L=x-r.width-16;if(T+r.height>H-8)T=y-r.height-14;
   tp.style.left=Math.max(8,L)+'px';tp.style.top=Math.max(8,T)+'px'}
 function hideTip(){$('tip').classList.remove('show');clearTimeout(tipTimer)}
-document.addEventListener('pointerover',e=>{if(drag||e.pointerType!=='mouse')return;const rm=e.target.closest('.room[data-id],.pal-item');if(!rm)return;
+document.addEventListener('pointerover',e=>{if(drag||e.pointerType!=='mouse')return;const fd=e.target.closest('.fdel');
+  if(fd){const n=fd.getAttribute('aria-label').replace(/\D+/g,'');showTip('<b>Махни етаж '+n+'</b>Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.',e.clientX,e.clientY);return}const rm=e.target.closest('.room[data-id],.pal-item');if(!rm)return;
   const tid=rm.dataset.type||(S.rooms.find(r=>r.id===+rm.dataset.id)||{}).t;showTip(tipHTML(tid,rm.dataset.id),e.clientX,e.clientY)});
 document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse'||!$('tip').classList.contains('show'))return;if(drag){hideTip();return}
-  if(!e.target.closest('.room[data-id],.pal-item')){hideTip();return}const tp=$('tip');const r=tp.getBoundingClientRect();let L=e.clientX+16,T=e.clientY+18;
+  if(!e.target.closest('.room[data-id],.pal-item,.fdel')){hideTip();return}const tp=$('tip');const r=tp.getBoundingClientRect();let L=e.clientX+16,T=e.clientY+18;
   if(L+r.width>innerWidth-8)L=e.clientX-r.width-16;if(T+r.height>innerHeight-8)T=e.clientY-r.height-14;tp.style.left=Math.max(8,L)+'px';tp.style.top=Math.max(8,T)+'px'});
-document.addEventListener('pointerout',e=>{if(e.pointerType==='mouse'&&e.target.closest('.room[data-id],.pal-item')&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.room[data-id],.pal-item')))hideTip()});
+document.addEventListener('pointerout',e=>{if(e.pointerType==='mouse'&&e.target.closest('.room[data-id],.pal-item,.fdel')&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.room[data-id],.pal-item,.fdel')))hideTip()});
 function tapTip(el,typeId,roomId){const r=el.getBoundingClientRect();showTip(tipHTML(typeId,roomId),r.left+r.width/2,r.top+r.height/2);clearTimeout(tipTimer);tipTimer=setTimeout(hideTip,3000)}
 function arm(e){hideTip();e.preventDefault();window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onCancel)}
 function startGhost(){const g=roomEl(drag.type);g.classList.add('ghost');g.style.width=drag.w+'px';g.style.height=drag.h+'px';document.body.appendChild(g);drag.ghost=g;
