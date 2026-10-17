@@ -52,14 +52,50 @@ textarea{height:56px;resize:vertical}
 .gh[open] summary{margin-bottom:8px}
 .ghgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:8px 0 10px}
 .state.err{color:var(--bad)}
-@media (max-width:1000px){.row{grid-template-columns:130px 1fr}.thumb{width:130px}.row>.wide{grid-column:1/-1}}
+.scene{background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.scene h2,.sec{font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:17px}
+.scene-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.sc{display:flex;flex-direction:column;gap:6px}
+.sc-prev{height:110px;background:var(--panel-2);border-radius:6px;overflow:hidden;display:grid;place-items:center;color:var(--hint);font-size:11px;position:relative}
+.sc-prev img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
+.sc-prev.tile img{object-fit:none;object-position:left top}
+.sc .btn{position:relative;overflow:hidden;text-align:center}
+.sc .btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.sc .tag b{color:var(--paper)}
+/* side menu: same look as the settings drawer on the site */
+.layout{display:block}
+.side{position:fixed;top:0;left:0;bottom:0;z-index:40;width:250px;overflow-y:auto;background:var(--panel);border-right:3px solid var(--ink);box-shadow:4px 0 0 var(--ink);
+  padding:18px 14px;display:flex;flex-direction:column;gap:6px;transition:transform .25s ease}
+.side-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}
+.side-head h2{font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:16px}
+#sideClose,#menuBtn{display:none}
+.nav{border:2px solid transparent;background:transparent;text-align:left;padding:10px 12px;border-radius:9px;font:inherit;font-weight:700;color:var(--hint);cursor:pointer}
+.nav:hover{background:var(--panel-2);color:var(--paper)}
+.nav.on{background:var(--hero);color:var(--hero-ink);border-color:var(--ink)}
+.nav .tag{display:block;font-weight:500;font-size:12px;margin-top:2px}
+.nav.on .tag{color:var(--hero-ink);opacity:.75}
+.main{min-width:0;display:flex;flex-direction:column;gap:12px}
+.pane{display:flex;flex-direction:column;gap:10px}
+input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:var(--panel-2);border:2px solid var(--ink);border-radius:7px;padding:6px 8px;width:100%}
+@media (min-width:901px){
+  body{padding-left:calc(250px + 24px);padding-right:24px}
+  .bar{margin-left:calc(50% - (50vw - 125px));margin-right:calc(50% - (50vw - 125px))}
+}
+@media (max-width:900px){
+  .side{transform:translateX(calc(-100% - 8px))}
+  .side.open{transform:none}
+  #sideClose,#menuBtn{display:inline-flex}
+}
+@media (prefers-reduced-motion:reduce){.side{transition:none}}
+@media (max-width:1500px){.row{grid-template-columns:160px 130px minmax(150px,1fr) auto 70px 150px auto}.row>.thumb{grid-row:span 2;align-self:start}.row>:nth-child(7){grid-column:2/7}.row>:nth-child(8){grid-column:7}}
+@media (max-width:1100px){.row{grid-template-columns:130px 1fr}.thumb{width:130px}.row>.thumb{grid-row:auto}.row>:nth-child(n){grid-column:auto}.row>.wide{grid-column:1/-1}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="bar" id="bar">
     <div class="bar-in">
-      <h1>Стаи в планера</h1>
+      <h1><button class="btn" id="menuBtn" type="button" aria-controls="side">Меню</button> Стаи в планера</h1>
       <div class="btns">
         <a class="btn" href="Hideout-Planner.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Отвори сайта ↗</a>
         <button class="btn" id="add" type="button">+ Нова стая</button>
@@ -68,20 +104,40 @@ textarea{height:56px;resize:vertical}
     </div>
     <div class="state" id="state" aria-live="polite"></div>
   </div>
-  <p class="hint">Тук редактираш стаите. „Запази в сайта“ записва промените направо в GitHub и до около минута се виждат на сайта.</p>
-  <details class="gh" id="ghBox">
-    <summary>Връзка с GitHub <span id="ghStatus" class="tag"></span></summary>
-    <p class="hint">Попълни веднъж. Ключът се пази само в този браузър и не се записва в никой файл.</p>
-    <div class="ghgrid">
-      <label>Потребител в GitHub<input type="text" id="ghOwner" autocomplete="off" placeholder="напр. stilian"></label>
-      <label>Хранилище<input type="text" id="ghRepo" autocomplete="off" placeholder="напр. hideout-planner"></label>
-      <label>Клон<input type="text" id="ghBranch" autocomplete="off" value="main"></label>
-      <label>Ключ (token)<input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_..."></label>
-    </div>
-    <div class="btns"><button class="btn primary" id="ghConnect" type="button">Свържи</button><button class="btn danger" id="ghForget" type="button">Забрави ключа</button></div>
-  </details>
-  <div class="list" id="list"></div>
-  <div class="btns"><button class="btn danger" id="reset" type="button">Започни отначало от rooms.js</button></div>
+  <div class="layout">
+    <nav class="side" id="side" aria-label="Раздели">
+      <div class="side-head"><h2>Админ</h2><button class="btn" id="sideClose" type="button">Затвори</button></div>
+      <button type="button" class="nav on" data-sec="rooms">Стаи</button>
+      <button type="button" class="nav" data-sec="scene">Картинки на сцената</button>
+      <button type="button" class="nav" data-sec="gh">Връзка с GitHub <span id="ghStatus" class="tag"></span></button>
+    </nav>
+    <main class="main">
+      <section class="pane" id="sec-rooms">
+        <h2 class="sec">Стаи</h2>
+        <p class="hint">„Запази в сайта“ записва промените направо в GitHub и до около минута се виждат на сайта.</p>
+        <div class="list" id="list"></div>
+        <div class="btns"><button class="btn danger" id="reset" type="button">Започни отначало от сайта</button></div>
+      </section>
+      <section class="pane" id="sec-scene" hidden>
+        <h2 class="sec">Картинки на сцената</h2>
+        <p class="hint">Избери файл и той се качва направо в сайта с правилното име. Може и .jpg, и .png.</p>
+        <div class="scene-grid" id="sceneGrid"></div>
+      </section>
+      <section class="pane" id="sec-gh" hidden>
+        <h2 class="sec">Връзка с GitHub</h2>
+        <div class="gh" id="ghBox">
+          <p class="hint">Попълни веднъж. Ключът се пази само в този браузър и не се записва в никой файл.</p>
+          <div class="ghgrid">
+            <label>Потребител в GitHub<input type="text" id="ghOwner" autocomplete="off" placeholder="напр. stilian"></label>
+            <label>Хранилище<input type="text" id="ghRepo" autocomplete="off" placeholder="напр. hideout-planner"></label>
+            <label>Клон<input type="text" id="ghBranch" autocomplete="off" value="main"></label>
+            <label>Ключ (token)<input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_..."></label>
+          </div>
+          <div class="btns"><button class="btn primary" id="ghConnect" type="button">Свържи</button><button class="btn danger" id="ghForget" type="button">Забрави ключа</button></div>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>
 
 <script src="rooms.js"></script>
@@ -95,6 +151,9 @@ if(!Array.isArray(rooms))rooms=fromFile();
 function say(msg,err){$('state').textContent=msg||'';$('state').classList.toggle('err',!!err)}
 function keep(msg){try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}say(msg||(gh.ok?'Има незапазени промени. Натисни „Запази в сайта“.':'Има незапазени промени. Свържи админа с GitHub, за да ги запазиш в сайта.'))}
 /* ---- GitHub: read and write rooms.js in the repository ---- */
+function showSec(k){$('side').classList.remove('open');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n.dataset.sec===k));document.querySelectorAll('.pane').forEach(p=>p.hidden=p.id!=='sec-'+k);try{localStorage.setItem('hz-admin-sec',k)}catch(e){}}
+$('menuBtn').onclick=()=>$('side').classList.toggle('open');$('sideClose').onclick=()=>$('side').classList.remove('open');
+document.querySelector('.side').addEventListener('click',e=>{const n=e.target.closest('.nav');if(n)showSec(n.dataset.sec)});
 const GHKEY='hz-hideout-gh-v1';let gh={};try{gh=JSON.parse(localStorage.getItem(GHKEY)||'{}')||{}}catch(e){gh={}}
 (function guess(){const m=location.hostname.match(/^([^.]+)\.github\.io$/);if(m&&!gh.owner){gh.owner=m[1];const seg=location.pathname.split('/').filter(Boolean);if(seg.length>1)gh.repo=seg[0]}})();
 function ghUrl(){return 'https://api.github.com/repos/'+encodeURIComponent(gh.owner)+'/'+encodeURIComponent(gh.repo)+'/contents/rooms.js'}
@@ -105,14 +164,33 @@ async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh
   const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[]}}
 function fileText(){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,rooms:rooms.map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
-  $('ghStatus').textContent=gh.ok?'· свързан с '+gh.owner+'/'+gh.repo:'· не е свързан';$('ghBox').open=!gh.ok}
+  $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
   if(!gh.owner||!gh.repo||!gh.token){say('Попълни потребител, хранилище и ключ.',true);return}
   say('Свързвам се...');try{const g=await ghGet();gh.ok=true;try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}
     rooms=g.rooms;try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
-$('ghSave').onclick=async()=>{if(!gh.ok){$('ghBox').open=true;$('ghBox').scrollIntoView({block:'center',behavior:'smooth'});say('Първо свържи админа с GitHub: попълни ключа и натисни „Свържи“.',true);return}const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
+/* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
+const SCENE=[['top','Хедър (горе)','картинката над скривалището'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305']];
+function renderScene(){$('sceneGrid').innerHTML=SCENE.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'">няма картинка<img alt="" src="images/'+k+'.png?t='+Date.now()+'" onerror="this.remove()"></div>'+
+  '<div class="tag"><b>'+t+'</b> · '+h+'</div><span class="btn">Смени<input type="file" accept="image/*" aria-label="'+t+'"></span></div>').join('')}
+function fileToPngB64(file){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej(new Error('Файлът не може да се прочете.'));
+  if(file.type==='image/png'){rd.onload=()=>res(String(rd.result).split(',')[1]);rd.readAsDataURL(file);return}
+  rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);res(c.toDataURL('image/png').split(',')[1])};
+    im.onerror=()=>rej(new Error('Това не е картинка, която браузърът може да отвори.'));im.src=rd.result};rd.readAsDataURL(file)})}
+async function ghPutFile(path,b64,msg){const url='https://api.github.com/repos/'+encodeURIComponent(gh.owner)+'/'+encodeURIComponent(gh.repo)+'/contents/'+path;
+  let sha;const g=await fetch(url+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
+  if(g.ok)sha=(await g.json()).sha;else if(g.status!==404)throw new Error(ghErr(g));
+  const r=await fetch(url,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify(Object.assign({message:msg,content:b64,branch:gh.branch||'main'},sha?{sha}:{}))});
+  if(!r.ok)throw new Error(ghErr(r))}
+$('sceneGrid').addEventListener('change',async e=>{const box=e.target.closest('.sc');if(!box)return;const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да качваш картинки.',true);return}
+  const k=box.dataset.k,name=SCENE.find(x=>x[0]===k)[1];say('Качвам „'+name+'“...');
+  try{const b64=await fileToPngB64(f);await ghPutFile('images/'+k+'.png',b64,'Картинка: '+name);
+    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
+  catch(err){say(err.message,true)}});
+$('ghSave').onclick=async()=>{if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub: попълни ключа и натисни „Свържи“.',true);return}const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
   $('ghSave').disabled=true;say('Записвам в GitHub...');
   try{const cur=await ghGet();const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),
       body:JSON.stringify({message:'Стаи: промени от админа',content:b64e(fileText()),sha:cur.sha,branch:gh.branch||'main'})});
@@ -148,9 +226,10 @@ $('list').addEventListener('click',e=>{const row=e.target.closest('.row');if(!ro
   const sb=e.target.closest('[data-size]');if(sb){r.size=+sb.dataset.size;keep();render();return}
   const del=e.target.closest('[data-del]');if(del){if(!del.classList.contains('armed')){del.classList.add('armed');del.textContent='Сигурен ли си?';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.textContent='Изтрий'}},3000);return}
     rooms.splice(i,1);keep('Стаята е изтрита. Не забравяй да свалиш rooms.js.');render()}});
-$('add').onclick=()=>{let n=1;while(rooms.some(r=>r.id==='room'+n))n++;rooms.push({id:'room'+n,name:'Нова стая',size:1,limit:1,boost:false,gen:false,desc:'',cat:'cus',_new:true});keep();render();
+$('add').onclick=()=>{showSec('rooms');let n=1;while(rooms.some(r=>r.id==='room'+n))n++;rooms.push({id:'room'+n,name:'Нова стая',size:1,limit:1,boost:false,gen:false,desc:'',cat:'cus',_new:true});keep();render();
   const row=$('list').lastElementChild;row.scrollIntoView({block:'center',behavior:'smooth'});const inp=row.querySelector('[data-k="name"]');inp.focus();inp.select()};
-ghShow();
+{let k='rooms';try{k=localStorage.getItem('hz-admin-sec')||'rooms'}catch(e){}showSec(k)}
+ghShow();renderScene();
 let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Натисни пак: ще се загубят незапазените промени';setTimeout(()=>{armed=false;$('reset').textContent='Започни отначало от rooms.js'},3000);return}
   armed=false;try{localStorage.removeItem(KEY)}catch(e){}
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
