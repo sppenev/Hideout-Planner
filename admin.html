@@ -16,7 +16,13 @@ body{margin:0;background:var(--bg);color:var(--paper);font-family:var(--f-body);
 .wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 h1{font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:28px;text-shadow:3px 3px 0 var(--ink)}
 .hint{color:var(--hint);margin:0;max-width:80ch}
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.bar{position:sticky;top:0;z-index:20;margin:-24px calc(50% - 50vw) 0;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));
+  background:rgba(42,33,26,.96);backdrop-filter:blur(4px);border-bottom:2px solid var(--ink);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.bar-in{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.bar h1{font-size:22px}
+.bar .state{max-width:1200px;margin:6px auto 0}
+.bar .state:empty{display:none}
+body{overflow-x:hidden}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 button{font:inherit;color:inherit;cursor:pointer}
 .btn{border:2px solid var(--ink);background:var(--panel);border-radius:9px;padding:8px 14px;font-weight:700;box-shadow:2px 2px 0 var(--ink)}
@@ -51,18 +57,18 @@ textarea{height:56px;resize:vertical}
 </head>
 <body>
 <div class="wrap">
-  <div class="bar">
-    <div>
+  <div class="bar" id="bar">
+    <div class="bar-in">
       <h1>Стаи в планера</h1>
-      <p class="hint">Тук редактираш стаите. Свързан с GitHub, бутонът „Запази в сайта“ записва промените направо там. Без връзка натисни „Свали rooms.js“ и сложи файла до Hideout-Planner.html.</p>
+      <div class="btns">
+        <a class="btn" href="Hideout-Planner.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Отвори сайта ↗</a>
+        <button class="btn" id="add" type="button">+ Нова стая</button>
+        <button class="btn primary" id="ghSave" type="button">Запази в сайта</button>
+      </div>
     </div>
-    <div class="btns">
-      <a class="btn" href="Hideout-Planner.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Отвори сайта ↗</a>
-      <button class="btn" id="add" type="button">+ Нова стая</button>
-      <button class="btn primary" id="ghSave" type="button" hidden>Запази в сайта</button>
-      <button class="btn" id="dl" type="button">Свали rooms.js</button>
-    </div>
+    <div class="state" id="state" aria-live="polite"></div>
   </div>
+  <p class="hint">Тук редактираш стаите. „Запази в сайта“ записва промените направо в GitHub и до около минута се виждат на сайта.</p>
   <details class="gh" id="ghBox">
     <summary>Връзка с GitHub <span id="ghStatus" class="tag"></span></summary>
     <p class="hint">Попълни веднъж. Ключът се пази само в този браузър и не се записва в никой файл.</p>
@@ -74,7 +80,6 @@ textarea{height:56px;resize:vertical}
     </div>
     <div class="btns"><button class="btn primary" id="ghConnect" type="button">Свържи</button><button class="btn danger" id="ghForget" type="button">Забрави ключа</button></div>
   </details>
-  <div class="state" id="state" aria-live="polite"></div>
   <div class="list" id="list"></div>
   <div class="btns"><button class="btn danger" id="reset" type="button">Започни отначало от rooms.js</button></div>
 </div>
@@ -88,7 +93,7 @@ const fromFile=()=>JSON.parse(JSON.stringify((window.ROOMS_CONFIG&&window.ROOMS_
 let rooms;try{rooms=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){rooms=null}
 if(!Array.isArray(rooms))rooms=fromFile();
 function say(msg,err){$('state').textContent=msg||'';$('state').classList.toggle('err',!!err)}
-function keep(msg){try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}say(msg||(gh.ok?'Има незапазени промени. Натисни „Запази в сайта“.':'Промените са запазени в този браузър. Не забравяй да свалиш rooms.js.'))}
+function keep(msg){try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}say(msg||(gh.ok?'Има незапазени промени. Натисни „Запази в сайта“.':'Има незапазени промени. Свържи админа с GitHub, за да ги запазиш в сайта.'))}
 /* ---- GitHub: read and write rooms.js in the repository ---- */
 const GHKEY='hz-hideout-gh-v1';let gh={};try{gh=JSON.parse(localStorage.getItem(GHKEY)||'{}')||{}}catch(e){gh={}}
 (function guess(){const m=location.hostname.match(/^([^.]+)\.github\.io$/);if(m&&!gh.owner){gh.owner=m[1];const seg=location.pathname.split('/').filter(Boolean);if(seg.length>1)gh.repo=seg[0]}})();
@@ -100,14 +105,14 @@ async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh
   const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[]}}
 function fileText(){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,rooms:rooms.map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
-  $('ghSave').hidden=!gh.ok;$('dl').classList.toggle('primary',!gh.ok);$('ghStatus').textContent=gh.ok?'· свързан с '+gh.owner+'/'+gh.repo:'· не е свързан';$('ghBox').open=!gh.ok}
+  $('ghStatus').textContent=gh.ok?'· свързан с '+gh.owner+'/'+gh.repo:'· не е свързан';$('ghBox').open=!gh.ok}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
   if(!gh.owner||!gh.repo||!gh.token){say('Попълни потребител, хранилище и ключ.',true);return}
   say('Свързвам се...');try{const g=await ghGet();gh.ok=true;try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}
     rooms=g.rooms;try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
-$('ghSave').onclick=async()=>{const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
+$('ghSave').onclick=async()=>{if(!gh.ok){$('ghBox').open=true;$('ghBox').scrollIntoView({block:'center',behavior:'smooth'});say('Първо свържи админа с GitHub: попълни ключа и натисни „Свържи“.',true);return}const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
   $('ghSave').disabled=true;say('Записвам в GitHub...');
   try{const cur=await ghGet();const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),
       body:JSON.stringify({message:'Стаи: промени от админа',content:b64e(fileText()),sha:cur.sha,branch:gh.branch||'main'})});
@@ -145,11 +150,6 @@ $('list').addEventListener('click',e=>{const row=e.target.closest('.row');if(!ro
     rooms.splice(i,1);keep('Стаята е изтрита. Не забравяй да свалиш rooms.js.');render()}});
 $('add').onclick=()=>{let n=1;while(rooms.some(r=>r.id==='room'+n))n++;rooms.push({id:'room'+n,name:'Нова стая',size:1,limit:1,boost:false,gen:false,desc:'',cat:'cus',_new:true});keep();render();
   const row=$('list').lastElementChild;row.scrollIntoView({block:'center',behavior:'smooth'});const inp=row.querySelector('[data-k="name"]');inp.focus();inp.select()};
-$('dl').onclick=()=>{const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){$('state').textContent='Поправи името на файла на „'+bad.name+'“ преди да свалиш.';return}
-  const out=rooms.map(({_new,...r})=>r);
-  const txt=fileText();
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/javascript'}));a.download='rooms.js';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
-  rooms.forEach(r=>delete r._new);keep('rooms.js е свален. Сложи го до Hideout-Planner.html на мястото на стария.');render()};
 ghShow();
 let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Натисни пак: ще се загубят незапазените промени';setTimeout(()=>{armed=false;$('reset').textContent='Започни отначало от rooms.js'},3000);return}
   armed=false;try{localStorage.removeItem(KEY)}catch(e){}
