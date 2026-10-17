@@ -241,6 +241,16 @@ window.ROOMS_CONFIG={
    "gen": false,
    "desc": "Събира фрагмени от Con точки",
    "cat": "cus"
+  },
+  {
+   "id": "room3",
+   "name": "Фабрика за медицински комплекти",
+   "size": 2,
+   "limit": 1,
+   "boost": false,
+   "gen": false,
+   "desc": "Произвежда медицински комплекти",
+   "cat": "cus"
   }
  ]
 };
