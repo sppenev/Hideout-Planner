@@ -384,6 +384,15 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .cpy.ok{color:#3ddc84}
 .cpy[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);z-index:5;pointer-events:none}
 .cpy.ok[data-tip]:hover::after{content:"Копирано!";color:#3ddc84}
+
+/* variant tabs: red x to delete (second click confirms), double-click name to rename */
+.tabw{position:relative;display:inline-flex}
+.tabx{position:absolute;top:-8px;right:-8px;z-index:2;min-width:20px;height:20px;padding:0 5px;border-radius:10px;border:2px solid #2a0804;background:#e8382a;color:#fff;font-size:14px;font-weight:800;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s;display:grid;place-items:center}
+.tabw:hover .tabx,.tabx:focus-visible,.tabx.armed{opacity:1}
+.tabx.armed{font-size:11px;padding:0 7px}
+@media (hover:none){.tabx{opacity:.9}}
+.tabx[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);pointer-events:none}
+.tabedit{width:150px;font:inherit;font-size:13px;font-weight:700;padding:5px 10px;border:2px solid var(--hero);border-radius:9px;background:var(--panel-2);color:var(--paper)}
 </style>
 </head>
 <body>
@@ -742,10 +751,19 @@ function render(){
   renderTabs();renderPalette();renderStats(boosted,gens);renderSel();updateShare();save()}
 
 function renderTabs(){const tb=$('tabs');tb.innerHTML='';
-  D.layouts.forEach((l,i)=>{const b=document.createElement('button');b.className='tab'+(i===D.active?' on':'');b.textContent=l.name;
-    b.onclick=()=>{if(i===D.active)return;D.active=i;S=D.layouts[i];selId=null;say('Вариант „'+l.name+'“.');render()};tb.appendChild(b)});
-  const add=document.createElement('button');add.className='tab add';add.textContent='+ Копие като нов вариант';
-  add.onclick=()=>{const L=clone(S);L.name='Вариант '+(D.layouts.length+1);L.rooms.forEach(r=>r.id=uid++);D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;say('Създаден е „'+L.name+'“. Можеш да го преименуваш долу.');render()};
+  D.layouts.forEach((l,i)=>{const w=document.createElement('span');w.className='tabw';
+    const b=document.createElement('button');b.type='button';b.className='tab'+(i===D.active?' on':'');b.textContent=l.name;b.title='Двоен клик за преименуване';
+    b.onclick=()=>{if(i===D.active)return;D.active=i;S=D.layouts[i];selId=null;render()};
+    b.ondblclick=()=>{const inp=document.createElement('input');inp.type='text';inp.className='tabedit';inp.value=l.name;inp.maxLength=24;w.replaceChild(inp,b);inp.focus();inp.select();
+      let done=false;const fin=ok=>{if(done)return;done=true;const v=inp.value.trim();if(ok&&v)l.name=v;render()};
+      inp.onkeydown=e=>{if(e.key==='Enter')fin(true);else if(e.key==='Escape')fin(false)};inp.onblur=()=>fin(true)};
+    w.appendChild(b);
+    if(i>0&&D.layouts.length>1){const x=document.createElement('button');x.type='button';x.className='tabx';x.setAttribute('aria-label','Изтрий „'+l.name+'“');x.dataset.tip='Изтрий варианта';x.textContent='×';
+      x.onclick=e=>{e.stopPropagation();if(!x.classList.contains('armed')){x.classList.add('armed');x.textContent='Изтрий?';x.dataset.tip='Натисни пак за изтриване';clearTimeout(x._t);x._t=setTimeout(()=>{if(x.isConnected){x.classList.remove('armed');x.textContent='×';x.dataset.tip='Изтрий варианта'}},3000);return}
+        D.layouts.splice(i,1);if(D.active>=i)D.active=Math.max(0,D.active-1);S=D.layouts[D.active];selId=null;render()};w.appendChild(x)}
+    tb.appendChild(w)});
+  const add=document.createElement('button');add.type='button';add.className='tab add';add.textContent='+ Копие като нов вариант';
+  add.onclick=()=>{const L=clone(S);L.name='Вариант '+(D.layouts.length+1);L.rooms.forEach(r=>r.id=uid++);D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;render()};
   tb.appendChild(add)}
 
 function renderPalette(){const p=$('palette');p.innerHTML='';
