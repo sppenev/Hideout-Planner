@@ -46,7 +46,7 @@ window.ROOMS_CONFIG={
    "id": "xp",
    "name": "Стая на безкрайното познание",
    "size": 2,
-   "limit": 1,
+   "limit": 2,
    "boost": true,
    "gen": false,
    "desc": "Произвежда опит (XP).",
