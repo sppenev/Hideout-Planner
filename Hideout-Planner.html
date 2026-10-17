@@ -209,8 +209,10 @@ body:not(.tray-open){padding-bottom:0}
 .cell::after{color:rgba(255,248,232,.35)}
 .flabel{width:34px;background:rgba(22,18,15,.55);color:var(--paper);border:0;box-shadow:none;font-size:9px}
 .flabel b{font-size:15px;color:var(--hero)}
-.side-l{display:none}
-body.tray-open .side-l{display:flex}
+/* rooms drawer slides up and down smoothly */
+.side-l{display:flex;transform:translateY(calc(100% + 48px));visibility:hidden;transition:transform .45s cubic-bezier(.22,1,.36,1),visibility 0s linear .45s}
+body.tray-open .side-l{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.22,1,.36,1),visibility 0s}
+@media (prefers-reduced-motion:reduce){.side-l,body.tray-open .side-l{transition:none}}
 .fab{position:fixed;z-index:35;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;gap:8px}
 .fab .btn{background:rgba(22,18,15,.82);border-color:rgba(0,0,0,.6)}
 .fab .btn[aria-pressed="true"]{background:var(--hero);color:var(--hero-ink)}
