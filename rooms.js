@@ -4,7 +4,7 @@ window.ROOMS_CONFIG={
  "bgSize": 510,
  "logoH": 84,
  "header": {
-  "bg": "images/top.png",
+  "bg": "images/headers/header-mvds8dp5.jpg",
   "en": "images/top.png"
  },
  "rooms": [
