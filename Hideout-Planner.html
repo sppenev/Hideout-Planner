@@ -485,16 +485,22 @@ body.tray-open .scroller{padding-bottom:280px!important}
 @media (prefers-reduced-motion:reduce){.credit .live .dot{animation:none}}
 
 /* new floor: unfolds down with a bounce, cells pop in one by one, a puff of dust, the button squishes */
-.floor.fresh{transform-origin:50% 0;animation:floorDrop .7s cubic-bezier(.34,1.56,.64,1) both}
+.floor.fresh{transform-origin:50% 0;animation:floorDrop 1.2s cubic-bezier(.34,1.45,.64,1) both}
 @keyframes floorDrop{0%{opacity:0;transform:translateY(-30px) scaleY(.15)}60%{opacity:1}100%{opacity:1;transform:none}}
-.floor.fresh .cell,.floor.fresh .shaft{animation:cellPop .55s cubic-bezier(.34,1.8,.64,1) both;animation-delay:calc(.18s + var(--i,0) * .07s)}
+.floor.fresh .cell,.floor.fresh .shaft{animation:cellPop .8s cubic-bezier(.34,1.7,.64,1) both;animation-delay:calc(.4s + var(--i,0) * .13s)}
 @keyframes cellPop{0%{opacity:0;transform:scale(.55) translateY(14px)}100%{opacity:1;transform:none}}
 .dust{position:absolute;z-index:6;width:var(--s);height:var(--s);border-radius:50%;background:radial-gradient(circle at 35% 35%,#f3dfc0,#b38a63 70%);pointer-events:none;opacity:0;
   animation:dustFly var(--d) cubic-bezier(.2,.7,.3,1) forwards;animation-delay:var(--w)}
 @keyframes dustFly{0%{opacity:.95;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4)}}
-.addfloor.squish{animation:squish .45s cubic-bezier(.34,1.8,.64,1)}
+.addfloor.squish{animation:squish .6s cubic-bezier(.34,1.8,.64,1)}
 @keyframes squish{0%{transform:none}30%{transform:scale(1.15,.8)}60%{transform:scale(.92,1.08)}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.floor.fresh,.floor.fresh .cell,.floor.fresh .shaft,.addfloor.squish{animation:none}.dust{display:none}}
+
+/* removing a floor: rooms and cells sink away one by one (right to left), then the row folds shut with a puff */
+.floor.leaving{pointer-events:none;overflow:hidden}
+.floor.leaving .fdel{display:none}
+.floor.leaving .cell,.floor.leaving .shaft,.floor.leaving .room{animation:cellSink .6s cubic-bezier(.55,-.4,.7,.6) both;animation-delay:calc(var(--j,0) * .11s)}
+@keyframes cellSink{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(26px) scale(.5) rotate(var(--r,0deg))}}
 </style>
 </head>
 <body>
@@ -931,6 +937,9 @@ function renderSel(){const box=$('selInfo');const r=S.rooms.find(x=>x.id===selId
 
 function removeFloor(f,btn){const has=S.rooms.some(r=>r.f===f);
   if(has&&!btn.classList.contains('armed')){btn.classList.add('armed');btn.textContent='Махни?';setTimeout(()=>{if(btn.isConnected){btn.classList.remove('armed');btn.textContent=''}},3000);return}
+  const row=btn.closest('.floor');if(row&&!row.classList.contains('leaving')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){removeFloorFx(row,()=>doRemoveFloor(f,has));return}
+  doRemoveFloor(f,has)}
+function doRemoveFloor(f,has){
   S.rooms=S.rooms.filter(r=>r.f!==f);S.rooms.forEach(r=>{if(r.f>f)r.f--});S.floors--;if(selId&&!S.rooms.some(r=>r.id===selId))selId=null;
   say('Етаж '+(f+1)+' е махнат'+(has?' заедно със стаите си.':'.'));render()}
 function removeRoom(id){S.rooms=S.rooms.filter(r=>r.id!==id);if(selId===id)selId=null;say('Стаята е махната.');render()}
@@ -1195,16 +1204,28 @@ function newFloorFx(btn){const rows=document.querySelectorAll('#floors .floor');
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){row.scrollIntoView({block:'nearest'});return}
   row.querySelectorAll('.cell,.shaft').forEach((c,i)=>c.style.setProperty('--i',i));row.classList.add('fresh');
   row.addEventListener('animationend',e=>{if(e.target===row)row.classList.remove('fresh')},{once:false});
-  setTimeout(()=>row.classList.remove('fresh'),1400);
+  setTimeout(()=>row.classList.remove('fresh'),2600);
   const fl=$('floors'),fr=fl.getBoundingClientRect();
   setTimeout(()=>{const r=row.getBoundingClientRect();const y=r.bottom-fr.top-6;
     for(let k=0;k<22;k++){const d=document.createElement('span');d.className='dust';const left=k%2===0;
       const x0=left?(r.left-fr.left)+Math.random()*r.width*0.5:(r.left-fr.left)+r.width*0.5+Math.random()*r.width*0.5;
       d.style.left=x0+'px';d.style.top=y+'px';d.style.setProperty('--s',(8+Math.random()*14)+'px');
       d.style.setProperty('--x',((Math.random()-.5)*160)+'px');d.style.setProperty('--y',(-10-Math.random()*50)+'px');
-      d.style.setProperty('--d',(.6+Math.random()*.5)+'s');d.style.setProperty('--w',(Math.random()*.15)+'s');
-      fl.appendChild(d);setTimeout(()=>d.remove(),1500)}},380);
+      d.style.setProperty('--d',(1+Math.random()*.6)+'s');d.style.setProperty('--w',(Math.random()*.25)+'s');
+      fl.appendChild(d);setTimeout(()=>d.remove(),2200)}},650);
   setTimeout(()=>{const ab=$('addFloor');(ab||row).scrollIntoView({block:'nearest',behavior:'smooth'})},120)}
+
+function puff(x,y,n,spread){const fl=$('floors');for(let k=0;k<n;k++){const d=document.createElement('span');d.className='dust';
+  d.style.left=(x+(Math.random()-.5)*spread)+'px';d.style.top=y+'px';d.style.setProperty('--s',(8+Math.random()*14)+'px');
+  d.style.setProperty('--x',((Math.random()-.5)*160)+'px');d.style.setProperty('--y',((Math.random()-.5)*70)+'px');
+  d.style.setProperty('--d',(1+Math.random()*.6)+'s');d.style.setProperty('--w',(Math.random()*.2)+'s');fl.appendChild(d);setTimeout(()=>d.remove(),2200)}}
+function removeFloorFx(row,done){row.classList.add('leaving');
+  const parts=[...row.querySelectorAll('.cell,.shaft,.room')].sort((a,b)=>b.getBoundingClientRect().left-a.getBoundingClientRect().left);
+  parts.forEach((el,i)=>{el.style.setProperty('--j',i);el.style.setProperty('--r',((Math.random()-.5)*16)+'deg')});
+  const sinkEnd=600+parts.length*110;
+  setTimeout(()=>{const fr=$('floors').getBoundingClientRect(),r=row.getBoundingClientRect();puff(r.left-fr.left+r.width/2,r.top-fr.top+r.height/2,26,r.width*.9);
+    row.style.height=row.offsetHeight+'px';void row.offsetHeight;row.style.transition='height .7s cubic-bezier(.65,0,.35,1),opacity .5s';row.style.height='0px';row.style.opacity='0';
+    setTimeout(done,720)},sinkEnd)}
 </script>
 
 </body>
