@@ -66,6 +66,11 @@ textarea{height:56px;resize:vertical}
 .state.err{color:var(--bad)}
 .scene{background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .scene h2,.sec{font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:17px}
+.bgsize{margin-top:18px;background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.bgsize-head{display:flex;justify-content:space-between;align-items:center}
+.bgsize-head span{font-weight:700;color:var(--hero)}
+.bgsize input[type=range]{width:100%;accent-color:var(--hero)}
+.bgprev{height:220px;border-radius:7px;border:2px solid var(--ink);background-color:var(--panel-2);background-repeat:repeat}
 .scene-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .sc{display:flex;flex-direction:column;gap:6px}
 .sc-prev{height:110px;background:var(--panel-2);border-radius:6px;overflow:hidden;display:grid;place-items:center;color:var(--hint);font-size:11px;position:relative}
@@ -146,6 +151,12 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
         <h2 class="sec">Картинки на сцената</h2>
         <p class="hint">Избери файл и той се качва направо в сайта с правилното име. Може и .jpg, и .png.</p>
         <div class="scene-grid" id="sceneGrid"></div>
+        <div class="bgsize">
+          <div class="bgsize-head"><b>Размер на патърна</b><span id="bgVal">300 px</span></div>
+          <input type="range" id="bgRange" min="60" max="1200" step="10" value="300" aria-label="Размер на патърна">
+          <div class="bgprev" id="bgPrev"></div>
+          <p class="hint">Така ще изглежда фонът под земята. Като пуснеш плъзгача, размерът се записва в сайта.</p>
+        </div>
       </section>
       <section class="pane" id="sec-gh" hidden>
         <h2 class="sec">Връзка с GitHub</h2>
@@ -185,14 +196,15 @@ function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorizati
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,''))));
 function ghErr(r){return r.status===401?'Ключът не е валиден или е изтекъл.':r.status===403?'Ключът няма право да записва в това хранилище.':r.status===404?'Не намирам хранилището или файла rooms.js в него. Провери потребителя, хранилището и клона.':r.status===409?'Някой друг е записал междувременно. Опитай пак.':'GitHub върна грешка '+r.status+'.'}
 async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});if(!r.ok)throw new Error(ghErr(r));const j=await r.json();
-  const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[]}}
-function fileText(){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,rooms:rooms.map(({_new,...r})=>r)},null,1)+';\n'}
+  const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[],bgSize:cfg&&+cfg.bgSize||null}}
+let bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;
+function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
   $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
   if(!gh.owner||!gh.repo||!gh.token){say('Попълни потребител, хранилище и ключ.',true);return}
   say('Свързвам се...');try{const g=await ghGet();gh.ok=true;try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}
-    rooms=g.rooms;try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
+    rooms=g.rooms;if(g.bgSize){bgSize=g.bgSize;showBg()}try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
 /* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
@@ -212,7 +224,7 @@ $('sceneGrid').addEventListener('change',async e=>{const box=e.target.closest('.
   if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да качваш картинки.',true);return}
   const k=box.dataset.k,name=SCENE.find(x=>x[0]===k)[1];say('Качвам „'+name+'“...');
   try{const b64=await fileToPngB64(f);await ghPutFile('images/'+k+'.png',b64,'Картинка: '+name);
-    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
+    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';if(k==='bg'){$('bgPrev').style.backgroundImage='url("data:image/png;base64,'+b64+'")'}say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
   catch(err){say(err.message,true)}});
 $('ghSave').onclick=async()=>{if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub: попълни ключа и натисни „Свържи“.',true);return}const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
   $('ghSave').disabled=true;say('Записвам в GitHub...');
@@ -270,9 +282,20 @@ ghShow();renderScene();
 let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Натисни пак: ще се загубят незапазените промени';setTimeout(()=>{armed=false;$('reset').textContent='Започни отначало от rooms.js'},3000);return}
   armed=false;try{localStorage.removeItem(KEY)}catch(e){}
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
-if(gh.ok)ghGet().then(g=>{let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
+if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
 else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като Hideout-Planner.html и rooms.js.';
 render();
+
+/* ---- pattern size: stored in rooms.js as bgSize, saved straight to the site when the slider is released ---- */
+function showBg(){$('bgRange').value=bgSize;$('bgVal').textContent=bgSize+' px';const pv=$('bgPrev');pv.style.backgroundImage='url("images/bg.png?t='+(window._bgT||(window._bgT=Date.now()))+'")';pv.style.backgroundSize=bgSize+'px auto'}
+$('bgRange').addEventListener('input',()=>{bgSize=+$('bgRange').value;$('bgVal').textContent=bgSize+' px';$('bgPrev').style.backgroundSize=bgSize+'px auto'});
+$('bgRange').addEventListener('change',async()=>{if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да запазиш размера.',true);return}
+  say('Записвам размера на патърна...');
+  try{const cur=await ghGet();const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),
+      body:JSON.stringify({message:'Размер на патърна: '+bgSize+' px',content:b64e(fileText(cur.rooms)),sha:cur.sha,branch:gh.branch||'main'})});
+    if(!r.ok)throw new Error(ghErr(r));say('Размерът на патърна е записан ('+bgSize+' px). До около минута се вижда на сайта.')}
+  catch(e){say(e.message,true)}});
+showBg();
 </script>
 </body>
 </html>

@@ -652,7 +652,7 @@ function saveImgs(){try{localStorage.setItem(KEY+'-img',JSON.stringify(D.imgs))}
 function load(){let d=null;try{const v=localStorage.getItem(KEY);if(v)d=fromData(JSON.parse(v))}catch(e){}
   if(!d)d={over:{},custom:{},hidden:{},imgs:{},bgSize:300,layouts:[sampleLayout('Основна')],active:0};
   /* scene pictures now come only from the site's images folder (set in the admin), same for everyone */
-  d.imgs={};d.bgSize=300;return d}
+  d.imgs={};d.bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;return d}
 function catColor(cat){return 'var('+(CATS[cat]||CATS.cus)[1]+')'}
 function count(t){return S.rooms.filter(r=>r.t===t).length}
 function say(msg,err){const s=$('status');s.textContent=msg||'';s.className=err?'err':''}
