@@ -1,6 +1,7 @@
 /* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */
 window.ROOMS_CONFIG={
  "version": 1,
+ "bgSize": 510,
  "rooms": [
   {
    "id": "base",
