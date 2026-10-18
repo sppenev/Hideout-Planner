@@ -273,7 +273,7 @@ async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh
   const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[],bgSize:cfg&&+cfg.bgSize||null,header:cfg&&cfg.header||null,logoH:cfg&&+cfg.logoH||null}}
 let bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;
 let logoH=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.logoH)||56;
-let headerCfg=Object.assign({bg:'images/top.png',en:'images/top.png'},(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{});
+let headerCfg=Object.assign({},(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{});
 function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:headerCfg,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
   $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
@@ -386,13 +386,15 @@ showBg();
 /* ---- header library: images/headers/* on GitHub, the pick per language is stored in rooms.js as header:{bg,en} ---- */
 let hdrList=[],hdrLocal={};
 function repoApi(path){return 'https://api.github.com/repos/'+encodeURIComponent(gh.owner)+'/'+encodeURIComponent(gh.repo)+'/contents/'+path}
-async function loadHeaders(){const list=[{path:'images/top.png',name:'top.png',sha:null}];
-  if(gh.ok){const r=await fetch(repoApi('images/headers')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
+async function loadHeaders(){const list=[];
+  if(gh.ok){/* the old top.png is listed only while it still exists in the repo */
+    const t=await fetch(repoApi('images/top.png')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
+    if(t.ok){const j=await t.json();list.push({path:'images/top.png',name:'top.png',sha:j.sha})}const r=await fetch(repoApi('images/headers')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
     if(r.ok){(await r.json()).filter(f=>f.type==='file'&&/\.(png|jpe?g|webp)$/i.test(f.name)).forEach(f=>list.push({path:f.path,name:f.name,sha:f.sha}))}else if(r.status!==404)throw new Error(ghErr(r))}
-  [headerCfg.bg,headerCfg.en].forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
+  if(!gh.ok)[headerCfg.bg,headerCfg.en].forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
   hdrList=list;renderHeaders()}
 function renderHeaders(){const g=$('hdrGrid');if(!g)return;if(!gh.ok&&hdrList.length<=1){g.innerHTML='<p class="hint">Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.</p>';}
-  const list=hdrList.length?hdrList:[{path:'images/top.png',name:'top.png'}];
+  const list=hdrList;if(!list.length){g.innerHTML='<p class="hint">'+(gh.ok?'Няма качени хедъри. Качи първия с „+ Качи хедър“.':'Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.')+'</p>';return}
   g.innerHTML=list.map(h=>{const onB=headerCfg.bg===h.path,onE=headerCfg.en===h.path,used=onB||onE;
     return '<div class="hcard'+(used?' on':'')+'" data-p="'+esc(h.path)+'"><div class="hprev"><img alt="" src="'+(hdrLocal[h.path]||esc(h.path)+'?t='+(window._bgT||Date.now()))+'"></div>'+
       '<div class="hname">'+esc(h.name)+(used?' · <b class="inuse">използва се</b>':'')+'</div><div class="hrow"><button type="button" class="hpick'+(onB?' on':'')+'" data-lang="bg" title="Показвай на български">БГ</button><button type="button" class="hpick'+(onE?' on':'')+'" data-lang="en" title="Показвай на английски">EN</button>'+
