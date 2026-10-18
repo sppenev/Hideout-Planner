@@ -474,6 +474,15 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .fab #shareBtn{background:#FBB437;color:#1d1712}
 .fab #shareBtn:hover{background:#ffc75e}
 .fab #shareBtn[aria-expanded="true"]{background:#fff4dc;color:#1d1712}
+
+/* live stats above the credit */
+.credit .live{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;color:rgba(255,240,220,.75)}
+.credit .live[hidden]{display:none}
+.credit .live b{color:#fff4dc;font-weight:800;margin-right:4px}
+.credit .live .sep{width:4px;height:4px;border-radius:50%;background:rgba(255,240,220,.4)}
+.credit .live .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3ddc84;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:livepulse 1.8s infinite}
+@keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(61,220,132,.6)}70%{box-shadow:0 0 0 8px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
+@media (prefers-reduced-motion:reduce){.credit .live .dot{animation:none}}
 </style>
 </head>
 <body>
@@ -563,7 +572,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
             </g>
           </svg>
         </div>
-        <div class="scroller" id="scroller"><div class="floors" id="floors"></div><footer class="credit">Built with ☕ by <a href="https://www.behance.net/sppenev" target="_blank" rel="noopener" title="Портфолио в Behance">eLeS</a> · 2026</footer></div>
+        <div class="scroller" id="scroller"><div class="floors" id="floors"></div><footer class="credit"><div class="live" id="liveStats" hidden><span><b id="statVisits">0</b> посещения</span><span class="sep"></span><span><i class="dot" aria-hidden="true"></i><b id="statOnline">1</b> онлайн сега</span></div>Built with ☕ by <a href="https://www.behance.net/sppenev" target="_blank" rel="noopener" title="Портфолио в Behance">eLeS</a> · 2026</footer></div>
         <div class="scene-ctl bg-ctl">
           <span class="btn filebtn">Фон под земята<input type="file" id="bgFile" accept="image/*" aria-label="Картинка за фона под земята"></span>
           <button class="btn" type="button" id="bgNo" hidden>Махни</button>
@@ -630,6 +639,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
 </div>
 
 <script src="rooms.js"></script>
+<script src="firebase-config.js"></script>
 <script>
 /* original room illustrations, drawn for this planner */
 const K='stroke="#16120f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"';
@@ -1149,6 +1159,23 @@ resetForm();render();applyScene();applyEmpty();
   document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!b.contains(e.target))set(false)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
   $('shareBtn').addEventListener('click',()=>set(false));$('gearBtn').addEventListener('click',()=>set(false))})();
+
+/* live stats in the footer: total visits + people online now (Firebase Realtime Database, set in firebase-config.js) */
+(()=>{const cfg=window.FIREBASE_CONFIG;if(!cfg||!cfg.databaseURL)return;
+  const load=src=>new Promise((res,rej)=>{const t=document.createElement('script');t.src=src;t.onload=res;t.onerror=rej;document.head.appendChild(t)});
+  const B='https://www.gstatic.com/firebasejs/10.12.2/';
+  load(B+'firebase-app-compat.js').then(()=>load(B+'firebase-database-compat.js')).then(()=>{
+    firebase.initializeApp(cfg);const db=firebase.database();const fmt=n=>Number(n||0).toLocaleString('bg-BG');
+    /* one visit per browser session, so a refresh does not count again */
+    let seen=false;try{seen=sessionStorage.getItem('hz-visit')==='1'}catch(e){}
+    if(!seen){db.ref('stats/visits').transaction(v=>(v||0)+1);try{sessionStorage.setItem('hz-visit','1')}catch(e){}}
+    db.ref('stats/visits').on('value',s=>{$('statVisits').textContent=fmt(s.val());$('liveStats').hidden=false});
+    /* presence: each open tab adds itself and is removed automatically when it closes */
+    const me=db.ref('online').push();
+    db.ref('.info/connected').on('value',s=>{if(s.val()===true){me.onDisconnect().remove();me.set(true)}});
+    db.ref('online').on('value',s=>{$('statOnline').textContent=fmt(Math.max(1,s.numChildren()))});
+  }).catch(()=>{});
+})();
 </script>
 
 </body>
