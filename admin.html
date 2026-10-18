@@ -95,7 +95,7 @@ textarea{height:56px;resize:vertical}
 .stepb:hover{background:var(--hero);color:var(--hero-ink)}
 .stepb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .slider-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--hint);padding:0 52px}
-#bgRange{-webkit-appearance:none;appearance:none;flex:1;height:14px;border-radius:7px;border:2px solid var(--ink);cursor:pointer;
+#bgRange,#logoRange{-webkit-appearance:none;appearance:none;flex:1;height:14px;border-radius:7px;border:2px solid var(--ink);cursor:pointer;
   background:linear-gradient(90deg,var(--hero) 0 var(--p,20%),var(--panel-2) var(--p,20%) 100%)}
 #bgRange:focus-visible{outline:3px solid var(--hero);outline-offset:4px}
 #bgRange::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff3b0,var(--hero) 60%,#c99400);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink),0 6px 14px rgba(0,0,0,.5);cursor:grab;transition:transform .12s}
@@ -169,6 +169,14 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
 .hdel{flex:none;width:34px;height:32px;border:2px solid var(--ink);border-radius:8px;background:#d8301f;color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}
 .hdel svg{width:16px;height:16px}
 .hdel[disabled]{opacity:.35;cursor:not-allowed}
+
+#logoRange{background:linear-gradient(90deg,var(--hero) 0 var(--p,20%),var(--panel-2) var(--p,20%) 100%)}
+#logoRange::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff3b0,var(--hero) 60%,#c99400);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink),0 6px 14px rgba(0,0,0,.5);cursor:grab}
+.logoprev{position:relative;height:220px;border-radius:7px;border:2px solid var(--ink);background:linear-gradient(#5a1a10,#2a0a06);overflow:hidden}
+.logoprev img{position:absolute;top:12px;left:16px;height:var(--lh,56px);width:auto}
+.logoprev .fakebtns{position:absolute;top:12px;right:12px;display:flex;gap:8px}
+.logoprev .fakebtns i{width:44px;height:42px;border-radius:14px;background:#1d1712;border:2px solid #fff4dc}
+.bgsize+.bgsize{margin-top:12px}
 </style>
 </head>
 <body>
@@ -209,6 +217,12 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
           <div class="hdr-grid" id="hdrGrid"><p class="hint">Зареждам...</p></div>
         </div>
         <div class="scene-grid" id="sceneGrid"></div>
+        <div class="bgsize">
+          <div class="bgsize-head"><b>Размер на логото</b><span id="logoVal">56 px</span></div>
+          <div class="slider"><button type="button" class="stepb" data-lstep="-4" aria-label="По-малко">−</button><input type="range" id="logoRange" class="rng" min="24" max="200" step="2" value="56" aria-label="Височина на логото"><button type="button" class="stepb" data-lstep="4" aria-label="По-голямо">+</button></div>
+          <div class="logoprev"><img id="logoPrev" alt="" src="images/logo.png" onerror="this.style.display='none'" onload="this.style.display=''"><span class="fakebtns"><i></i><i></i><i></i></span></div>
+          <p class="hint">Височината на логото в горната лента. Качи го от картата „Лого“ отдолу. Като пуснеш плъзгача, размерът се записва в сайта.</p>
+        </div>
         <div class="bgsize">
           <div class="bgsize-head"><b>Размер на патърна</b><span id="bgVal">300 px</span></div>
           <div class="slider"><button type="button" class="stepb" data-step="-20" aria-label="По-малък">−</button><input type="range" id="bgRange" min="60" max="1200" step="10" value="300" aria-label="Размер на патърна"><button type="button" class="stepb" data-step="20" aria-label="По-голям">+</button></div>
@@ -255,10 +269,11 @@ function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorizati
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,''))));
 function ghErr(r){return r.status===401?'Ключът не е валиден или е изтекъл.':r.status===403?'Ключът няма право да записва в това хранилище.':r.status===404?'Не намирам хранилището или файла rooms.js в него. Провери потребителя, хранилището и клона.':r.status===409?'Някой друг е записал междувременно. Опитай пак.':'GitHub върна грешка '+r.status+'.'}
 async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});if(!r.ok)throw new Error(ghErr(r));const j=await r.json();
-  const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[],bgSize:cfg&&+cfg.bgSize||null,header:cfg&&cfg.header||null}}
+  const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[],bgSize:cfg&&+cfg.bgSize||null,header:cfg&&cfg.header||null,logoH:cfg&&+cfg.logoH||null}}
 let bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;
+let logoH=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.logoH)||56;
 let headerCfg=Object.assign({bg:'images/top.png',en:'images/top.png'},(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{});
-function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,header:headerCfg,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
+function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:headerCfg,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
   $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
@@ -268,7 +283,7 @@ $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghR
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
 /* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
-const SCENE=[['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
+const SCENE=[['logo','Лого','горе вляво в лентата, PNG с прозрачен фон'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
 function renderScene(){$('sceneGrid').innerHTML=SCENE.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'">няма картинка<img alt="" src="images/'+k+'.png?t='+Date.now()+'" onerror="this.remove()"></div>'+
   '<div class="tag"><b>'+t+'</b> · '+h+'</div><span class="btn">Смени<input type="file" accept="image/*" aria-label="'+t+'"></span></div>').join('')}
 function fileToPngB64(file){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej(new Error('Файлът не може да се прочете.'));
@@ -284,7 +299,7 @@ $('sceneGrid').addEventListener('change',async e=>{const box=e.target.closest('.
   if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да качваш картинки.',true);return}
   const k=box.dataset.k,name=SCENE.find(x=>x[0]===k)[1];say('Качвам „'+name+'“...');
   try{const b64=await fileToPngB64(f);await ghPutFile('images/'+k+'.png',b64,'Картинка: '+name);
-    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';if(k==='bg'){$('bgPrev').style.backgroundImage='url("data:image/png;base64,'+b64+'")'}say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
+    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';if(k==='logo'){$('logoPrev').src='data:image/png;base64,'+b64}if(k==='bg'){$('bgPrev').style.backgroundImage='url("data:image/png;base64,'+b64+'")'}say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
   catch(err){say(err.message,true)}});
 $('ghSave').onclick=async()=>{if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub: попълни ключа и натисни „Свържи“.',true);saveBtnState('fail','Свържи GitHub');return}const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
   const sb=$('ghSave');clearTimeout(sb._t);sb.classList.remove('done','fail');sb.classList.add('busy');sb.disabled=true;sb.textContent='Записвам...';say('Записвам в GitHub...');
@@ -350,7 +365,7 @@ let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textCon
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
 function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
 mergeEn(fromFile());
-if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header){headerCfg=Object.assign(headerCfg,g.header);renderHeaders()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
+if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header){headerCfg=Object.assign(headerCfg,g.header);renderHeaders()}if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
 else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като Hideout-Planner.html и rooms.js.';
 render();
 
@@ -397,6 +412,14 @@ $('hdrFile').addEventListener('change',async e=>{const f=e.target.files[0];e.tar
     await ghPutFile(path,dataUrl.split(',')[1],'Нов хедър: '+f.name);hdrLocal[path]=dataUrl;hdrList.push({path,name:path.split('/').pop()+' ('+f.name+')',sha:null});
     loadHeaders().catch(()=>renderHeaders());say('Хедърът е качен. Избери БГ или EN, за да го покажеш.')}catch(err){say(err.message,true)}});
 renderHeaders();loadHeaders().catch(e=>say(e.message,true));
+
+/* ---- logo size: stored in rooms.js as logoH ---- */
+function showLogo(){const r=$('logoRange');r.value=logoH;r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%');$('logoVal').textContent=logoH+' px';document.querySelector('.logoprev').style.setProperty('--lh',logoH+'px')}
+$('logoRange').addEventListener('input',()=>{logoH=+$('logoRange').value;showLogo()});
+let logoStepT=null;document.querySelectorAll('[data-lstep]').forEach(b=>b.onclick=()=>{const r=$('logoRange');r.value=Math.max(+r.min,Math.min(+r.max,+r.value+ +b.dataset.lstep));r.dispatchEvent(new Event('input'));clearTimeout(logoStepT);logoStepT=setTimeout(()=>r.dispatchEvent(new Event('change')),900)});
+$('logoRange').addEventListener('change',async()=>{if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да запазиш размера.',true);return}
+  say('Записвам размера на логото...');try{await saveHeaderCfg('Размер на логото: '+logoH+' px');say('Размерът на логото е записан ('+logoH+' px). До около минута се вижда на сайта.')}catch(e){say(e.message,true)}});
+showLogo();
 </script>
 </body>
 </html>

@@ -504,12 +504,16 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 @keyframes cellSink{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(26px) scale(.5) rotate(var(--r,0deg))}}
 
 .fab .langbtn{font-size:13px;font-weight:900;letter-spacing:.04em}
+
+/* logo top-left in the button bar; height set in the admin (logoH) */
+.toplogo{position:fixed;z-index:35;top:calc(12px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));height:var(--logo-h,56px);width:auto;max-width:45vw;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));pointer-events:none}
 </style>
 </head>
 <body>
 
 
 <div class="tip" id="tip" role="tooltip"></div>
+<img class="toplogo" id="topLogo" alt="Hideout Planner" src="images/logo.png" onerror="this.remove()">
 <div class="fab">
   <button class="btn iconbtn langbtn" id="langBtn" type="button"></button>
   <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
@@ -666,6 +670,8 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
   if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L==='en'?'en':'bg';document.documentElement.lang=window.HZ_LANG})();
 </script>
 <script src="rooms.js"></script>
+<script>if(window.ROOMS_CONFIG&&+window.ROOMS_CONFIG.logoH)document.documentElement.style.setProperty('--logo-h',(+window.ROOMS_CONFIG.logoH)+'px');
+</script>
 <script src="firebase-config.js"></script>
 <script>
 /* original room illustrations, drawn for this planner */
