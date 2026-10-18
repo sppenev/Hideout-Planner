@@ -272,9 +272,11 @@ function rowHTML(r,i){const isNew=!!r._new;
    '<div class="thumb w'+r.size+'">Няма картинка<label class="upover"><span>Смени картинката</span><input type="file" accept="image/*" data-up aria-label="Картинка за '+esc(r.name)+'"></label></div>'+
    '<div class="fields">'+
    '<label>Име<input type="text" data-k="name" maxlength="40" value="'+esc(r.name)+'"></label>'+
+   '<label class="wide">Име (EN)<input type="text" data-k="name_en" maxlength="40" lang="en" value="'+esc(r.name_en||'')+'" placeholder="Name in English"></label>'+
    '<div><div class="tag">Клетки</div><div class="seg">'+[1,2,3].map(n=>'<button type="button" data-size="'+n+'"'+(r.size===n?' class="on"':'')+'>'+n+'</button>').join('')+'</div></div>'+
    '<label>Лимит<input type="number" data-k="limit" min="1" max="20" value="'+r.limit+'"></label>'+
    '<label class="wide">Описание (в тултипа)<textarea data-k="desc" maxlength="240">'+esc(r.desc)+'</textarea></label>'+
+   '<label class="wide">Описание (EN)<textarea data-k="desc_en" maxlength="240" lang="en" placeholder="Description in English">'+esc(r.desc_en||'')+'</textarea></label>'+
    '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+
    '<div class="btns"><span class="btn upbtn">Качи картинка<input type="file" accept="image/*" data-up aria-label="Качи картинка за '+esc(r.name)+'"></span><button class="btn danger delbtn" type="button" data-del title="Изтрий стаята" aria-label="Изтрий стаята"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'+
    '</div></div>'}
@@ -286,6 +288,7 @@ $('q').addEventListener('input',filterRooms);
 $('list').addEventListener('input',e=>{const row=e.target.closest('.row');if(!row)return;const r=rooms[+row.dataset.i],k=e.target.dataset.k;
   if(k==='name')r.name=e.target.value;
   else if(k==='desc')r.desc=e.target.value;
+  else if(k==='name_en'||k==='desc_en'){const v=e.target.value;if(v.trim())r[k]=v;else delete r[k]}
   else if(k==='limit')r.limit=Math.max(1,Math.min(20,+e.target.value||1));
   else if(k==='id'){const v=e.target.value.trim().toLowerCase(),er=row.querySelector('[data-err]');
     if(!/^[a-z0-9_-]+$/.test(v)){er.textContent='Само латински букви, цифри, - и _';return}
@@ -313,7 +316,9 @@ ghShow();renderScene();
 let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Натисни пак: ще се загубят незапазените промени';setTimeout(()=>{armed=false;$('reset').textContent='Започни отначало от rooms.js'},3000);return}
   armed=false;try{localStorage.removeItem(KEY)}catch(e){}
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
-if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
+function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
+mergeEn(fromFile());
+if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
 else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като Hideout-Planner.html и rooms.js.';
 render();
 

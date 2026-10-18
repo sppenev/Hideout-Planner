@@ -386,6 +386,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .cpy.ok{color:#3ddc84}
 .cpy[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);z-index:5;pointer-events:none}
 .cpy.ok[data-tip]:hover::after{content:"Копирано!";color:#3ddc84}
+html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 
 /* variant tabs: red x to delete (second click confirms), double-click name to rename */
 .tabw{position:relative;display:inline-flex}
@@ -501,6 +502,8 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .floor.leaving .fdel{display:none}
 .floor.leaving .cell,.floor.leaving .shaft,.floor.leaving .room{animation:cellSink .6s cubic-bezier(.55,-.4,.7,.6) both;animation-delay:calc(var(--j,0) * .11s)}
 @keyframes cellSink{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(26px) scale(.5) rotate(var(--r,0deg))}}
+
+.fab .langbtn{font-size:13px;font-weight:900;letter-spacing:.04em}
 </style>
 </head>
 <body>
@@ -508,6 +511,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
 
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="fab">
+  <button class="btn iconbtn langbtn" id="langBtn" type="button"></button>
   <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
   <button class="btn iconbtn" id="shareBtn" type="button" aria-label="Сподели подредбата" aria-expanded="false" aria-controls="sharePop" data-tip="Сподели подредбата"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
   <button class="btn" id="trayBtn" type="button" aria-pressed="false">Стаи</button>
@@ -656,6 +660,11 @@ body.tray-open .scroller{padding-bottom:280px!important}
   </div>
 </div>
 
+<script>
+/* language: ?lang=en|bg in the address wins, then the saved choice, default Bulgarian */
+(function(){var q=(location.search.match(/[?&]lang=(en|bg)/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
+  if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L==='en'?'en':'bg';document.documentElement.lang=window.HZ_LANG})();
+</script>
 <script src="rooms.js"></script>
 <script src="firebase-config.js"></script>
 <script>
@@ -762,7 +771,7 @@ const DESC={
 /* rooms.js (made with admin.html) defines the room list; when it is present nobody can change room types from this page */
 const LOCKED=!!(window.ROOMS_CONFIG&&Array.isArray(window.ROOMS_CONFIG.rooms));
 if(LOCKED){Object.keys(BASE_TYPES).forEach(k=>delete BASE_TYPES[k]);Object.keys(DESC).forEach(k=>delete DESC[k]);
-  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:r.name||r.id,size:Math.max(1,Math.min(3,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=r.desc||''})}
+  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:(window.HZ_LANG==='en'&&r.name_en)||r.name||r.id,size:Math.max(1,Math.min(3,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=(window.HZ_LANG==='en'&&r.desc_en)||r.desc||''})}
 const KEY='hz-hideout-planner-v2';
 const SAMPLE_ROOMS=[
  {t:'base',f:0,c:0},{t:'gen',f:0,c:3},{t:'stone',f:0,c:4},
@@ -1226,6 +1235,48 @@ function removeFloorFx(row,done){row.classList.add('leaving');
   setTimeout(()=>{const fr=$('floors').getBoundingClientRect(),r=row.getBoundingClientRect();puff(r.left-fr.left+r.width/2,r.top-fr.top+r.height/2,26,r.width*.9);
     row.style.height=row.offsetHeight+'px';void row.offsetHeight;row.style.transition='height .7s cubic-bezier(.65,0,.35,1),opacity .5s';row.style.height='0px';row.style.opacity='0';
     setTimeout(done,720)},sinkEnd)}
+
+/* ===== English version: room names come from the admin (name_en / desc_en), the interface is translated here ===== */
+(()=>{const lb=$('langBtn'),EN=window.HZ_LANG==='en';
+  lb.textContent=EN?'BG':'EN';lb.dataset.tip=EN?'Български':'English';lb.setAttribute('aria-label',EN?'Превключи на български':'Switch to English');
+  lb.onclick=()=>{try{localStorage.setItem('hz-lang',EN?'bg':'en')}catch(e){}const q=location.search.replace(/([?&])lang=(en|bg)&?/,'$1').replace(/[?&]$/,'');location.href=location.pathname+q+location.hash};
+  if(!EN)return;
+  const D={'Стаи':'Rooms','Настройки':'Settings','Затвори':'Close','Скривалище':'Hideout','Нива':'Floors','Махни всички стаи':'Remove all rooms','Натисни пак':'Press again',
+    'Варианти':'Variants','+ Копие като нов вариант':'+ Copy as new variant','Основна':'Main','Обобщение':'Summary','Зареди подредба':'Load a layout',
+    'Постави линк или код от съотборник. Подредбата идва като нов вариант, твоите не се пипат.':'Paste a link or code from a teammate. The layout arrives as a new variant; yours stay untouched.',
+    'Постави код или линк тук':'Paste a code or link here','Зареди':'Load','Зареден ✓':'Loaded ✓','Полето е празно':'The field is empty','Кодът не става':'Invalid code','Копирай от полето':'Copy it from the field',
+    'Сподели подредбата':'Share the layout','Подредбата се пази сама в този браузър. Прати линка на съотборник и той ще види точно нея. Кодът е същото, само по-кратко, за да си го пазиш.':'Your layout saves itself in this browser. Send the link to a teammate and they will see exactly this layout. The code is the same thing, just shorter, so you can keep it.',
+    'Линк':'Link','Код':'Code','Копирай линка':'Copy link','Копирай кода':'Copy code','Как се ползва':'How to use','Пусни тук, за да махнеш стая':'Drop here to remove a room',
+    'Добави етаж':'Add floor','посещения':'visits','онлайн сега':'online now','Всички стаи са сложени.':'All rooms are placed.',
+    'Всички генератори работят с пълна мощ.':'All generators are running at full power.','Липсва Скривалищна База.':'The Hideout Base is missing.',
+    'Изтрий варианта':'Delete variant','Натисни пак за изтриване':'Press again to delete','Изтрий?':'Delete?','Двоен клик за преименуване':'Double-click to rename',
+    'Махни стаята':'Remove room','Махни?':'Remove?','Махни ниво':'Remove floor','Добави ниво':'Add floor','Наляво':'Left','Надясно':'Right',
+    'Код или линк на подредба':'Layout code or link','Линк към подредбата':'Layout link','Код на подредбата':'Layout code','Обобщение и настройки':'Summary and settings',
+    'В момента е заредена от генератор':'Currently powered by a generator','Портфолио в Behance':'Portfolio on Behance','Скрий стаите':'Hide rooms','Сподели':'Share',
+    'Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.':'The whole floor disappears together with its rooms. If it has rooms, press twice.'};
+  const R=[[/^Махни етаж (\d+)$/,'Remove floor $1'],[/^Изтрий „(.+)“$/,'Delete “$1”'],[/^Вариант (\d+)$/,'Variant $1'],[/^Споделен (\d+)$/,'Shared $1'],[/^Зареден (\d+)$/,'Loaded $1'],
+    [/^Генератор \(ниво (\d+), слот (\d+)\) зарежда (\d) от 2 съседа\.$/,'Generator (floor $1, slot $2) powers $3 of 2 neighbours.'],
+    [/^(.+) \(ниво (\d+)\) няма генератор до себе си\.$/,'$1 (floor $2) has no generator next to it.'],
+    [/^(\d+) сл\. · (\d+)\/(\d+) · зарежда се$/,'$1 cell · $2/$3 · powered'],[/^(\d+) сл\. · (\d+)\/(\d+)$/,'$1 cell · $2/$3'],
+    [/^(\d+) слота? · зарежда съседите си$/,'$1 cell · powers its neighbours'],[/^(\d+) слота? · генераторът я зарежда$/,'$1 cell · powered by generators'],[/^(\d+) слота? · генераторът не я зарежда$/,'$1 cell · not powered by generators'],
+    [/^(.+), ниво (\d+), слот (\d+)$/,'$1, floor $2, slot $3'],[/^Махни (.+)$/,'Remove $1']];
+  const tr=t=>{const k=t.trim();if(!k||!/[А-Яа-я]/.test(k))return null;let out=D[k];if(out==null){for(const [re,to] of R){if(re.test(k)){out=k.replace(re,to);break}}}
+    if(out!=null)out=out.replace(/^(\d+) cell\b/,(m,n)=>n==='1'?m:n+' cells');
+    return out==null?null:t.replace(k,out)};
+  const ATTR=['placeholder','aria-label','title','data-tip'];
+  const doNode=n=>{if(n.nodeType===3){const v=tr(n.nodeValue);if(v!=null&&v!==n.nodeValue)n.nodeValue=v;return}
+    if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE')return;
+    ATTR.forEach(a=>{if(n.hasAttribute&&n.hasAttribute(a)){const v=tr(n.getAttribute(a));if(v!=null&&v!==n.getAttribute(a))n.setAttribute(a,v)}});
+    if((n.tagName==='INPUT'||n.tagName==='TEXTAREA')&&n.readOnly)return;
+    n.childNodes.forEach(doNode)};
+  const hp=$('helpPop');hp.querySelector('h3').textContent='How to use';hp.querySelector('.helpbody').innerHTML='<p>Plan your Hero Zero hideout, try out variants and send them to your team. Everything is saved in this browser only.</p>'+
+    '<h4>Rooms</h4><ul><li><b>Place:</b> hover an empty cell and press the orange plus. The rooms drawer opens below. Click or drag a room.</li><li><b>Move:</b> drag the room. Green means it fits, red means it does not. Drop it on another room and they swap.</li><li><b>Remove:</b> hover the room and press the red X in its corner.</li><li>A room at its limit disappears from the drawer. Hover a room to see what it does.</li></ul>'+
+    '<h4>Floors and generators</h4><ul><li><b>Add floor</b> is the orange button at the bottom. The red minus on the left removes a floor together with its rooms.</li><li>A generator powers the rooms to its left and right. The turquoise current shows the power reaches them.</li><li>Settings → Summary lists problems in red.</li></ul>'+
+    '<h4>Variants and sharing</h4><ul><li>Settings → Variants: “+ Copy” makes a new variant. Double-click renames it, X deletes it.</li><li>The share icon at the top gives a link and a code. Whoever opens the link sees your layout.</li><li>Settings → Load a layout: paste a link or code from a teammate.</li></ul>';
+  doNode(document.body);
+  new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='characterData')doNode(m.target);else if(m.type==='attributes')doNode(m.target);else m.addedNodes.forEach(doNode)}))
+    .observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR});
+})();
 </script>
 
 </body>

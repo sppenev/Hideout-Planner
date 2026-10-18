@@ -11,7 +11,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда монети. Нивото ѝ определя максималното ниво на другите стаи и колко суперлепило и зеронит можеш да държиш.",
-   "cat": "core"
+   "cat": "core",
+   "name_en": "Hideout Base",
+   "desc_en": "Produces coins. Its level sets the max level of the other rooms and how much super glue and zeronite you can store."
   },
   {
    "id": "gen",
@@ -21,7 +23,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": true,
    "desc": "Зарежда стаите вляво и вдясно от себе си: повече продукция и по-голям склад.",
-   "cat": "gen"
+   "cat": "gen",
+   "name_en": "Generator Room",
+   "desc_en": "Powers the rooms to its left and right: more production and bigger storage."
   },
   {
    "id": "glue",
@@ -31,7 +35,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда суперлепило, единият от двата ресурса за строеж.",
-   "cat": "res"
+   "cat": "res",
+   "name_en": "Super Glue Factory",
+   "desc_en": "Produces super glue, one of the two building resources."
   },
   {
    "id": "stone",
@@ -41,7 +47,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Добива зеронит, другият ресурс за строеж.",
-   "cat": "res"
+   "cat": "res",
+   "name_en": "Zeronite Mine",
+   "desc_en": "Mines zeronite, the other building resource."
   },
   {
    "id": "xp",
@@ -51,7 +59,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда опит (XP).",
-   "cat": "res"
+   "cat": "res",
+   "name_en": "Room of Infinite Knowledge",
+   "desc_en": "Produces experience (XP)."
   },
   {
    "id": "work",
@@ -61,7 +71,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Изработва модификации за екипировката.",
-   "cat": "prod"
+   "cat": "prod",
+   "name_en": "Workshop",
+   "desc_en": "Crafts modifications for your gear."
   },
   {
    "id": "forge",
@@ -71,7 +83,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Изработва предмети с ресурси от скривалището.",
-   "cat": "prod"
+   "cat": "prod",
+   "name_en": "Hero Forge",
+   "desc_en": "Crafts items from hideout resources."
   },
   {
    "id": "atk",
@@ -81,7 +95,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда атакуващи ботове за нападения на чужди скривалища.",
-   "cat": "war"
+   "cat": "war",
+   "name_en": "Attack-o-Bot Factory",
+   "desc_en": "Produces attack bots for raiding other hideouts."
   },
   {
    "id": "def",
@@ -91,7 +107,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда защитни ботове, които пазят скривалището.",
-   "cat": "war"
+   "cat": "war",
+   "name_en": "Defend-o-Bot Factory",
+   "desc_en": "Produces defense bots that guard your hideout."
   },
   {
    "id": "post",
@@ -101,7 +119,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Защитава скривалището заедно със защитните ботове.",
-   "cat": "war"
+   "cat": "war",
+   "name_en": "Guard Post",
+   "desc_en": "Defends the hideout together with the defense bots."
   },
   {
    "id": "store",
@@ -111,7 +131,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Увеличава колко атакуващи и защитни бота можеш да имаш.",
-   "cat": "war"
+   "cat": "war",
+   "name_en": "Robot Storage",
+   "desc_en": "Raises how many attack and defense bots you can have."
   },
   {
    "id": "cbu",
@@ -121,7 +143,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Вдига нивото и атрибутите на бойните ботове.",
-   "cat": "war"
+   "cat": "war",
+   "name_en": "Combat Bot Unit Upgrader",
+   "desc_en": "Raises the level and attributes of combat bots."
   },
   {
    "id": "robot",
@@ -131,7 +155,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Ускорява работния робот, който строи и разширява стаите.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Worker Robot Upgrader",
+   "desc_en": "Speeds up the worker robot that builds and expands rooms."
   },
   {
    "id": "spec",
@@ -141,7 +167,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Намалява цената в монети за подобряване на стаите.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Broker Center",
+   "desc_en": "Lowers the coin cost of upgrading rooms."
   },
   {
    "id": "trade",
@@ -151,7 +179,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Обменя зеронит за суперлепило и обратното. На по-високите нива се обменят повече ресурси.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Exchange Room",
+   "desc_en": "Trades zeronite for super glue and back. Higher levels trade more resources."
   },
   {
    "id": "r42",
@@ -161,7 +191,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Повишава ефективността на Стаята на безкрайното познание.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Room 42.0 Beta",
+   "desc_en": "Boosts the Room of Infinite Knowledge."
   },
   {
    "id": "cyber",
@@ -171,7 +203,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Подобрява основните умения и атрибутите на новите предмети.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Cyber Research Lab",
+   "desc_en": "Improves the base skills and attributes of new items."
   },
   {
    "id": "troph",
@@ -181,7 +215,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Увеличава наградите от дуели и лигата.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Trophy Hall",
+   "desc_en": "Increases rewards from duels and the league."
   },
   {
    "id": "club",
@@ -191,7 +227,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Увеличава куража (дуели) и адреналина (лига).",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Private Fight Club",
+   "desc_en": "Increases courage (duels) and adrenaline (league)."
   },
   {
    "id": "bar",
@@ -201,7 +239,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Увеличава опита от мисиите.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Sports Bar",
+   "desc_en": "Increases experience from missions."
   },
   {
    "id": "scout",
@@ -211,7 +251,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Увеличава наградите в монети от мисиите.",
-   "cat": "sup"
+   "cat": "sup",
+   "name_en": "Scout Center",
+   "desc_en": "Increases coin rewards from missions."
   },
   {
    "id": "hq",
@@ -221,7 +263,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Отключва отборни стаи.",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Team HQ",
+   "desc_en": "Unlocks team rooms."
   },
   {
    "id": "room1",
@@ -231,7 +275,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда дини, които можеш да ползваш за мятане по време на отборни битки.",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Melon Plantation",
+   "desc_en": "Grows melons you can throw during team fights."
   },
   {
    "id": "room2",
@@ -241,7 +287,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Събира фрагмени от Con точки",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Team Contest HQ",
+   "desc_en": "Collects Con point fragments."
   },
   {
    "id": "room3",
@@ -251,7 +299,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда медицински комплекти",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Medkit Factory",
+   "desc_en": "Produces medkits."
   },
   {
    "id": "room4",
@@ -261,7 +311,9 @@ window.ROOMS_CONFIG={
    "boost": false,
    "gen": false,
    "desc": "Намалява цената за точка умение във фитнеса с % в сравнение с покупката на точка за умение.",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Gym",
+   "desc_en": "Lowers the price of a skill point in the gym compared to buying one directly."
   },
   {
    "id": "room5",
@@ -271,7 +323,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда ракетни бустери от предмети, които вече не ти трявбат",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Rocket Booster Factory",
+   "desc_en": "Turns items you no longer need into rocket boosters."
   },
   {
    "id": "room6",
@@ -281,7 +335,9 @@ window.ROOMS_CONFIG={
    "boost": true,
    "gen": false,
    "desc": "Произвежда дубльори за каскади",
-   "cat": "cus"
+   "cat": "cus",
+   "name_en": "Stunt Double Studio",
+   "desc_en": "Produces stunt doubles."
   }
  ]
 };
