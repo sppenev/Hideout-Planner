@@ -2,7 +2,7 @@
 window.ROOMS_CONFIG={
  "version": 1,
  "bgSize": 510,
- "logoH": 60,
+ "logoH": 84,
  "header": {
   "bg": "images/top.png",
   "en": "images/top.png"
