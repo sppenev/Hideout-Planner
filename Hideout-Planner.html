@@ -460,6 +460,20 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .credit{margin:48px auto 8px;text-align:center;font-size:13px;color:rgba(255,240,220,.6);text-shadow:0 1px 2px rgba(0,0,0,.8);letter-spacing:.03em}
 .credit a{color:var(--hero);font-weight:800;text-decoration:none;border-bottom:2px dotted rgba(255,204,46,.6);padding-bottom:1px;transition:color .15s,border-color .15s}
 .credit a:hover{color:#fff4dc;border-bottom-color:#fff4dc}
+
+/* top-right buttons: dark cartoon bubbles with a hand-drawn white outline; share is the yellow accent */
+.fab{gap:10px}
+.fab .btn{background:#1d1712;color:#fff4dc;border:solid #fff4dc;border-width:2px 3px 4px 2.5px;border-radius:18px 14px 20px 13px / 14px 20px 13px 18px;
+  box-shadow:0 4px 0 rgba(0,0,0,.55),0 8px 18px rgba(0,0,0,.45);font-weight:800;padding:8px 16px;transition:transform .18s cubic-bezier(.34,1.8,.64,1),background .15s,color .15s}
+.fab .btn:nth-child(2n){border-width:3px 2px 2.5px 4px;border-radius:14px 19px 13px 20px / 20px 13px 18px 14px}
+.fab .btn:hover{background:#2c231b;transform:translateY(-3px) rotate(-2deg)}
+.fab .btn:nth-child(2n):hover{transform:translateY(-3px) rotate(2deg)}
+.fab .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.55)}
+.fab .btn[aria-pressed="true"],.fab #helpBtn[aria-expanded="true"]{background:#fff4dc;color:#1d1712}
+.fab .iconbtn{width:44px;height:42px;padding:0}
+.fab #shareBtn{background:#FBB437;color:#1d1712}
+.fab #shareBtn:hover{background:#ffc75e}
+.fab #shareBtn[aria-expanded="true"]{background:#fff4dc;color:#1d1712}
 </style>
 </head>
 <body>
