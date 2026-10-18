@@ -483,6 +483,18 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .credit .live .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3ddc84;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:livepulse 1.8s infinite}
 @keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(61,220,132,.6)}70%{box-shadow:0 0 0 8px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
 @media (prefers-reduced-motion:reduce){.credit .live .dot{animation:none}}
+
+/* new floor: unfolds down with a bounce, cells pop in one by one, a puff of dust, the button squishes */
+.floor.fresh{transform-origin:50% 0;animation:floorDrop .7s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes floorDrop{0%{opacity:0;transform:translateY(-30px) scaleY(.15)}60%{opacity:1}100%{opacity:1;transform:none}}
+.floor.fresh .cell,.floor.fresh .shaft{animation:cellPop .55s cubic-bezier(.34,1.8,.64,1) both;animation-delay:calc(.18s + var(--i,0) * .07s)}
+@keyframes cellPop{0%{opacity:0;transform:scale(.55) translateY(14px)}100%{opacity:1;transform:none}}
+.dust{position:absolute;z-index:6;width:var(--s);height:var(--s);border-radius:50%;background:radial-gradient(circle at 35% 35%,#f3dfc0,#b38a63 70%);pointer-events:none;opacity:0;
+  animation:dustFly var(--d) cubic-bezier(.2,.7,.3,1) forwards;animation-delay:var(--w)}
+@keyframes dustFly{0%{opacity:.95;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4)}}
+.addfloor.squish{animation:squish .45s cubic-bezier(.34,1.8,.64,1)}
+@keyframes squish{0%{transform:none}30%{transform:scale(1.15,.8)}60%{transform:scale(.92,1.08)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.floor.fresh,.floor.fresh .cell,.floor.fresh .shaft,.addfloor.squish{animation:none}.dust{display:none}}
 </style>
 </head>
 <body>
@@ -867,7 +879,7 @@ function render(){
     row.appendChild(g);fl.appendChild(row)}
   const ev=document.createElement('div');ev.className='elevator';ev.id='elevator';fl.appendChild(ev);
   let ab=document.getElementById('addFloor');if(!ab){ab=document.createElement('button');ab.id='addFloor';ab.type='button';ab.className='addfloor';ab.innerHTML='<span class="plus" aria-hidden="true">+</span>Добави етаж';
-    ab.onclick=()=>{if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}S.floors++;say('Добавен е етаж '+S.floors+'.');render()};fl.after(ab)}placeElevator();applyElevator();
+    ab.onclick=()=>{if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}S.floors++;say('Добавен е етаж '+S.floors+'.');render();newFloorFx(ab)};fl.after(ab)}placeElevator();applyElevator();
   renderTabs();renderPalette();renderStats(boosted,gens);renderSel();updateShare();save()}
 
 function renderTabs(){const tb=$('tabs');tb.innerHTML='';
@@ -1005,7 +1017,7 @@ function onUp(){const d=drag;if(!d)return;
   render();flip(snap)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag)onCancel()});
 
-$('fPlus').onclick=()=>{if(S.floors>=40)return;S.floors++;render()};
+$('fPlus').onclick=()=>{if(S.floors>=40)return;S.floors++;render();newFloorFx()};
 function setDrawer(o){$('drawer').classList.toggle('open',o);$('gearBtn').setAttribute('aria-expanded',o)}
 $('gearBtn').onclick=()=>setDrawer(!$('drawer').classList.contains('open'));
 let pendingCell=null;
@@ -1176,6 +1188,23 @@ resetForm();render();applyScene();applyEmpty();
     db.ref('online').on('value',s=>{$('statOnline').textContent=fmt(Math.max(1,s.numChildren()))});
   }).catch(()=>{});
 })();
+
+/* new floor effect */
+function newFloorFx(btn){const rows=document.querySelectorAll('#floors .floor');const row=rows[rows.length-1];if(!row)return;
+  if(btn){btn.classList.remove('squish');void btn.offsetWidth;btn.classList.add('squish')}
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){row.scrollIntoView({block:'nearest'});return}
+  row.querySelectorAll('.cell,.shaft').forEach((c,i)=>c.style.setProperty('--i',i));row.classList.add('fresh');
+  row.addEventListener('animationend',e=>{if(e.target===row)row.classList.remove('fresh')},{once:false});
+  setTimeout(()=>row.classList.remove('fresh'),1400);
+  const fl=$('floors'),fr=fl.getBoundingClientRect();
+  setTimeout(()=>{const r=row.getBoundingClientRect();const y=r.bottom-fr.top-6;
+    for(let k=0;k<22;k++){const d=document.createElement('span');d.className='dust';const left=k%2===0;
+      const x0=left?(r.left-fr.left)+Math.random()*r.width*0.5:(r.left-fr.left)+r.width*0.5+Math.random()*r.width*0.5;
+      d.style.left=x0+'px';d.style.top=y+'px';d.style.setProperty('--s',(8+Math.random()*14)+'px');
+      d.style.setProperty('--x',((Math.random()-.5)*160)+'px');d.style.setProperty('--y',(-10-Math.random()*50)+'px');
+      d.style.setProperty('--d',(.6+Math.random()*.5)+'s');d.style.setProperty('--w',(Math.random()*.15)+'s');
+      fl.appendChild(d);setTimeout(()=>d.remove(),1500)}},380);
+  setTimeout(()=>{const ab=$('addFloor');(ab||row).scrollIntoView({block:'nearest',behavior:'smooth'})},120)}
 </script>
 
 </body>
