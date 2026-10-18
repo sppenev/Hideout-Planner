@@ -169,6 +169,7 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
 .hdel{flex:none;width:34px;height:32px;border:2px solid var(--ink);border-radius:8px;background:#d8301f;color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}
 .hdel svg{width:16px;height:16px}
 .hdel[disabled]{opacity:.35;cursor:not-allowed}
+.hname .inuse{color:var(--hero);font-weight:700}
 
 #logoRange{background:linear-gradient(90deg,var(--hero) 0 var(--p,20%),var(--panel-2) var(--p,20%) 100%)}
 #logoRange::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff3b0,var(--hero) 60%,#c99400);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink),0 6px 14px rgba(0,0,0,.5);cursor:grab}
@@ -385,17 +386,17 @@ showBg();
 /* ---- header library: images/headers/* on GitHub, the pick per language is stored in rooms.js as header:{bg,en} ---- */
 let hdrList=[],hdrLocal={};
 function repoApi(path){return 'https://api.github.com/repos/'+encodeURIComponent(gh.owner)+'/'+encodeURIComponent(gh.repo)+'/contents/'+path}
-async function loadHeaders(){const list=[{path:'images/top.png',name:'top.png',sha:null,fixed:true}];
+async function loadHeaders(){const list=[{path:'images/top.png',name:'top.png',sha:null}];
   if(gh.ok){const r=await fetch(repoApi('images/headers')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
     if(r.ok){(await r.json()).filter(f=>f.type==='file'&&/\.(png|jpe?g|webp)$/i.test(f.name)).forEach(f=>list.push({path:f.path,name:f.name,sha:f.sha}))}else if(r.status!==404)throw new Error(ghErr(r))}
   [headerCfg.bg,headerCfg.en].forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
   hdrList=list;renderHeaders()}
 function renderHeaders(){const g=$('hdrGrid');if(!g)return;if(!gh.ok&&hdrList.length<=1){g.innerHTML='<p class="hint">Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.</p>';}
-  const list=hdrList.length?hdrList:[{path:'images/top.png',name:'top.png',fixed:true}];
+  const list=hdrList.length?hdrList:[{path:'images/top.png',name:'top.png'}];
   g.innerHTML=list.map(h=>{const onB=headerCfg.bg===h.path,onE=headerCfg.en===h.path,used=onB||onE;
     return '<div class="hcard'+(used?' on':'')+'" data-p="'+esc(h.path)+'"><div class="hprev"><img alt="" src="'+(hdrLocal[h.path]||esc(h.path)+'?t='+(window._bgT||Date.now()))+'"></div>'+
-      '<div class="hname">'+esc(h.name)+'</div><div class="hrow"><button type="button" class="hpick'+(onB?' on':'')+'" data-lang="bg" title="Показвай на български">БГ</button><button type="button" class="hpick'+(onE?' on':'')+'" data-lang="en" title="Показвай на английски">EN</button>'+
-      '<button type="button" class="hdel" '+(h.fixed||used?'disabled title="'+(h.fixed?'Основният хедър не се трие':'Първо избери друг хедър за този език')+'"':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
+      '<div class="hname">'+esc(h.name)+(used?' · <b class="inuse">използва се</b>':'')+'</div><div class="hrow"><button type="button" class="hpick'+(onB?' on':'')+'" data-lang="bg" title="Показвай на български">БГ</button><button type="button" class="hpick'+(onE?' on':'')+'" data-lang="en" title="Показвай на английски">EN</button>'+
+      '<button type="button" class="hdel" '+(used?'disabled title="Използва се. Първо избери друг хедър за '+(onB&&onE?'БГ и EN':onB?'БГ':'EN')+'."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
 async function saveHeaderCfg(msg){const cur=await ghGet();const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),
   body:JSON.stringify({message:msg,content:b64e(fileText(cur.rooms)),sha:cur.sha,branch:gh.branch||'main'})});if(!r.ok)throw new Error(ghErr(r))}
 $('hdrGrid').addEventListener('click',async e=>{const card=e.target.closest('.hcard');if(!card)return;const path=card.dataset.p;
@@ -404,7 +405,8 @@ $('hdrGrid').addEventListener('click',async e=>{const card=e.target.closest('.hc
     say('Записвам хедъра за '+(L==='bg'?'български':'английски')+'...');try{await saveHeaderCfg('Хедър ('+L+'): '+path.split('/').pop());say('Хедърът е сменен. До около минута се вижда на сайта.')}catch(err){headerCfg[L]=old;renderHeaders();say(err.message,true)}return}
   const del=e.target.closest('.hdel');if(del&&!del.disabled){if(!del.classList.contains('armed')){del.classList.add('armed');del.title='Натисни пак за изтриване';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.title='Изтрий този хедър'}},3000);return}
     const h=hdrList.find(x=>x.path===path);say('Трия хедъра...');
-    try{const r=await fetch(repoApi(path),{method:'DELETE',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'Изтрит хедър: '+h.name,sha:h.sha,branch:gh.branch||'main'})});
+    try{if(!h.sha){const g=await fetch(repoApi(path)+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});if(g.status===404){hdrList=hdrList.filter(x=>x!==h);renderHeaders();say('Хедърът вече го няма.');return}if(!g.ok)throw new Error(ghErr(g));h.sha=(await g.json()).sha}
+      const r=await fetch(repoApi(path),{method:'DELETE',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'Изтрит хедър: '+h.name,sha:h.sha,branch:gh.branch||'main'})});
       if(!r.ok)throw new Error(ghErr(r));hdrList=hdrList.filter(x=>x!==h);renderHeaders();say('Хедърът е изтрит.')}catch(err){say(err.message,true)}}});
 $('hdrFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub.',true);return}
   const ext=f.type==='image/jpeg'?'jpg':f.type==='image/webp'?'webp':'png';const path='images/headers/header-'+Date.now().toString(36)+'.'+ext;
