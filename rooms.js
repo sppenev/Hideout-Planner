@@ -2,6 +2,11 @@
 window.ROOMS_CONFIG={
  "version": 1,
  "bgSize": 510,
+ "logoH": 60,
+ "header": {
+  "bg": "images/top.png",
+  "en": "images/top.png"
+ },
  "rooms": [
   {
    "id": "base",
