@@ -507,15 +507,22 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 
 /* logo top-left in the button bar; height set in the admin (logoH) */
 .toplogo{position:fixed;z-index:35;top:calc(12px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));height:var(--logo-h,56px);width:auto;max-width:45vw;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));pointer-events:none}
+
+/* left group: logo + language button */
+.fab.fab-left{right:auto;left:max(16px,env(safe-area-inset-left,0px));align-items:center;gap:14px}
+.fab-left .toplogo{position:static;max-width:40vw}
+.fab-left .iconbtn[data-tip]:hover::after{right:auto;left:0}
 </style>
 </head>
 <body>
 
 
 <div class="tip" id="tip" role="tooltip"></div>
-<img class="toplogo" id="topLogo" alt="Hideout Planner" src="images/logo.png" onerror="this.remove()">
-<div class="fab">
+<div class="fab fab-left">
+  <img class="toplogo" id="topLogo" alt="Hideout Planner" src="images/logo.png" onerror="this.remove()">
   <button class="btn iconbtn langbtn" id="langBtn" type="button"></button>
+</div>
+<div class="fab">
   <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
   <button class="btn iconbtn" id="shareBtn" type="button" aria-label="Сподели подредбата" aria-expanded="false" aria-controls="sharePop" data-tip="Сподели подредбата"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
   <button class="btn" id="trayBtn" type="button" aria-pressed="false">Стаи</button>
