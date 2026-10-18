@@ -514,6 +514,24 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 .fab-left .iconbtn[data-tip]:hover::after{right:auto;left:0}
 
 .scroller{position:relative;z-index:1;padding-top:5px!important}
+
+/* digging states: soil (invisible), shovel cell, fill-back button */
+.floors .cell.dirt{visibility:hidden;pointer-events:none}
+.floors .cell.dig{background-image:var(--dig-img,none),radial-gradient(ellipse at 50% 70%,#6b4a30 0,#4a3020 45%,#2d1d12 80%);background-size:cover;background-position:center;cursor:pointer;
+  box-shadow:inset 0 0 0 3px rgba(0,0,0,.25),inset 0 -18px 30px rgba(0,0,0,.35)}
+.floors .cell.dig::after{background:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20stroke%3D%22%2316120f%22%20stroke-width%3D%223%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2229%22%20y%3D%226%22%20width%3D%226%22%20height%3D%2230%22%20rx%3D%222%22%20fill%3D%22%23c98a4a%22%20transform%3D%22rotate(25%2032%2032)%22/%3E%3Cpath%20d%3D%22M20%2036l14%206-6%2016c-7-1-13-6-14-13z%22%20fill%3D%22%23c9cfd6%22/%3E%3Crect%20x%3D%2234%22%20y%3D%222%22%20width%3D%2214%22%20height%3D%226%22%20rx%3D%223%22%20fill%3D%22%23c98a4a%22%20transform%3D%22rotate(25%2032%2032)%22/%3E%3C/g%3E%3C/svg%3E') center/contain no-repeat!important;
+  opacity:.9!important;width:min(64px,38%)!important;transform:translate(-50%,-50%) rotate(-8deg)!important;filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))!important;animation:shovel 1.8s ease-in-out infinite}
+.floors .cell.dig:hover::after{animation:shovelDig .6s ease-in-out infinite}
+@keyframes shovel{0%,100%{transform:translate(-50%,-50%) rotate(-8deg)}50%{transform:translate(-50%,-56%) rotate(-2deg)}}
+@keyframes shovelDig{0%,100%{transform:translate(-50%,-50%) rotate(-8deg)}50%{transform:translate(-50%,-40%) rotate(-24deg)}}
+.floors .cell.dig.digging{animation:digPulse .5s ease-in-out}
+@keyframes digPulse{0%{filter:none}40%{filter:brightness(1.6)}100%{filter:none}}
+.floors .cell .bury{position:absolute;left:6px;top:6px;z-index:5;width:26px;height:26px;border-radius:50%;border:2px solid #fff4dc;background:#1d1712;color:#fff4dc;font-size:14px;font-weight:900;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s;padding:0}
+.floors .cell:hover .bury{opacity:1}
+@media (hover:none){.floors .cell .bury{opacity:.8}}
+body.dragging .floors .cell .bury{display:none}
+@media (prefers-reduced-motion:reduce){.floors .cell.dig::after{animation:none}}
+
 </style>
 </head>
 <body>
@@ -802,11 +820,11 @@ function sampleLayout(name){return {name:name||'Основна',cols:5,floors:1,
 function fromData(d){
   const out={over:d.over||{},custom:d.custom||{},hidden:d.hidden||{},imgs:d.imgs||{},bgSize:d.bgSize||300,layouts:[],active:0};
   const src=d.layouts||[{name:'Основна',cols:d.cols,floors:d.floors,rooms:d.rooms||[]}];
-  src.forEach(l=>{const L={name:l.name||'Вариант',cols:l.cols||5,floors:l.floors||4,rooms:[]};
+  src.forEach(l=>{const L={name:l.name||'Вариант',cols:l.cols||5,floors:l.floors||4,rooms:[],dug:Array.isArray(l.dug)?l.dug.slice():undefined};
     (l.rooms||[]).forEach(r=>{if((BASE_TYPES[r.t]&&!out.hidden[r.t])||out.custom[r.t])L.rooms.push({id:uid++,t:r.t,f:r.f,c:r.c})});out.layouts.push(L)});
   if(!out.layouts.length)out.layouts.push(sampleLayout());
   out.active=Math.min(d.active||0,out.layouts.length-1);return out}
-function toData(withImgs){return {v:2,bgSize:D.bgSize,imgs:withImgs?D.imgs:undefined,over:D.over,custom:D.custom,hidden:D.hidden,active:D.active,layouts:D.layouts.map(l=>({name:l.name,cols:l.cols,floors:l.floors,rooms:l.rooms.map(r=>({t:r.t,f:r.f,c:r.c}))}))}}
+function toData(withImgs){return {v:2,bgSize:D.bgSize,imgs:withImgs?D.imgs:undefined,over:D.over,custom:D.custom,hidden:D.hidden,active:D.active,layouts:D.layouts.map(l=>({name:l.name,cols:l.cols,floors:l.floors,dug:l.dug,rooms:l.rooms.map(r=>({t:r.t,f:r.f,c:r.c}))}))}}
 function typeOf(id){const b=BASE_TYPES[id];if(b)return Object.assign({icon:id,desc:DESC[id]||''},b,D.over[id]||{});return D.custom[id]||null}
 function allTypeIds(){return Object.keys(BASE_TYPES).filter(k=>!D.hidden[k]).concat(Object.keys(D.custom))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(toData(false)))}catch(e){}}
@@ -827,7 +845,10 @@ window.picOk=img=>{FOUND[img.dataset.id]=+img.dataset.i};
 window.picFail=img=>{const id=img.dataset.id,i=+img.dataset.i+1;if(i<EXTS.length&&FOUND[id]==null){img.dataset.i=i;img.src='images/'+id+'.'+EXTS[i]}else{MISSING.add(id);delete FOUND[id];img.remove()}};
 
 function occupant(f,c){return S.rooms.find(r=>r.f===f&&c>=r.c&&c<r.c+typeOf(r.t).size)}
-function fits(t,f,c,ignore){const sz=typeOf(t).size;if(f<0||f>=S.floors||c<0||c+sz>S.cols)return false;
+/* digging: each floor has `dug` cells counted from the elevator (right); the next one left is the shovel, the rest is soil */
+function dugOf(f,L){L=L||S;return (L.dug&&L.dug[f]!=null)?Math.max(0,Math.min(L.cols,L.dug[f])):L.cols}
+function isDug(f,c,L){L=L||S;return c>=L.cols-dugOf(f,L)}
+function fits(t,f,c,ignore){const sz=typeOf(t).size;if(f<0||f>=S.floors||c<0||c+sz>S.cols||!isDug(f,c))return false;
   for(let i=c;i<c+sz;i++){const o=occupant(f,i);if(o&&o.id!==ignore)return false}return true}
 /* swap: rooms that sit inside the target spot move into the place the dragged room leaves */
 function planSwap(id,f,c){const r=S.rooms.find(x=>x.id===id);if(!r)return null;const sz=typeOf(r.t).size;
@@ -851,7 +872,7 @@ function planReverse(id,f,c){const a=S.rooms.find(x=>x.id===id);if(!a)return nul
 /* clear rules for dropping:
    - on another room: the two rooms swap places as whole rooms (wherever on it you let go)
    - on an empty cell: the room goes there, nudged sideways only as much as needed to fit */
-function freeExcept(f,c,sz,ids){if(f<0||f>=S.floors||c<0||c+sz>S.cols)return false;for(let i=c;i<c+sz;i++){const o=occupant(f,i);if(o&&!ids.includes(o.id))return false}return true}
+function freeExcept(f,c,sz,ids){if(f<0||f>=S.floors||c<0||c+sz>S.cols||!isDug(f,c))return false;for(let i=c;i<c+sz;i++){const o=occupant(f,i);if(o&&!ids.includes(o.id))return false}return true}
 function planRoomSwap(aId,bId){const A=S.rooms.find(x=>x.id===aId),B=S.rooms.find(x=>x.id===bId);if(!A||!B||A===B)return null;
   const sA=typeOf(A.t).size,sB=typeOf(B.t).size;
   if(A.f===B.f){const f=A.f,lo=Math.min(A.c,B.c),hi=Math.max(A.c+sA,B.c+sB);
@@ -860,7 +881,7 @@ function planRoomSwap(aId,bId){const A=S.rooms.find(x=>x.id===aId),B=S.rooms.fin
     let x=lo,res=null;const moves=[];units.forEach(u=>{if(u){if(u===A)res={f,c:x};else if(u.c!==x)moves.push({o:u,f,c:x});x+=typeOf(u.t).size}else x++});
     return {f:res.f,c:res.c,moves}}
   /* different floors: the bigger room's strip is swapped as a whole, so smaller rooms around it travel together */
-  const strip=(f,c,len)=>{if(c<0||c+len>S.cols)return null;const ins=S.rooms.filter(o=>o.f===f&&o.c<c+len&&o.c+typeOf(o.t).size>c);
+  const strip=(f,c,len)=>{if(c<0||c+len>S.cols||!isDug(f,c))return null;const ins=S.rooms.filter(o=>o.f===f&&o.c<c+len&&o.c+typeOf(o.t).size>c);
     return ins.every(o=>o.c>=c&&o.c+typeOf(o.t).size<=c+len)?ins:null};
   const order=(base,lo,hi)=>{const a=[];for(let c=lo;c<=hi;c++)a.push(c);return a.sort((x,y)=>Math.abs(x-base)-Math.abs(y-base))};
   if(sA>=sB){for(const st of order(B.c,B.c-(sA-sB),B.c)){const ins=strip(B.f,st,sA);if(!ins)continue;
@@ -889,7 +910,7 @@ function render(){
     const row=document.createElement('div');row.className='floor';
     row.innerHTML='<div class="flabel"><span>Ниво</span><b>'+(f+1)+'</b></div>';
     const g=document.createElement('div');g.className='grid';g.style.setProperty('--cols',S.cols);
-    for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell';cell.dataset.f=f;cell.dataset.c=c;cell.dataset.n=c+1;cell.style.gridColumn=(c+1);if(occupant(f,c))cell.classList.add('taken');g.appendChild(cell)}
+    for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell';cell.dataset.f=f;cell.dataset.c=c;cell.dataset.n=c+1;cell.style.gridColumn=(c+1);if(occupant(f,c))cell.classList.add('taken');const nd=S.cols-dugOf(f);if(c<nd-1)cell.classList.add('dirt');else if(c===nd-1){cell.classList.add('dig');cell.title=window.HZ_LANG==='en'?'Dig this cell':'Изкопай клетката'}else if(c===nd&&!occupant(f,c)){const fb=document.createElement('button');fb.type='button';fb.className='bury';fb.title=window.HZ_LANG==='en'?'Fill back in':'Зарови обратно';fb.textContent='↺';fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=e=>{e.stopPropagation();buryCell(f)};cell.appendChild(fb)}g.appendChild(cell)}
     const sh=document.createElement('div');sh.className='shaft';
     if(S.floors>1){const fb=document.createElement('button');fb.type='button';fb.className='fdel';fb.textContent='';fb.setAttribute('aria-label','Махни етаж '+(f+1));
       fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=()=>removeFloor(f,fb);row.appendChild(fb)}sh.style.gridColumn=(S.cols+1);g.appendChild(sh);g.style.setProperty('--cols',S.cols+1);g.style.setProperty('--rc',S.cols);
@@ -909,7 +930,8 @@ function render(){
     row.appendChild(g);fl.appendChild(row)}
   const ev=document.createElement('div');ev.className='elevator';ev.id='elevator';fl.appendChild(ev);
   let ab=document.getElementById('addFloor');if(!ab){ab=document.createElement('button');ab.id='addFloor';ab.type='button';ab.className='addfloor';ab.innerHTML='<span class="plus" aria-hidden="true">+</span>Добави етаж';
-    ab.onclick=()=>{if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}S.floors++;say('Добавен е етаж '+S.floors+'.');render();newFloorFx(ab)};fl.after(ab)}placeElevator();applyElevator();
+    ab.onclick=()=>{if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}addFloorAction(ab)};fl.after(ab)}
+  renderGhost(fl);placeElevator();applyElevator();
   renderTabs();renderPalette();renderStats(boosted,gens);renderSel();updateShare();save()}
 
 function renderTabs(){const tb=$('tabs');tb.innerHTML='';
@@ -964,7 +986,7 @@ function removeFloor(f,btn){const has=S.rooms.some(r=>r.f===f);
   const row=btn.closest('.floor');if(row&&!row.classList.contains('leaving')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){removeFloorFx(row,()=>doRemoveFloor(f,has));return}
   doRemoveFloor(f,has)}
 function doRemoveFloor(f,has){
-  S.rooms=S.rooms.filter(r=>r.f!==f);S.rooms.forEach(r=>{if(r.f>f)r.f--});S.floors--;if(selId&&!S.rooms.some(r=>r.id===selId))selId=null;
+  S.rooms=S.rooms.filter(r=>r.f!==f);S.rooms.forEach(r=>{if(r.f>f)r.f--});if(S.dug)S.dug.splice(f,1);S.floors--;if(selId&&!S.rooms.some(r=>r.id===selId))selId=null;
   say('Етаж '+(f+1)+' е махнат'+(has?' заедно със стаите си.':'.'));render()}
 function removeRoom(id){S.rooms=S.rooms.filter(r=>r.id!==id);if(selId===id)selId=null;say('Стаята е махната.');render()}
 function autoPlace(t){for(let f=0;f<S.floors;f++)for(let c=0;c<S.cols;c++)if(fits(t,f,c)){const id=uid++;S.rooms.push({id,t,f,c});selId=id;say('Добавена на ниво '+(f+1)+', слот '+(c+1)+'.');render();return}say('Няма свободно място за тази стая.',true)}
@@ -1050,13 +1072,14 @@ function onUp(){const d=drag;if(!d)return;
   render();flip(snap)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag)onCancel()});
 
-$('fPlus').onclick=()=>{if(S.floors>=40)return;S.floors++;render();newFloorFx()};
+$('fPlus').onclick=()=>addFloorAction();
 function setDrawer(o){$('drawer').classList.toggle('open',o);$('gearBtn').setAttribute('aria-expanded',o)}
 $('gearBtn').onclick=()=>setDrawer(!$('drawer').classList.contains('open'));
 let pendingCell=null;
 function setTray(o){document.body.classList.toggle('tray-open',o);$('trayBtn').setAttribute('aria-pressed',o);if(!o){pendingCell=null;document.querySelectorAll('.cell.pick').forEach(x=>x.classList.remove('pick'))}}
 $('trayClose').onclick=()=>setTray(false);
-$('floors').addEventListener('click',e=>{if(drag)return;const c=e.target.closest('.cell');if(!c||c.classList.contains('taken'))return;
+$('floors').addEventListener('click',e=>{if(drag)return;const c=e.target.closest('.cell');if(!c||c.classList.contains('taken')||c.classList.contains('dirt'))return;
+  if(c.classList.contains('dig')){digCell(+c.dataset.f,+c.dataset.c,c);return}
   document.querySelectorAll('.cell.pick').forEach(x=>x.classList.remove('pick'));c.classList.add('pick');pendingCell={f:+c.dataset.f,c:+c.dataset.c};setTray(true);
   say('Избери стая от долу, за да я сложиш тук, или я влачи където искаш.')});
 $('trayBtn').onclick=()=>setTray(!document.body.classList.contains('tray-open'));
@@ -1073,7 +1096,7 @@ $('trayBtn').onclick=()=>setTray(!document.body.classList.contains('tray-open'))
   sc.hidden=true;head.after(box,vt,sc)})();
 $('drawerClose').onclick=()=>setDrawer(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drag)setDrawer(false)});
-$('fMinus').onclick=()=>{if(S.floors<=1)return;if(S.rooms.some(r=>r.f===S.floors-1)){say('Най-долното ниво не е празно. Махни стаите от него първо.',true);return}S.floors--;render()};
+$('fMinus').onclick=()=>{if(S.floors<=1)return;if(S.rooms.some(r=>r.f===S.floors-1)){say('Най-долното ниво не е празно. Махни стаите от него първо.',true);return}if(S.dug)S.dug.length=Math.min(S.dug.length,S.floors-1);S.floors--;render()};
 $('cPlus').onclick=()=>{if(S.cols>=12)return;S.cols++;render()};
 $('cMinus').onclick=()=>{if(S.cols<=3)return;if(S.rooms.some(r=>r.c+typeOf(r.t).size>S.cols-1)){say('Има стаи в последния слот. Премести ги първо.',true);return}S.cols--;render()};
 let clearArmed=false;
@@ -1117,10 +1140,10 @@ $('typeForm').addEventListener('submit',e=>{e.preventDefault();const size=+$('tS
 /* short share code: floors split by "~", each floor lists its rooms left to right by id, "_" is an empty cell */
 function layoutCode(L){const out=[];for(let f=0;f<L.floors;f++){const row=[];let c=0;
     while(c<L.cols){const r=L.rooms.find(x=>x.f===f&&x.c===c);if(r){row.push(r.t);c+=Math.max(1,typeOf(r.t)?typeOf(r.t).size:1)}else{row.push('_');c++}}
-    while(row.length&&row[row.length-1]==='_')row.pop();out.push(row.join('.'))}return out.join('~')}
+    while(row.length&&row[row.length-1]==='_')row.pop();const dg=dugOf(f,L);out.push((dg<L.cols?dg+':':'')+row.join('.'))}return out.join('~')}
 function codeLayout(code,name){const fl=code.split('~');if(!fl.length||fl.length>40)return null;const keep=S;
-  const L={name,cols:5,floors:fl.length,rooms:[]};S=L;
-  fl.forEach((row,f)=>{let c=0;row.split('.').filter(Boolean).forEach(t=>{if(t==='_'){c++;return}const ty=typeOf(t);if(!ty||D.hidden[t]){c++;return}
+  const L={name,cols:5,floors:fl.length,rooms:[],dug:[]};S=L;
+  fl.forEach((row,f)=>{const m=row.match(/^(\d):(.*)$/);L.dug[f]=m?Math.min(5,+m[1]):5;if(m)row=m[2];let c=0;row.split('.').filter(Boolean).forEach(t=>{if(t==='_'){c++;return}const ty=typeOf(t);if(!ty||D.hidden[t]){c++;return}
     if(fits(t,f,c))L.rooms.push({id:uid++,t,f,c});c+=ty.size})});S=keep;return L}
 function shareLink(){return location.origin+location.pathname+'#p='+layoutCode(S)}
 function flash(btn,txt){const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent=txt;clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=o},1800)}
@@ -1133,7 +1156,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('.cpy');if(!b)ret
 function addShared(L){D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;render()}
 $('loadBtn').onclick=()=>{let v=$('io').value.trim();if(!v){flash($('loadBtn'),'Полето е празно');return}
   const m=v.match(/#p=(.*)$/);if(m)v=decodeURIComponent(m[1]);
-  if(/^[A-Za-z0-9_.~-]*$/.test(v)){const L=codeLayout(v,'Зареден '+(D.layouts.length+1));if(L){addShared(L);flash($('loadBtn'),'Зареден ✓');$('io').value='';return}}
+  if(/^[A-Za-z0-9_.~:-]*$/.test(v)){const L=codeLayout(v,'Зареден '+(D.layouts.length+1));if(L){addShared(L);flash($('loadBtn'),'Зареден ✓');$('io').value='';return}}
   try{D=fromData(JSON.parse(decodeURIComponent(escape(atob(v)))));D.imgs={};S=D.layouts[D.active];selId=null;render();flash($('loadBtn'),'Зареден ✓')}catch(err){flash($('loadBtn'),'Кодът не става')}};
 
 /* scene pictures: the area above the base (top) and the underground background (bg) */
@@ -1226,7 +1249,7 @@ resetForm();render();applyScene();applyEmpty();
 })();
 
 /* new floor effect */
-function newFloorFx(btn){const rows=document.querySelectorAll('#floors .floor');const row=rows[rows.length-1];if(!row)return;
+function newFloorFx(btn){const rows=document.querySelectorAll('#floors .floor:not(.digrow)');const row=rows[rows.length-1];if(!row)return;
   if(btn){btn.classList.remove('squish');void btn.offsetWidth;btn.classList.add('squish')}
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){row.scrollIntoView({block:'nearest'});return}
   row.querySelectorAll('.cell,.shaft').forEach((c,i)=>c.style.setProperty('--i',i));row.classList.add('fresh');
@@ -1295,6 +1318,31 @@ function removeFloorFx(row,done){row.classList.add('leaving');
   new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='characterData')doNode(m.target);else if(m.type==='attributes')doNode(m.target);else m.addedNodes.forEach(doNode)}))
     .observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR});
 })();
+
+/* digging helpers */
+function setDug(f,n){if(!S.dug)S.dug=[];for(let i=0;i<S.floors;i++)if(S.dug[i]==null)S.dug[i]=S.cols;S.dug[f]=Math.max(0,Math.min(S.cols,n));if(S.dug.every(v=>v===S.cols))delete S.dug}
+function digCell(f,c,el){if(el)el.classList.add('digging');const fr=$('floors').getBoundingClientRect(),r=el?el.getBoundingClientRect():null;
+  if(r&&typeof puff==='function')puff(r.left-fr.left+r.width/2,r.top-fr.top+r.height*.7,16,r.width*.6);
+  setTimeout(()=>{if(f>=S.floors){S.floors++;setDug(S.floors-1,0)}setDug(f,dugOf(f)+1);render();const n=document.querySelector('.cell[data-f="'+f+'"][data-c="'+c+'"]');if(n){n.style.animation='cellPop .6s cubic-bezier(.34,1.7,.64,1) both'}},280)}
+let digSrc=null;findFile('dig',u=>{digSrc=u;if(u)document.documentElement.style.setProperty('--dig-img','url("'+u+'")')});
+
+/* add floor = dig a whole floor at once, or finish the last floor if it is only partly dug */
+function addFloorAction(btn){const last=S.floors-1;
+  if(last>=0&&dugOf(last)<S.cols){setDug(last,S.cols);render();const row=document.querySelectorAll('#floors .floor:not(.digrow)')[last];
+    if(row){row.querySelectorAll('.cell').forEach((c,i)=>{c.style.animation='cellPop .7s cubic-bezier(.34,1.7,.64,1) both';c.style.animationDelay=(i*.1)+'s'})}
+    if(btn){btn.classList.remove('squish');void btn.offsetWidth;btn.classList.add('squish')}return}
+  if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}
+  S.floors++;if(S.dug)S.dug[S.floors-1]=S.cols;say('Добавен е етаж '+S.floors+'.');render();newFloorFx(btn)}
+function buryCell(f){const n=dugOf(f)-1;
+  if(n<=0&&f===S.floors-1&&S.floors>1&&!S.rooms.some(r=>r.f===f)){if(S.dug)S.dug.splice(f,1);S.floors--;render();return}
+  setDug(f,Math.max(0,n));render()}
+/* the row under a fully dug last floor: only a shovel next to the elevator; digging it starts a new floor */
+function renderGhost(fl){const old=$('ghostFloor');if(old)old.remove();if(S.floors>=40||dugOf(S.floors-1)<S.cols)return;
+  const row=document.createElement('div');row.id='ghostFloor';row.className='floor digrow';const g=document.createElement('div');g.className='grid';g.style.setProperty('--cols',S.cols+1);g.style.setProperty('--rc',S.cols);
+  for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell '+(c===S.cols-1?'dig':'dirt');cell.dataset.f=S.floors;cell.dataset.c=c;cell.style.gridColumn=(c+1);
+    if(c===S.cols-1)cell.title=window.HZ_LANG==='en'?'Dig a new cell':'Изкопай нова клетка';g.appendChild(cell)}
+  const sh=document.createElement('div');sh.className='shaft';sh.style.gridColumn=(S.cols+1);g.appendChild(sh);
+  row.appendChild(g);fl.appendChild(row)}
 </script>
 
 </body>

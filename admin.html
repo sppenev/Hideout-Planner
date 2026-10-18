@@ -284,7 +284,7 @@ $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghR
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
 /* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
-const SCENE=[['logo','Лого','горе вляво в лентата, PNG с прозрачен фон'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
+const SCENE=[['logo','Лого','горе вляво в лентата, PNG с прозрачен фон'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['dig','Неизкопана клетка','542 x 305, разкопана пръст с лопата'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
 function renderScene(){$('sceneGrid').innerHTML=SCENE.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'">няма картинка<img alt="" src="images/'+k+'.png?t='+Date.now()+'" onerror="this.remove()"></div>'+
   '<div class="tag"><b>'+t+'</b> · '+h+'</div><span class="btn">Смени<input type="file" accept="image/*" aria-label="'+t+'"></span></div>').join('')}
 function fileToPngB64(file){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej(new Error('Файлът не може да се прочете.'));
