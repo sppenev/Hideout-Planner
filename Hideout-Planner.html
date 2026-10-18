@@ -686,6 +686,8 @@ body.dragging .floors .cell .bury{display:none}
 <script>
 /* language: ?lang=en|bg in the address wins, then the saved choice, default Bulgarian */
 (function(){var q=(location.search.match(/[?&]lang=(en|bg)/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
+  /* no choice yet: Bulgarian browsers get Bulgarian, everyone else English */
+  if(!L){var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);L=langs.some(function(x){return /^bg\b/i.test(x||'')})?'bg':'en'}
   if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L==='en'?'en':'bg';document.documentElement.lang=window.HZ_LANG})();
 </script>
 <script src="rooms.js"></script>
