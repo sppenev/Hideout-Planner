@@ -448,6 +448,13 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .sharepop .copyrow{border:0;background:rgba(0,0,0,.28);border-radius:14px 12px 15px 11px}
 .sharepop .cpy{border-right:0;background:rgba(255,255,255,.09);border-radius:13px 0 0 11px}
 .sharepop .sharel{color:#d9c7a8}
+
+.helppop{width:min(420px,calc(100vw - 24px));max-height:calc(100vh - 90px);overflow-y:auto}
+.helpbody{font-size:13.5px;line-height:1.5;color:#e9dcc4}
+.helpbody p{margin:6px 0 4px;color:#a8977d}
+.helpbody h4{margin:14px 0 6px;font-family:var(--f-display);font-weight:400;font-size:15px;color:var(--hero)}
+.helpbody ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.helpbody b{color:#fff4dc}
 </style>
 </head>
 <body>
@@ -455,9 +462,35 @@ body.tray-open .scroller{padding-bottom:280px!important}
 
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="fab">
+  <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
   <button class="btn iconbtn" id="shareBtn" type="button" aria-label="Сподели подредбата" aria-expanded="false" aria-controls="sharePop" data-tip="Сподели подредбата"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
   <button class="btn" id="trayBtn" type="button" aria-pressed="false">Стаи</button>
   <button class="btn" id="gearBtn" type="button" aria-controls="drawer">Настройки</button>
+</div>
+<div class="sharepop helppop" id="helpPop" hidden role="dialog" aria-label="Как се ползва">
+  <div class="sharepop-head"><h3>Как се ползва</h3><button class="xbtn" type="button" id="helpClose" aria-label="Затвори">×</button></div>
+  <div class="helpbody">
+    <p>Подреждаш скривалището си от Hero Zero, пробваш варианти и ги пращаш на отбора. Всичко се пази само в този браузър.</p>
+    <h4>Стаи</h4>
+    <ul>
+      <li><b>Сложи:</b> посочи празна клетка и натисни оранжевия плюс. Отдолу излизат стаите. Цъкни или влачи стая.</li>
+      <li><b>Премести:</b> влачи стаята. Зелено значи може, червено значи не. Върху друга стая двете се разменят.</li>
+      <li><b>Махни:</b> посочи стаята и натисни червеното Х в ъгъла.</li>
+      <li>Стая с достигнат лимит изчезва от чекмеджето. Посочи стая, за да видиш какво прави.</li>
+    </ul>
+    <h4>Етажи и генератори</h4>
+    <ul>
+      <li><b>Добави етаж</b> е оранжевият бутон отдолу. Червеният минус вляво маха етажа заедно със стаите.</li>
+      <li>Генераторът зарежда стаите вляво и вдясно. Тюркоазеният ток показва, че стига.</li>
+      <li>В Настройки → Обобщение проблемите са в червено.</li>
+    </ul>
+    <h4>Варианти и споделяне</h4>
+    <ul>
+      <li>Настройки → Варианти: „+ Копие“ прави нов вариант. Двоен клик го преименува, Х го трие.</li>
+      <li>Иконката за споделяне горе дава линк и код. Който отвори линка, вижда подредбата ти.</li>
+      <li>Настройки → Зареди подредба: постави линк или код от съотборник.</li>
+    </ul>
+  </div>
 </div>
 <div class="sharepop" id="sharePop" hidden role="dialog" aria-label="Сподели подредбата">
   <div class="sharepop-head"><h3>Сподели подредбата</h3><button class="xbtn" type="button" id="shareClose" aria-label="Затвори">×</button></div>
@@ -1090,6 +1123,13 @@ resetForm();render();applyScene();applyEmpty();
   document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!b.contains(e.target))set(false)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
   $('gearBtn').addEventListener('click',()=>set(false))})();
+
+/* help popover */
+(()=>{const b=$('helpBtn'),pop=$('helpPop');const set=o=>{pop.hidden=!o;b.setAttribute('aria-expanded',o);if(o){setDrawer(false);$('sharePop').hidden=true;$('shareBtn').setAttribute('aria-expanded',false)}};
+  b.onclick=e=>{e.stopPropagation();set(pop.hidden)};$('helpClose').onclick=()=>set(false);
+  document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!b.contains(e.target))set(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
+  $('shareBtn').addEventListener('click',()=>set(false));$('gearBtn').addEventListener('click',()=>set(false))})();
 </script>
 
 </body>
