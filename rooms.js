@@ -35,7 +35,7 @@ window.ROOMS_CONFIG={
   },
   {
    "id": "stone",
-   "name": "Мина за зеронит",
+   "name": "Зеронитна мина",
    "size": 1,
    "limit": 3,
    "boost": true,
