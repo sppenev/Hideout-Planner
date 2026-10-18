@@ -1128,7 +1128,10 @@ function readImg(file,max,cb){const rd=new FileReader();rd.onload=()=>{const im=
 function findFile(name,cb,i=0){if(i>=EXTS.length)return cb(null);const t=new Image();const u='images/'+name+'.'+EXTS[i];t.onload=()=>cb(u);t.onerror=()=>findFile(name,cb,i+1);t.src=u}
 function applyScene(){
   const top=$('topside');top.querySelectorAll('img.scene').forEach(e=>e.remove());top.classList.remove('hasimg');const set=src=>{if(!src)return;top.classList.add('hasimg');const im=document.createElement('img');im.className='scene';im.alt='';im.src=src;top.insertBefore(im,top.querySelector('.scene-ctl'))};
-  $('topNo').hidden=!D.imgs.__top;if(D.imgs.__top){set(D.imgs.__top);top.classList.remove('loading')}else{top.classList.add('loading');findFile('top',src=>{set(src);top.classList.remove('loading')})}
+  $('topNo').hidden=!D.imgs.__top;if(D.imgs.__top){set(D.imgs.__top);top.classList.remove('loading')}else{top.classList.add('loading');const done=src=>{set(src);top.classList.remove('loading')};
+    /* header picked in the admin for this language, else images/top.* */
+    const hc=(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{},want=hc[window.HZ_LANG]||hc.bg;
+    if(want){const t=new Image();t.onload=()=>done(want);t.onerror=()=>findFile('top',done);t.src=want}else findFile('top',done)}
   const sc=$('scroller');const bg=src=>{if(src){sc.style.backgroundImage='url("'+src+'")';sc.style.backgroundSize=(D.bgSize||300)+'px auto';sc.classList.add('hasbg')}else{sc.style.backgroundImage='';sc.style.backgroundSize='';sc.classList.remove('hasbg')}};
   $('bgSize').value=D.bgSize||300;$('bgSizeVal').textContent=(D.bgSize||300)+' px';
   $('bgNo').hidden=!D.imgs.__bg;if(D.imgs.__bg)bg(D.imgs.__bg);else{bg(null);findFile('bg',bg)}}
