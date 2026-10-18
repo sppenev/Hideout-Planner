@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hideout Planner Admin</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/favicon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;500;700;800&display=swap">
 <style>
 /* Admin for the Hideout Planner room list. Same dark comic look as the planner. Keep this file on your own computer. */
@@ -100,6 +102,7 @@ textarea{height:56px;resize:vertical}
 .scene-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .sc{display:flex;flex-direction:column;gap:6px}
 .sc-prev{height:110px;background:var(--panel-2);border-radius:6px;overflow:hidden;display:grid;place-items:center;color:var(--hint);font-size:11px;position:relative}
+.sc-prev:has(img){color:transparent}
 .sc-prev img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
 .sc-prev.tile img{object-fit:none;object-position:left top}
 .sc .btn,.upbtn{position:relative;overflow:hidden;text-align:center}
@@ -235,7 +238,7 @@ $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghR
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
 /* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
-const SCENE=[['top','Хедър (горе)','картинката над скривалището'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305']];
+const SCENE=[['top','Хедър (горе)','картинката над скривалището'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
 function renderScene(){$('sceneGrid').innerHTML=SCENE.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'">няма картинка<img alt="" src="images/'+k+'.png?t='+Date.now()+'" onerror="this.remove()"></div>'+
   '<div class="tag"><b>'+t+'</b> · '+h+'</div><span class="btn">Смени<input type="file" accept="image/*" aria-label="'+t+'"></span></div>').join('')}
 function fileToPngB64(file){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej(new Error('Файлът не може да се прочете.'));
