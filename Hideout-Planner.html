@@ -691,7 +691,8 @@ let D, S, uid=1, selId=null, editType=null;
 const $=id=>document.getElementById(id);
 const clone=o=>JSON.parse(JSON.stringify(o));
 
-function sampleLayout(name){return {name:name||'Пример',cols:5,floors:4,rooms:SAMPLE_ROOMS.map(r=>({id:uid++,...r}))}}
+/* default for a first visit: one floor with the Hideout Base on the left */
+function sampleLayout(name){return {name:name||'Основна',cols:5,floors:1,rooms:[{id:uid++,t:'base',f:0,c:0}]}}
 function fromData(d){
   const out={over:d.over||{},custom:d.custom||{},hidden:d.hidden||{},imgs:d.imgs||{},bgSize:d.bgSize||300,layouts:[],active:0};
   const src=d.layouts||[{name:'Основна',cols:d.cols,floors:d.floors,rooms:d.rooms||[]}];
