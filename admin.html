@@ -28,6 +28,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 .btn{border:2px solid var(--ink);background:var(--panel);border-radius:9px;padding:8px 14px;font-weight:700;box-shadow:2px 2px 0 var(--ink)}
 .btn:hover{background:var(--line)}
 .btn.primary{background:var(--hero);color:var(--hero-ink)}
+.btn{transition:background .12s,transform .12s,box-shadow .12s;cursor:pointer}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primary:hover{background:#ffe066}
+#ghSave.done:hover{background:#38c977}#ghSave.fail:hover{background:#ef4433}
 .btn.danger{color:var(--bad)}
 .btn.armed{background:var(--bad);color:#fff}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--hero);outline-offset:2px}
