@@ -525,14 +525,19 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 body.dragging .floors .cell .bury{display:none}
 
 
-/* search in the rooms drawer */
-.palsearch{flex:none;align-self:center;position:relative;width:190px}
-.palsearch input{width:100%;font:inherit;font-size:13px;color:#fff4dc;background:rgba(0,0,0,.3);border:2px solid rgba(255,244,220,.25);border-radius:14px 12px 15px 11px;padding:10px 12px 10px 34px;outline:none}
-.palsearch input:focus{border-color:var(--hero)}
-.palsearch svg{position:absolute;left:11px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:#d9c7a8;pointer-events:none}
+/* search in the rooms drawer: a small tab on the drawer's top edge, opens into a field */
+.palsearch{position:absolute;left:16px;top:-34px;height:34px;width:52px;z-index:2;border:2px solid var(--ink);border-bottom:0;border-radius:12px 12px 0 0;background:var(--panel-2);
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap;gap:0;align-items:center;overflow:hidden;cursor:pointer;transition:width .3s cubic-bezier(.34,1.4,.64,1);margin:0}
+.palsearch svg{flex:none;width:18px;height:18px;margin:0 6px 0 15px;color:#fff4dc;pointer-events:none}
+.palsearch input{flex:1;min-width:0;height:100%;width:auto!important;box-shadow:none!important;font:inherit;font-size:13px;color:#fff4dc;background:transparent;border:0;outline:none;padding:0 10px 0 0;opacity:0;transition:opacity .2s}
+.palsearch.open{width:230px;cursor:text}
+.palsearch.open input{opacity:1}
+.palsearch:hover{background:var(--panel-line)}
 .pal-none{align-self:center;color:var(--hint);font-size:13px;padding:0 12px;white-space:nowrap}
 .side-l .pal-item.nomatch{display:none}
-@media (max-width:600px){.palsearch{width:120px}}
+
+.side-l .palwrap{min-height:172px}
+@media (max-width:600px){.side-l .palwrap{min-height:150px}}
 </style>
 </head>
 <body>
@@ -1351,7 +1356,9 @@ function renderGhost(fl){const old=$('ghostFloor');if(old)old.remove();if(S.floo
 /* rooms drawer search: filters the cards by name as you type */
 (()=>{const wrap=document.querySelector('.palwrap');if(!wrap)return;const box=document.createElement('label');box.className='palsearch';
   box.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="palQ" placeholder="Търси стая..." aria-label="Търси стая" autocomplete="off">';
-  wrap.parentNode.insertBefore(box,wrap);
+  document.querySelector('.side-l').appendChild(box);const inp=box.querySelector('input');
+  const sync=()=>box.classList.toggle('open',document.activeElement===inp||!!inp.value);
+  box.addEventListener('click',()=>{box.classList.add('open');inp.focus()});inp.addEventListener('focus',sync);inp.addEventListener('blur',()=>setTimeout(sync,0));
   window.filterPalette=()=>{const q=($('palQ').value||'').trim().toLowerCase();const pal=$('palette');let n=0;
     pal.querySelectorAll('.pal-item').forEach(it=>{const nm=(it.querySelector('.pal-name')||{}).textContent||'';const hit=!q||nm.toLowerCase().includes(q);it.classList.toggle('nomatch',!hit);if(hit&&!it.classList.contains('full'))n++});
     let none=pal.querySelector('.pal-none');if(q&&!n){if(!none){none=document.createElement('div');none.className='pal-none';pal.appendChild(none)}none.textContent=window.HZ_LANG==='en'?'No room matches.':'Няма такава стая.'}else if(none)none.remove();
