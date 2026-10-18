@@ -517,20 +517,12 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 
 /* digging states: soil (invisible), shovel cell, fill-back button */
 .floors .cell.dirt{visibility:hidden;pointer-events:none}
-.floors .cell.dig{background-image:var(--dig-img,none),radial-gradient(ellipse at 50% 70%,#6b4a30 0,#4a3020 45%,#2d1d12 80%);background-size:cover;background-position:center;cursor:pointer;
-  box-shadow:inset 0 0 0 3px rgba(0,0,0,.25),inset 0 -18px 30px rgba(0,0,0,.35)}
-.floors .cell.dig::after{background:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20stroke%3D%22%2316120f%22%20stroke-width%3D%223%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2229%22%20y%3D%226%22%20width%3D%226%22%20height%3D%2230%22%20rx%3D%222%22%20fill%3D%22%23c98a4a%22%20transform%3D%22rotate(25%2032%2032)%22/%3E%3Cpath%20d%3D%22M20%2036l14%206-6%2016c-7-1-13-6-14-13z%22%20fill%3D%22%23c9cfd6%22/%3E%3Crect%20x%3D%2234%22%20y%3D%222%22%20width%3D%2214%22%20height%3D%226%22%20rx%3D%223%22%20fill%3D%22%23c98a4a%22%20transform%3D%22rotate(25%2032%2032)%22/%3E%3C/g%3E%3C/svg%3E') center/contain no-repeat!important;
-  opacity:.9!important;width:min(64px,38%)!important;transform:translate(-50%,-50%) rotate(-8deg)!important;filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))!important;animation:shovel 1.8s ease-in-out infinite}
-.floors .cell.dig:hover::after{animation:shovelDig .6s ease-in-out infinite}
-@keyframes shovel{0%,100%{transform:translate(-50%,-50%) rotate(-8deg)}50%{transform:translate(-50%,-56%) rotate(-2deg)}}
-@keyframes shovelDig{0%,100%{transform:translate(-50%,-50%) rotate(-8deg)}50%{transform:translate(-50%,-40%) rotate(-24deg)}}
-.floors .cell.dig.digging{animation:digPulse .5s ease-in-out}
-@keyframes digPulse{0%{filter:none}40%{filter:brightness(1.6)}100%{filter:none}}
+.floors .cell.dig{background-image:var(--dig-img,none);background-size:cover;background-position:center;background-repeat:no-repeat;cursor:pointer}
+.floors .cell.dig::after{display:none!important}
 .floors .cell .bury{position:absolute;left:6px;top:6px;z-index:5;width:26px;height:26px;border-radius:50%;border:2px solid #fff4dc;background:#1d1712;color:#fff4dc;font-size:14px;font-weight:900;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s;padding:0}
 .floors .cell:hover .bury{opacity:1}
 @media (hover:none){.floors .cell .bury{opacity:.8}}
 body.dragging .floors .cell .bury{display:none}
-@media (prefers-reduced-motion:reduce){.floors .cell.dig::after{animation:none}}
 
 </style>
 </head>
