@@ -524,6 +524,15 @@ html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 @media (hover:none){.floors .cell .bury{opacity:.8}}
 body.dragging .floors .cell .bury{display:none}
 
+
+/* search in the rooms drawer */
+.palsearch{flex:none;align-self:center;position:relative;width:190px}
+.palsearch input{width:100%;font:inherit;font-size:13px;color:#fff4dc;background:rgba(0,0,0,.3);border:2px solid rgba(255,244,220,.25);border-radius:14px 12px 15px 11px;padding:10px 12px 10px 34px;outline:none}
+.palsearch input:focus{border-color:var(--hero)}
+.palsearch svg{position:absolute;left:11px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:#d9c7a8;pointer-events:none}
+.pal-none{align-self:center;color:var(--hint);font-size:13px;padding:0 12px;white-space:nowrap}
+.side-l .pal-item.nomatch{display:none}
+@media (max-width:600px){.palsearch{width:120px}}
 </style>
 </head>
 <body>
@@ -954,6 +963,7 @@ function renderPalette(){const p=$('palette');p.innerHTML='';
     it.addEventListener('keydown',e=>{if(e.key==='Enter'&&!full)autoPlace(id)});
     p.appendChild(it)});
   if(!p.querySelector('.pal-item:not(.full)')){const d=document.createElement('div');d.className='pal-done';d.textContent='Всички стаи са сложени.';p.appendChild(d)}
+  if(typeof filterPalette==='function')filterPalette()
   const lg=$('legend');lg.innerHTML='';Object.keys(CATS).forEach(k=>{const s=document.createElement('span');s.innerHTML='<i></i>'+CATS[k][0];s.querySelector('i').style.background=catColor(k);lg.appendChild(s)})}
 
 function renderStats(boosted,gens){let used=0;S.rooms.forEach(r=>used+=typeOf(r.t).size);
@@ -1287,7 +1297,7 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     'Изтрий варианта':'Delete variant','Натисни пак за изтриване':'Press again to delete','Изтрий?':'Delete?','Двоен клик за преименуване':'Double-click to rename',
     'Махни стаята':'Remove room','Махни?':'Remove?','Махни ниво':'Remove floor','Добави ниво':'Add floor','Наляво':'Left','Надясно':'Right',
     'Код или линк на подредба':'Layout code or link','Линк към подредбата':'Layout link','Код на подредбата':'Layout code','Обобщение и настройки':'Summary and settings',
-    'В момента е заредена от генератор':'Currently powered by a generator','Портфолио в Behance':'Portfolio on Behance','Скрий стаите':'Hide rooms','Сподели':'Share',
+    'В момента е заредена от генератор':'Currently powered by a generator','Портфолио в Behance':'Portfolio on Behance','Скрий стаите':'Hide rooms','Търси стая...':'Search rooms...','Търси стая':'Search rooms','Сподели':'Share',
     'Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.':'The whole floor disappears together with its rooms. If it has rooms, press twice.'};
   const R=[[/^Махни етаж (\d+)$/,'Remove floor $1'],[/^Изтрий „(.+)“$/,'Delete “$1”'],[/^Вариант (\d+)$/,'Variant $1'],[/^Споделен (\d+)$/,'Shared $1'],[/^Зареден (\d+)$/,'Loaded $1'],
     [/^Генератор \(ниво (\d+), слот (\d+)\) зарежда (\d) от 2 съседа\.$/,'Generator (floor $1, slot $2) powers $3 of 2 neighbours.'],
@@ -1337,6 +1347,17 @@ function renderGhost(fl){const old=$('ghostFloor');if(old)old.remove();if(S.floo
     if(c===S.cols-1)cell.title=window.HZ_LANG==='en'?'Dig a new cell':'Изкопай нова клетка';g.appendChild(cell)}
   const sh=document.createElement('div');sh.className='shaft';sh.style.gridColumn=(S.cols+1);g.appendChild(sh);
   row.appendChild(g);fl.appendChild(row)}
+
+/* rooms drawer search: filters the cards by name as you type */
+(()=>{const wrap=document.querySelector('.palwrap');if(!wrap)return;const box=document.createElement('label');box.className='palsearch';
+  box.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="palQ" placeholder="Търси стая..." aria-label="Търси стая" autocomplete="off">';
+  wrap.parentNode.insertBefore(box,wrap);
+  window.filterPalette=()=>{const q=($('palQ').value||'').trim().toLowerCase();const pal=$('palette');let n=0;
+    pal.querySelectorAll('.pal-item').forEach(it=>{const nm=(it.querySelector('.pal-name')||{}).textContent||'';const hit=!q||nm.toLowerCase().includes(q);it.classList.toggle('nomatch',!hit);if(hit&&!it.classList.contains('full'))n++});
+    let none=pal.querySelector('.pal-none');if(q&&!n){if(!none){none=document.createElement('div');none.className='pal-none';pal.appendChild(none)}none.textContent=window.HZ_LANG==='en'?'No room matches.':'Няма такава стая.'}else if(none)none.remove();
+    pal.scrollLeft=0};
+  $('palQ').addEventListener('input',filterPalette);
+  $('palQ').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';filterPalette()}})})();
 </script>
 
 </body>
