@@ -5,7 +5,8 @@ window.ROOMS_CONFIG={
  "logoH": 62,
  "header": {
   "bg": "images/headers/header-mvdt6xqc.jpg",
-  "en": "images/headers/header-mvds8m8f.jpg"
+  "en": "images/headers/header-mvds8m8f.jpg",
+  "pl": "images/headers/header-mvg9k70s.jpg"
  },
  "rooms": [
   {
