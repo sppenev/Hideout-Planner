@@ -1,4 +1,10 @@
 <!doctype html>
+<!--
+  Hero Zero Hideout Planner
+  (c) 2026 eLeS (https://www.behance.net/sppenev). All rights reserved.
+  The code may be viewed, but not copied, modified or republished without written permission.
+  Fan-made, not affiliated with Hero Zero or its developers. Hero Zero names and artwork belong to their owners.
+-->
 <html lang="bg">
 <head>
 <meta charset="utf-8">
@@ -493,6 +499,7 @@ html[lang=de] .cpy.ok[data-tip]:hover::after{content:"Kopiert!"}
 /* footer credit */
 .credit{margin:48px auto 8px;text-align:center;font-size:13px;color:rgba(255,240,220,.6);text-shadow:0 1px 2px rgba(0,0,0,.8);letter-spacing:.03em}
 .credit a{color:var(--hero);font-weight:800;text-decoration:none;border-bottom:2px dotted rgba(255,204,46,.6);padding-bottom:1px;transition:color .15s,border-color .15s}
+.credit .fan{display:block;margin-top:6px;font-size:11px;color:rgba(255,240,220,.42);letter-spacing:.02em}
 .credit a:hover{color:#fff4dc;border-bottom-color:#fff4dc}
 
 /* top-right buttons: dark cartoon bubbles with a hand-drawn white outline; share is the yellow accent */
@@ -679,7 +686,7 @@ body.dragging .floors .cell .bury{display:none}
             </g>
           </svg>
         </div>
-        <div class="scroller" id="scroller"><div class="floors" id="floors"></div><footer class="credit"><div class="live" id="liveStats" hidden><span><b id="statVisits">0</b> посещения</span><span class="sep"></span><span><i class="dot" aria-hidden="true"></i><b id="statOnline">1</b> онлайн сега</span></div>Built with ☕ by <a href="https://www.behance.net/sppenev" target="_blank" rel="noopener" title="Портфолио в Behance">eLeS</a> · 2026</footer></div>
+        <div class="scroller" id="scroller"><div class="floors" id="floors"></div><footer class="credit"><div class="live" id="liveStats" hidden><span><b id="statVisits">0</b> посещения</span><span class="sep"></span><span><i class="dot" aria-hidden="true"></i><b id="statOnline">1</b> онлайн сега</span></div>Built with ☕ by <a href="https://www.behance.net/sppenev" target="_blank" rel="noopener" title="Портфолио в Behance">eLeS</a> · © 2026<small class="fan">Fan-made, not affiliated with Hero Zero or its developers.</small></footer></div>
         <div class="scene-ctl bg-ctl">
           <span class="btn filebtn">Фон под земята<input type="file" id="bgFile" accept="image/*" aria-label="Картинка за фона под земята"></span>
           <button class="btn" type="button" id="bgNo" hidden>Махни</button>
