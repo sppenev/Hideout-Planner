@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://sppenev.github.io/Hideout-Planner/sitemap.xml
