@@ -6,7 +6,8 @@ window.ROOMS_CONFIG={
  "header": {
   "bg": "images/headers/header-mvdt6xqc.jpg",
   "en": "images/headers/header-mvds8m8f.jpg",
-  "pl": "images/headers/header-mvg9k70s.jpg"
+  "pl": "images/headers/header-mvg9k70s.jpg",
+  "de": "images/headers/header-mvg9kdah.jpg"
  },
  "rooms": [
   {
