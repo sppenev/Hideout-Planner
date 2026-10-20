@@ -56,8 +56,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .ltabs{display:flex;gap:4px;background:var(--panel-2);border-radius:9px;padding:3px;border:2px solid var(--ink)}
 .ltabs button{flex:1;border:0;background:transparent;color:var(--hint);font-weight:800;font-size:12px;padding:5px 0;border-radius:6px;cursor:pointer;position:relative}
 .ltabs button:hover{color:var(--paper)}
-.row[data-l="bg"] .ltabs [data-lt="bg"],.row[data-l="en"] .ltabs [data-lt="en"]{background:var(--hero);color:var(--hero-ink)}
-.row[data-l="bg"] [data-lng="en"],.row[data-l="en"] [data-lng="bg"]{display:none}
+.row[data-l="bg"] .ltabs [data-lt="bg"],.row[data-l="en"] .ltabs [data-lt="en"],.row[data-l="pl"] .ltabs [data-lt="pl"],.row[data-l="de"] .ltabs [data-lt="de"]{background:var(--hero);color:var(--hero-ink)}
+.row[data-l="bg"] [data-lng]:not([data-lng="bg"]),.row[data-l="en"] [data-lng]:not([data-lng="en"]),.row[data-l="pl"] [data-lng]:not([data-lng="pl"]),.row[data-l="de"] [data-lng]:not([data-lng="de"]){display:none}
 .ltabs .miss{position:absolute;top:4px;right:8px;width:7px;height:7px;border-radius:50%;background:#e8382a}
 .fields>.wide{grid-column:1/-1}
 .fields>.foot{grid-column:1/-1;display:flex;flex-direction:column;align-items:stretch;gap:10px}
@@ -229,7 +229,7 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
         <h2 class="sec">Картинки на сцената</h2>
         <p class="hint">Избери файл и той се качва направо в сайта с правилното име. Може и .jpg, и .png.</p>
         <div class="hdr">
-          <div class="hdr-head"><div><b>Хедър</b><span class="tag">Качи няколко варианта и избери кой да се показва на български и кой на английски.</span></div>
+          <div class="hdr-head"><div><b>Хедър</b><span class="tag">Качи няколко варианта и избери кой хедър за кой език да се показва. Ако за PL или DE няма избран, се показва английският.</span></div>
             <span class="btn primary upbtn">+ Качи хедър<input type="file" accept="image/png,image/jpeg,image/webp" id="hdrFile" aria-label="Качи нов хедър"></span></div>
           <div class="hdr-grid" id="hdrGrid"><p class="hint">Зареждам...</p></div>
         </div>
@@ -351,13 +351,17 @@ function rowHTML(r,i){const isNew=!!r._new;const L=cardLang[r.id]||'bg';
   return '<div class="row" data-i="'+i+'" data-l="'+L+'">'+
    '<div class="thumb w'+r.size+'">Няма картинка<label class="upover"><span>Смени картинката</span><input type="file" accept="image/*" data-up aria-label="Картинка за '+esc(r.name)+'"></label></div>'+
    '<div class="fields">'+
-   '<div class="ltabs wide" role="tablist"><button type="button" data-lt="bg" role="tab">БГ</button><button type="button" data-lt="en" role="tab">EN'+(r.name_en?'':'<i class="miss" title="Няма английско име"></i>')+'</button></div>'+
+   '<div class="ltabs wide" role="tablist"><button type="button" data-lt="bg" role="tab">БГ</button><button type="button" data-lt="en" role="tab">EN'+(r.name_en?'':'<i class="miss" title="Няма английско име"></i>')+'</button><button type="button" data-lt="pl" role="tab">PL'+(r.name_pl?'':'<i class="miss" title="Няма полско име"></i>')+'</button><button type="button" data-lt="de" role="tab">DE'+(r.name_de?'':'<i class="miss" title="Няма немско име"></i>')+'</button></div>'+
    '<label class="wide" data-lng="bg">Име<input type="text" data-k="name" maxlength="40" value="'+esc(r.name)+'"></label>'+
    '<label class="wide" data-lng="en">Име (EN)<input type="text" data-k="name_en" maxlength="40" lang="en" value="'+esc(r.name_en||'')+'" placeholder="Name in English"></label>'+
+   '<label class="wide" data-lng="pl">Име (PL)<input type="text" data-k="name_pl" maxlength="40" lang="pl" value="'+esc(r.name_pl||'')+'" placeholder="Nazwa po polsku"></label>'+
+   '<label class="wide" data-lng="de">Име (DE)<input type="text" data-k="name_de" maxlength="40" lang="de" value="'+esc(r.name_de||'')+'" placeholder="Name auf Deutsch"></label>'+
    '<div><div class="tag">Клетки</div><div class="seg">'+[1,2,3].map(n=>'<button type="button" data-size="'+n+'"'+(r.size===n?' class="on"':'')+'>'+n+'</button>').join('')+'</div></div>'+
    '<label>Лимит<input type="number" data-k="limit" min="1" max="20" value="'+r.limit+'"></label>'+
    '<label class="wide" data-lng="bg">Описание (в тултипа)<textarea data-k="desc" maxlength="240">'+esc(r.desc)+'</textarea></label>'+
    '<label class="wide" data-lng="en">Описание (EN)<textarea data-k="desc_en" maxlength="240" lang="en" placeholder="Description in English">'+esc(r.desc_en||'')+'</textarea></label>'+
+   '<label class="wide" data-lng="pl">Описание (PL)<textarea data-k="desc_pl" maxlength="240" lang="pl" placeholder="Opis po polsku">'+esc(r.desc_pl||'')+'</textarea></label>'+
+   '<label class="wide" data-lng="de">Описание (DE)<textarea data-k="desc_de" maxlength="240" lang="de" placeholder="Beschreibung auf Deutsch">'+esc(r.desc_de||'')+'</textarea></label>'+
    '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+
    '<div class="btns"><span class="btn upbtn">Качи картинка<input type="file" accept="image/*" data-up aria-label="Качи картинка за '+esc(r.name)+'"></span><button class="btn danger delbtn" type="button" data-del title="Изтрий стаята" aria-label="Изтрий стаята"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'+
    '</div></div>'}
@@ -369,7 +373,7 @@ $('q').addEventListener('input',filterRooms);
 $('list').addEventListener('input',e=>{const row=e.target.closest('.row');if(!row)return;const r=rooms[+row.dataset.i],k=e.target.dataset.k;
   if(k==='name')r.name=e.target.value;
   else if(k==='desc')r.desc=e.target.value;
-  else if(k==='name_en'||k==='desc_en'){const v=e.target.value;if(v.trim())r[k]=v;else delete r[k]}
+  else if(/^(name|desc)_(en|pl|de)$/.test(k)){const v=e.target.value;if(v.trim())r[k]=v;else delete r[k]}
   else if(k==='limit')r.limit=Math.max(1,Math.min(20,+e.target.value||1));
   else if(k==='id'){const v=e.target.value.trim().toLowerCase(),er=row.querySelector('[data-err]');
     if(!/^[a-z0-9_-]+$/.test(v)){er.textContent='Само латински букви, цифри, - и _';return}
@@ -397,7 +401,7 @@ ghShow();renderScene();
 let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Натисни пак: ще се загубят незапазените промени';setTimeout(()=>{armed=false;$('reset').textContent='Започни отначало от rooms.js'},3000);return}
   armed=false;try{localStorage.removeItem(KEY)}catch(e){}
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
-function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
+function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en','name_pl','desc_pl','name_de','desc_de'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
 mergeEn(fromFile());
 if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header){headerCfg=Object.assign(headerCfg,g.header);renderHeaders()}if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
 else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като index.html и rooms.js.';
@@ -424,20 +428,21 @@ async function loadHeaders(){const list=[];
     const t=await fetch(repoApi('images/top.png')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
     if(t.ok){const j=await t.json();list.push({path:'images/top.png',name:'top.png',sha:j.sha})}const r=await fetch(repoApi('images/headers')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
     if(r.ok){(await r.json()).filter(f=>f.type==='file'&&/\.(png|jpe?g|webp)$/i.test(f.name)).forEach(f=>list.push({path:f.path,name:f.name,sha:f.sha}))}else if(r.status!==404)throw new Error(ghErr(r))}
-  if(!gh.ok)[headerCfg.bg,headerCfg.en].forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
+  if(!gh.ok)[headerCfg.bg,headerCfg.en,headerCfg.pl,headerCfg.de].forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
   hdrList=list;renderHeaders()}
 function renderHeaders(){const g=$('hdrGrid');if(!g)return;if(!gh.ok&&hdrList.length<=1){g.innerHTML='<p class="hint">Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.</p>';}
   const list=hdrList;if(!list.length){g.innerHTML='<p class="hint">'+(gh.ok?'Няма качени хедъри. Качи първия с „+ Качи хедър“.':'Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.')+'</p>';return}
-  g.innerHTML=list.map(h=>{const onB=headerCfg.bg===h.path,onE=headerCfg.en===h.path,used=onB||onE;
+  const HL={bg:'БГ',en:'EN',pl:'PL',de:'DE'},HN={bg:'български',en:'английски',pl:'полски',de:'немски'};
+  g.innerHTML=list.map(h=>{const on=Object.keys(HL).filter(k=>headerCfg[k]===h.path),used=on.length>0;
     return '<div class="hcard'+(used?' on':'')+'" data-p="'+esc(h.path)+'"><div class="hprev"><img alt="" src="'+(hdrLocal[h.path]||esc(h.path)+'?t='+(window._bgT||Date.now()))+'"></div>'+
-      '<div class="hname">'+esc(h.name)+(used?' · <b class="inuse">използва се</b>':'')+'</div><div class="hrow"><button type="button" class="hpick'+(onB?' on':'')+'" data-lang="bg" title="Показвай на български">БГ</button><button type="button" class="hpick'+(onE?' on':'')+'" data-lang="en" title="Показвай на английски">EN</button>'+
-      '<button type="button" class="hdel" '+(used?'disabled title="Използва се. Първо избери друг хедър за '+(onB&&onE?'БГ и EN':onB?'БГ':'EN')+'."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
+      '<div class="hname">'+esc(h.name)+(used?' · <b class="inuse">използва се</b>':'')+'</div><div class="hrow">'+Object.keys(HL).map(k=>'<button type="button" class="hpick'+(on.includes(k)?' on':'')+'" data-lang="'+k+'" title="Показвай на '+HN[k]+'">'+HL[k]+'</button>').join('')+
+      '<button type="button" class="hdel" '+(used?'disabled title="Използва се. Първо избери друг хедър за '+on.map(k=>HL[k]).join(', ')+'."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
 async function saveHeaderCfg(msg){const cur=await ghGet();const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),
   body:JSON.stringify({message:msg,content:b64e(fileText(cur.rooms)),sha:cur.sha,branch:gh.branch||'main'})});if(!r.ok)throw new Error(ghErr(r))}
 $('hdrGrid').addEventListener('click',async e=>{const card=e.target.closest('.hcard');if(!card)return;const path=card.dataset.p;
   if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub.',true);return}
   const pk=e.target.closest('.hpick');if(pk){const L=pk.dataset.lang;if(headerCfg[L]===path)return;const old=headerCfg[L];headerCfg[L]=path;renderHeaders();
-    say('Записвам хедъра за '+(L==='bg'?'български':'английски')+'...');try{await saveHeaderCfg('Хедър ('+L+'): '+path.split('/').pop());say('Хедърът е сменен. До около минута се вижда на сайта.')}catch(err){headerCfg[L]=old;renderHeaders();say(err.message,true)}return}
+    say('Записвам хедъра за '+({bg:'български',en:'английски',pl:'полски',de:'немски'}[L])+'...');try{await saveHeaderCfg('Хедър ('+L+'): '+path.split('/').pop());say('Хедърът е сменен. До около минута се вижда на сайта.')}catch(err){headerCfg[L]=old;renderHeaders();say(err.message,true)}return}
   const del=e.target.closest('.hdel');if(del&&!del.disabled){if(!del.classList.contains('armed')){del.classList.add('armed');del.title='Натисни пак за изтриване';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.title='Изтрий този хедър'}},3000);return}
     const h=hdrList.find(x=>x.path===path);say('Трия хедъра...');
     try{if(!h.sha){const g=await fetch(repoApi(path)+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});if(g.status===404){hdrList=hdrList.filter(x=>x!==h);renderHeaders();say('Хедърът вече го няма.');return}if(!g.ok)throw new Error(ghErr(g));h.sha=(await g.json()).sha}

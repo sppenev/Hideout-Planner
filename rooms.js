@@ -18,7 +18,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда монети. Нивото ѝ определя максималното ниво на другите стаи и колко суперлепило и зеронит можеш да държиш.",
    "cat": "core",
    "name_en": "Hideout Base",
-   "desc_en": "Produces coins. Its level sets the max level of the other rooms and how much super glue and zeronite you can store."
+   "desc_en": "Produces coins. Its level sets the max level of the other rooms and how much super glue and zeronite you can store.",
+   "name_pl": "Baza Kryjówki",
+   "desc_pl": "Produkuje monety. Jej poziom określa maksymalny poziom pozostałych pokoi oraz ile superkleju i zeronitu możesz przechowywać.",
+   "name_de": "Versteck-Basis",
+   "desc_de": "Produziert Münzen. Ihre Stufe bestimmt die Maximalstufe der anderen Räume und wie viel Superkleber und Zeronit du lagern kannst."
   },
   {
    "id": "gen",
@@ -30,7 +34,11 @@ window.ROOMS_CONFIG={
    "desc": "Зарежда стаите вляво и вдясно от себе си: повече продукция и по-голям склад.",
    "cat": "gen",
    "name_en": "Generator Room",
-   "desc_en": "Powers the rooms to its left and right: more production and bigger storage."
+   "desc_en": "Powers the rooms to its left and right: more production and bigger storage.",
+   "name_pl": "Generator",
+   "desc_pl": "Zasila pokoje po lewej i prawej stronie: większa produkcja i większy magazyn.",
+   "name_de": "Generatorraum",
+   "desc_de": "Versorgt die Räume links und rechts: mehr Produktion und größeres Lager."
   },
   {
    "id": "glue",
@@ -42,7 +50,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда суперлепило, единият от двата ресурса за строеж.",
    "cat": "res",
    "name_en": "Super Glue Factory",
-   "desc_en": "Produces super glue, one of the two building resources."
+   "desc_en": "Produces super glue, one of the two building resources.",
+   "name_pl": "Fabryka Superkleju",
+   "desc_pl": "Produkuje superklej, jeden z dwóch surowców budowlanych.",
+   "name_de": "Superkleber-Fabrik",
+   "desc_de": "Produziert Superkleber, einen der beiden Baurohstoffe."
   },
   {
    "id": "stone",
@@ -54,7 +66,11 @@ window.ROOMS_CONFIG={
    "desc": "Добива зеронит, другият ресурс за строеж.",
    "cat": "res",
    "name_en": "Zeronite Mine",
-   "desc_en": "Mines zeronite, the other building resource."
+   "desc_en": "Mines zeronite, the other building resource.",
+   "name_pl": "Kopalnia Zeronitu",
+   "desc_pl": "Wydobywa zeronit, drugi surowiec budowlany.",
+   "name_de": "Zeronit-Mine",
+   "desc_de": "Baut Zeronit ab, den anderen Baurohstoff."
   },
   {
    "id": "xp",
@@ -66,7 +82,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда опит (XP).",
    "cat": "res",
    "name_en": "Room of Infinite Knowledge",
-   "desc_en": "Produces experience (XP)."
+   "desc_en": "Produces experience (XP).",
+   "name_pl": "Pokój Nieskończonej Wiedzy",
+   "desc_pl": "Produkuje doświadczenie (XP).",
+   "name_de": "Raum des unendlichen Wissens",
+   "desc_de": "Produziert Erfahrung (XP)."
   },
   {
    "id": "work",
@@ -78,7 +98,11 @@ window.ROOMS_CONFIG={
    "desc": "Изработва модификации за екипировката.",
    "cat": "prod",
    "name_en": "Workshop",
-   "desc_en": "Crafts modifications for your gear."
+   "desc_en": "Crafts modifications for your gear.",
+   "name_pl": "Warsztat",
+   "desc_pl": "Tworzy modyfikacje do twojego ekwipunku.",
+   "name_de": "Werkstatt",
+   "desc_de": "Stellt Modifikationen für deine Ausrüstung her."
   },
   {
    "id": "forge",
@@ -90,7 +114,11 @@ window.ROOMS_CONFIG={
    "desc": "Изработва предмети с ресурси от скривалището.",
    "cat": "prod",
    "name_en": "Hero Forge",
-   "desc_en": "Crafts items from hideout resources."
+   "desc_en": "Crafts items from hideout resources.",
+   "name_pl": "Kuźnia Bohatera",
+   "desc_pl": "Tworzy przedmioty z surowców kryjówki.",
+   "name_de": "Heldenschmiede",
+   "desc_de": "Stellt Gegenstände aus Versteck-Rohstoffen her."
   },
   {
    "id": "atk",
@@ -102,7 +130,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда атакуващи ботове за нападения на чужди скривалища.",
    "cat": "war",
    "name_en": "Attack-o-Bot Factory",
-   "desc_en": "Produces attack bots for raiding other hideouts."
+   "desc_en": "Produces attack bots for raiding other hideouts.",
+   "name_pl": "Fabryka Atako-Botów",
+   "desc_pl": "Produkuje boty atakujące do napadów na inne kryjówki.",
+   "name_de": "Angriffs-Bot-Fabrik",
+   "desc_de": "Produziert Angriffs-Bots für Überfälle auf andere Verstecke."
   },
   {
    "id": "def",
@@ -114,7 +146,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда защитни ботове, които пазят скривалището.",
    "cat": "war",
    "name_en": "Defend-o-Bot Factory",
-   "desc_en": "Produces defense bots that guard your hideout."
+   "desc_en": "Produces defense bots that guard your hideout.",
+   "name_pl": "Fabryka Obrono-Botów",
+   "desc_pl": "Produkuje boty obronne, które strzegą twojej kryjówki.",
+   "name_de": "Verteidigungs-Bot-Fabrik",
+   "desc_de": "Produziert Verteidigungs-Bots, die dein Versteck bewachen."
   },
   {
    "id": "post",
@@ -126,7 +162,11 @@ window.ROOMS_CONFIG={
    "desc": "Защитава скривалището заедно със защитните ботове.",
    "cat": "war",
    "name_en": "Guard Post",
-   "desc_en": "Defends the hideout together with the defense bots."
+   "desc_en": "Defends the hideout together with the defense bots.",
+   "name_pl": "Posterunek Straży",
+   "desc_pl": "Broni kryjówki razem z botami obronnymi.",
+   "name_de": "Wachposten",
+   "desc_de": "Verteidigt das Versteck zusammen mit den Verteidigungs-Bots."
   },
   {
    "id": "store",
@@ -138,7 +178,11 @@ window.ROOMS_CONFIG={
    "desc": "Увеличава колко атакуващи и защитни бота можеш да имаш.",
    "cat": "war",
    "name_en": "Robot Storage",
-   "desc_en": "Raises how many attack and defense bots you can have."
+   "desc_en": "Raises how many attack and defense bots you can have.",
+   "name_pl": "Magazyn Robotów",
+   "desc_pl": "Zwiększa liczbę botów atakujących i obronnych, które możesz mieć.",
+   "name_de": "Roboterlager",
+   "desc_de": "Erhöht, wie viele Angriffs- und Verteidigungs-Bots du haben kannst."
   },
   {
    "id": "cbu",
@@ -150,7 +194,11 @@ window.ROOMS_CONFIG={
    "desc": "Вдига нивото и атрибутите на бойните ботове.",
    "cat": "war",
    "name_en": "Combat Bot Unit Upgrader",
-   "desc_en": "Raises the level and attributes of combat bots."
+   "desc_en": "Raises the level and attributes of combat bots.",
+   "name_pl": "Ulepszacz Botów Bojowych",
+   "desc_pl": "Podnosi poziom i atrybuty botów bojowych.",
+   "name_de": "Kampfbot-Aufwerter",
+   "desc_de": "Erhöht Stufe und Attribute der Kampfbots."
   },
   {
    "id": "robot",
@@ -162,7 +210,11 @@ window.ROOMS_CONFIG={
    "desc": "Ускорява работния робот, който строи и разширява стаите.",
    "cat": "sup",
    "name_en": "Worker Robot Upgrader",
-   "desc_en": "Speeds up the worker robot that builds and expands rooms."
+   "desc_en": "Speeds up the worker robot that builds and expands rooms.",
+   "name_pl": "Ulepszacz Robota Roboczego",
+   "desc_pl": "Przyspiesza robota roboczego, który buduje i rozbudowuje pokoje.",
+   "name_de": "Arbeitsroboter-Aufwerter",
+   "desc_de": "Beschleunigt den Arbeitsroboter, der Räume baut und ausbaut."
   },
   {
    "id": "spec",
@@ -174,7 +226,11 @@ window.ROOMS_CONFIG={
    "desc": "Намалява цената в монети за подобряване на стаите.",
    "cat": "sup",
    "name_en": "Broker Center",
-   "desc_en": "Lowers the coin cost of upgrading rooms."
+   "desc_en": "Lowers the coin cost of upgrading rooms.",
+   "name_pl": "Centrum Maklerskie",
+   "desc_pl": "Obniża koszt ulepszania pokoi w monetach.",
+   "name_de": "Maklerzentrum",
+   "desc_de": "Senkt die Münzkosten für das Aufwerten von Räumen."
   },
   {
    "id": "trade",
@@ -186,7 +242,11 @@ window.ROOMS_CONFIG={
    "desc": "Обменя зеронит за суперлепило и обратното. На по-високите нива се обменят повече ресурси.",
    "cat": "sup",
    "name_en": "Exchange Room",
-   "desc_en": "Trades zeronite for super glue and back. Higher levels trade more resources."
+   "desc_en": "Trades zeronite for super glue and back. Higher levels trade more resources.",
+   "name_pl": "Pokój Wymiany",
+   "desc_pl": "Wymienia zeronit na superklej i odwrotnie. Wyższe poziomy wymieniają więcej surowców.",
+   "name_de": "Tauschraum",
+   "desc_de": "Tauscht Zeronit gegen Superkleber und umgekehrt. Höhere Stufen tauschen mehr Rohstoffe."
   },
   {
    "id": "r42",
@@ -198,7 +258,11 @@ window.ROOMS_CONFIG={
    "desc": "Повишава ефективността на Стаята на безкрайното познание.",
    "cat": "sup",
    "name_en": "Room 42.0 Beta",
-   "desc_en": "Boosts the Room of Infinite Knowledge."
+   "desc_en": "Boosts the Room of Infinite Knowledge.",
+   "name_pl": "Pokój 42.0 Beta",
+   "desc_pl": "Wzmacnia Pokój Nieskończonej Wiedzy.",
+   "name_de": "Raum 42.0 Beta",
+   "desc_de": "Verstärkt den Raum des unendlichen Wissens."
   },
   {
    "id": "cyber",
@@ -210,7 +274,11 @@ window.ROOMS_CONFIG={
    "desc": "Подобрява основните умения и атрибутите на новите предмети.",
    "cat": "sup",
    "name_en": "Cyber Research Lab",
-   "desc_en": "Improves the base skills and attributes of new items."
+   "desc_en": "Improves the base skills and attributes of new items.",
+   "name_pl": "Laboratorium Cyberbadań",
+   "desc_pl": "Poprawia podstawowe umiejętności i atrybuty nowych przedmiotów.",
+   "name_de": "Cyber-Forschungslabor",
+   "desc_de": "Verbessert Grundfähigkeiten und Attribute neuer Gegenstände."
   },
   {
    "id": "troph",
@@ -222,7 +290,11 @@ window.ROOMS_CONFIG={
    "desc": "Увеличава наградите от дуели и лигата.",
    "cat": "sup",
    "name_en": "Trophy Hall",
-   "desc_en": "Increases rewards from duels and the league."
+   "desc_en": "Increases rewards from duels and the league.",
+   "name_pl": "Sala Trofeów",
+   "desc_pl": "Zwiększa nagrody z pojedynków i ligi.",
+   "name_de": "Trophäenhalle",
+   "desc_de": "Erhöht die Belohnungen aus Duellen und der Liga."
   },
   {
    "id": "club",
@@ -234,7 +306,11 @@ window.ROOMS_CONFIG={
    "desc": "Увеличава куража (дуели) и адреналина (лига).",
    "cat": "sup",
    "name_en": "Private Fight Club",
-   "desc_en": "Increases courage (duels) and adrenaline (league)."
+   "desc_en": "Increases courage (duels) and adrenaline (league).",
+   "name_pl": "Prywatny Klub Walki",
+   "desc_pl": "Zwiększa odwagę (pojedynki) i adrenalinę (liga).",
+   "name_de": "Privater Fight Club",
+   "desc_de": "Erhöht Mut (Duelle) und Adrenalin (Liga)."
   },
   {
    "id": "bar",
@@ -246,7 +322,11 @@ window.ROOMS_CONFIG={
    "desc": "Увеличава опита от мисиите.",
    "cat": "sup",
    "name_en": "Sports Bar",
-   "desc_en": "Increases experience from missions."
+   "desc_en": "Increases experience from missions.",
+   "name_pl": "Bar Sportowy",
+   "desc_pl": "Zwiększa doświadczenie z misji.",
+   "name_de": "Sportbar",
+   "desc_de": "Erhöht die Erfahrung aus Missionen."
   },
   {
    "id": "scout",
@@ -258,7 +338,11 @@ window.ROOMS_CONFIG={
    "desc": "Увеличава наградите в монети от мисиите.",
    "cat": "sup",
    "name_en": "Scout Center",
-   "desc_en": "Increases coin rewards from missions."
+   "desc_en": "Increases coin rewards from missions.",
+   "name_pl": "Centrum Zwiadowcze",
+   "desc_pl": "Zwiększa nagrody w monetach z misji.",
+   "name_de": "Späherzentrum",
+   "desc_de": "Erhöht die Münzbelohnungen aus Missionen."
   },
   {
    "id": "hq",
@@ -270,7 +354,11 @@ window.ROOMS_CONFIG={
    "desc": "Отключва отборни стаи.",
    "cat": "cus",
    "name_en": "Team HQ",
-   "desc_en": "Unlocks team rooms."
+   "desc_en": "Unlocks team rooms.",
+   "name_pl": "Kwatera Drużyny",
+   "desc_pl": "Odblokowuje pokoje drużynowe.",
+   "name_de": "Team-Hauptquartier",
+   "desc_de": "Schaltet die Teamräume frei."
   },
   {
    "id": "room1",
@@ -282,7 +370,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда дини, които можеш да ползваш за мятане по време на отборни битки.",
    "cat": "cus",
    "name_en": "Melon Plantation",
-   "desc_en": "Grows melons you can throw during team fights."
+   "desc_en": "Grows melons you can throw during team fights.",
+   "name_pl": "Plantacja Melonów",
+   "desc_pl": "Uprawia melony, którymi możesz rzucać podczas walk drużynowych.",
+   "name_de": "Melonenplantage",
+   "desc_de": "Baut Melonen an, die du in Teamkämpfen werfen kannst."
   },
   {
    "id": "room2",
@@ -294,7 +386,11 @@ window.ROOMS_CONFIG={
    "desc": "Събира фрагмени от Con точки",
    "cat": "cus",
    "name_en": "Team Contest HQ",
-   "desc_en": "Collects Con point fragments."
+   "desc_en": "Collects Con point fragments.",
+   "name_pl": "Kwatera Konkursu Drużyn",
+   "desc_pl": "Zbiera fragmenty punktów Con.",
+   "name_de": "Team-Wettbewerb-Hauptquartier",
+   "desc_de": "Sammelt Con-Punkt-Fragmente."
   },
   {
    "id": "room3",
@@ -306,7 +402,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда медицински комплекти",
    "cat": "cus",
    "name_en": "Medkit Factory",
-   "desc_en": "Produces medkits."
+   "desc_en": "Produces medkits.",
+   "name_pl": "Fabryka Apteczek",
+   "desc_pl": "Produkuje apteczki.",
+   "name_de": "Medikit-Fabrik",
+   "desc_de": "Produziert Medikits."
   },
   {
    "id": "room4",
@@ -318,7 +418,11 @@ window.ROOMS_CONFIG={
    "desc": "Намалява цената за точка умение във фитнеса с % в сравнение с покупката на точка за умение.",
    "cat": "cus",
    "name_en": "Gym",
-   "desc_en": "Lowers the price of a skill point in the gym compared to buying one directly."
+   "desc_en": "Lowers the price of a skill point in the gym compared to buying one directly.",
+   "name_pl": "Siłownia",
+   "desc_pl": "Obniża cenę punktu umiejętności na siłowni w porównaniu z bezpośrednim zakupem.",
+   "name_de": "Fitnessstudio",
+   "desc_de": "Senkt den Preis eines Fertigkeitspunkts im Fitnessstudio im Vergleich zum Direktkauf."
   },
   {
    "id": "room5",
@@ -330,7 +434,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда ракетни бустери от предмети, които вече не ти трявбат",
    "cat": "cus",
    "name_en": "Rocket Booster Factory",
-   "desc_en": "Turns items you no longer need into rocket boosters."
+   "desc_en": "Turns items you no longer need into rocket boosters.",
+   "name_pl": "Fabryka Dopalaczy Rakietowych",
+   "desc_pl": "Zamienia niepotrzebne przedmioty w dopalacze rakietowe.",
+   "name_de": "Raketen-Booster-Fabrik",
+   "desc_de": "Verwandelt Gegenstände, die du nicht mehr brauchst, in Raketen-Booster."
   },
   {
    "id": "room6",
@@ -342,7 +450,11 @@ window.ROOMS_CONFIG={
    "desc": "Произвежда дубльори за каскади",
    "cat": "cus",
    "name_en": "Stunt Double Studio",
-   "desc_en": "Produces stunt doubles."
+   "desc_en": "Produces stunt doubles.",
+   "name_pl": "Studio Kaskaderów",
+   "desc_pl": "Produkuje dublerów kaskaderskich.",
+   "name_de": "Stuntdouble-Studio",
+   "desc_de": "Produziert Stuntdoubles."
   }
  ]
 };

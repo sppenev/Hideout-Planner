@@ -4,6 +4,8 @@
     <loc>https://sppenev.github.io/Hideout-Planner/</loc>
     <xhtml:link rel="alternate" hreflang="bg" href="https://sppenev.github.io/Hideout-Planner/?lang=bg"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sppenev.github.io/Hideout-Planner/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sppenev.github.io/Hideout-Planner/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sppenev.github.io/Hideout-Planner/?lang=de"/>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

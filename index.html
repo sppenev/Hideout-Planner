@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hero Zero Hideout Planner - планер за скривалището | Delta Uno</title>
 <meta name="description" content="Неофициален планер за скривалището в Hero Zero. Подреди стаите по етажите, виж кои са заредени от генератора и сподели подредбата с отбора с един линк. Безплатно, без регистрация.">
-<meta name="keywords" content="Hero Zero, Hero Zero hideout, hideout planner, скривалище, планер за скривалище, Hero Zero скривалище, стаи, генератор, подредба на стаи, Delta Uno, hideout layout, Hero Zero planner">
+<meta name="keywords" content="Hero Zero, Hero Zero hideout, hideout planner, скривалище, планер за скривалище, Hero Zero скривалище, стаи, генератор, подредба на стаи, Delta Uno, kryjówka, planer kryjówki, Versteck, Versteck Planer, hideout layout, Hero Zero planner">
 <meta name="author" content="eLeS">
 <meta name="robots" content="index,follow">
 <meta name="theme-color" content="#1d1712">
 <link rel="canonical" href="https://sppenev.github.io/Hideout-Planner/">
 <link rel="alternate" hreflang="bg" href="https://sppenev.github.io/Hideout-Planner/?lang=bg">
 <link rel="alternate" hreflang="en" href="https://sppenev.github.io/Hideout-Planner/?lang=en">
+<link rel="alternate" hreflang="pl" href="https://sppenev.github.io/Hideout-Planner/?lang=pl">
+<link rel="alternate" hreflang="de" href="https://sppenev.github.io/Hideout-Planner/?lang=de">
 <link rel="alternate" hreflang="x-default" href="https://sppenev.github.io/Hideout-Planner/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hideout Planner · Delta Uno">
@@ -24,6 +26,8 @@
 <meta property="og:image:alt" content="Hero Zero Hideout Planner">
 <meta property="og:locale" content="bg_BG">
 <meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="de_DE">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hero Zero Hideout Planner - планер за скривалището">
 <meta name="twitter:description" content="Неофициален планер за скривалището в Hero Zero. Подреди стаите по етажите, виж кои са заредени от генератора и сподели подредбата с отбора с един линк. Безплатно, без регистрация.">
@@ -414,6 +418,8 @@ body.tray-open .scroller{padding-bottom:280px!important}
 .cpy[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);z-index:5;pointer-events:none}
 .cpy.ok[data-tip]:hover::after{content:"Копирано!";color:#3ddc84}
 html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
+html[lang=pl] .cpy.ok[data-tip]:hover::after{content:"Skopiowano!"}
+html[lang=de] .cpy.ok[data-tip]:hover::after{content:"Kopiert!"}
 
 /* variant tabs: red x to delete (second click confirms), double-click name to rename */
 .tabw{position:relative;display:inline-flex}
@@ -565,6 +571,20 @@ body.dragging .floors .cell .bury{display:none}
 
 .side-l .palwrap{min-height:172px}
 @media (max-width:600px){.side-l .palwrap{min-height:150px}}
+
+/* language dropdown next to the logo */
+.langwrap{position:relative}
+.fab .langbtn{width:auto;min-width:62px;padding:0 12px;display:flex;align-items:center;gap:6px;height:42px}
+.langbtn .car{width:12px;height:12px;transition:transform .2s}
+.langbtn[aria-expanded="true"] .car{transform:rotate(180deg)}
+.langmenu{position:absolute;top:calc(100% + 10px);left:0;min-width:170px;background:#1d1712;border:solid #fff4dc;border-width:2px 3px 4px 2.5px;border-radius:16px 12px 18px 11px / 12px 18px 11px 16px;padding:6px;box-shadow:0 10px 24px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:2px;z-index:40;animation:lmIn .16s ease-out}
+.langmenu[hidden]{display:none}
+@keyframes lmIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.langmenu button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;color:#fff4dc;font-size:14px;font-weight:600}
+.langmenu button b{font-weight:900;font-size:12px;letter-spacing:.04em;width:22px;color:#FBB437}
+.langmenu button:hover,.langmenu button:focus-visible{background:rgba(255,244,220,.1)}
+.langmenu button[aria-current="true"]{background:#FBB437;color:#1d1712}
+.langmenu button[aria-current="true"] b{color:#1d1712}
 </style>
 </head>
 <body>
@@ -573,7 +593,8 @@ body.dragging .floors .cell .bury{display:none}
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="fab fab-left">
   <img class="toplogo" id="topLogo" alt="Hideout Planner" src="images/logo.png" onerror="this.remove()">
-  <button class="btn iconbtn langbtn" id="langBtn" type="button"></button>
+  <div class="langwrap"><button class="btn langbtn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu"></button>
+    <div class="langmenu" id="langMenu" role="menu" hidden></div></div>
 </div>
 <div class="fab">
   <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
@@ -726,10 +747,10 @@ body.dragging .floors .cell .bury{display:none}
 
 <script>
 /* language: ?lang=en|bg in the address wins, then the saved choice, default Bulgarian */
-(function(){var q=(location.search.match(/[?&]lang=(en|bg)/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
-  /* no choice yet: Bulgarian browsers get Bulgarian, everyone else English */
-  if(!L){var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);L=langs.some(function(x){return /^bg\b/i.test(x||'')})?'bg':'en'}
-  if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L==='en'?'en':'bg';document.documentElement.lang=window.HZ_LANG})();
+(function(){var OK=/^(bg|en|pl|de)$/,q=(location.search.match(/[?&]lang=(bg|en|pl|de)\b/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
+  /* no choice yet: the first browser language we support wins (bg, en, pl, de), everyone else gets English */
+  if(!L||!OK.test(L)){L='en';var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);for(var i=0;i<langs.length;i++){var m=String(langs[i]||'').toLowerCase().slice(0,2);if(OK.test(m)){L=m;break}}}
+  if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L;document.documentElement.lang=L})();
 </script>
 <script src="rooms.js"></script>
 <script>if(window.ROOMS_CONFIG&&+window.ROOMS_CONFIG.logoH)document.documentElement.style.setProperty('--logo-h',(+window.ROOMS_CONFIG.logoH)+'px');
@@ -839,7 +860,7 @@ const DESC={
 /* rooms.js (made with admin.html) defines the room list; when it is present nobody can change room types from this page */
 const LOCKED=!!(window.ROOMS_CONFIG&&Array.isArray(window.ROOMS_CONFIG.rooms));
 if(LOCKED){Object.keys(BASE_TYPES).forEach(k=>delete BASE_TYPES[k]);Object.keys(DESC).forEach(k=>delete DESC[k]);
-  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:(window.HZ_LANG==='en'&&r.name_en)||r.name||r.id,size:Math.max(1,Math.min(3,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=(window.HZ_LANG==='en'&&r.desc_en)||r.desc||''})}
+  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:(window.HZ_LANG!=='bg'&&(r['name_'+window.HZ_LANG]||r.name_en))||r.name||r.id,size:Math.max(1,Math.min(3,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=(window.HZ_LANG!=='bg'&&(r['desc_'+window.HZ_LANG]||r.desc_en))||r.desc||''})}
 const KEY='hz-hideout-planner-v2';
 const SAMPLE_ROOMS=[
  {t:'base',f:0,c:0},{t:'gen',f:0,c:3},{t:'stone',f:0,c:4},
@@ -945,7 +966,7 @@ function render(){
     const row=document.createElement('div');row.className='floor';
     row.innerHTML='<div class="flabel"><span>Ниво</span><b>'+(f+1)+'</b></div>';
     const g=document.createElement('div');g.className='grid';g.style.setProperty('--cols',S.cols);
-    for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell';cell.dataset.f=f;cell.dataset.c=c;cell.dataset.n=c+1;cell.style.gridColumn=(c+1);if(occupant(f,c))cell.classList.add('taken');const nd=S.cols-dugOf(f);if(c<nd-1)cell.classList.add('dirt');else if(c===nd-1){cell.classList.add('dig');cell.title=window.HZ_LANG==='en'?'Dig this cell':'Изкопай клетката'}else if(c===nd&&!occupant(f,c)){const fb=document.createElement('button');fb.type='button';fb.className='bury';fb.title=window.HZ_LANG==='en'?'Fill back in':'Зарови обратно';fb.textContent='↺';fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=e=>{e.stopPropagation();buryCell(f)};cell.appendChild(fb)}g.appendChild(cell)}
+    for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell';cell.dataset.f=f;cell.dataset.c=c;cell.dataset.n=c+1;cell.style.gridColumn=(c+1);if(occupant(f,c))cell.classList.add('taken');const nd=S.cols-dugOf(f);if(c<nd-1)cell.classList.add('dirt');else if(c===nd-1){cell.classList.add('dig');cell.title='Изкопай клетката'}else if(c===nd&&!occupant(f,c)){const fb=document.createElement('button');fb.type='button';fb.className='bury';fb.title='Зарови обратно';fb.textContent='↺';fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=e=>{e.stopPropagation();buryCell(f)};cell.appendChild(fb)}g.appendChild(cell)}
     const sh=document.createElement('div');sh.className='shaft';
     if(S.floors>1){const fb=document.createElement('button');fb.type='button';fb.className='fdel';fb.textContent='';fb.setAttribute('aria-label','Махни етаж '+(f+1));
       fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=()=>removeFloor(f,fb);row.appendChild(fb)}sh.style.gridColumn=(S.cols+1);g.appendChild(sh);g.style.setProperty('--cols',S.cols+1);g.style.setProperty('--rc',S.cols);
@@ -1204,7 +1225,7 @@ function applyScene(){
   const top=$('topside');top.querySelectorAll('img.scene').forEach(e=>e.remove());top.classList.remove('hasimg');const set=src=>{if(!src)return;top.classList.add('hasimg');const im=document.createElement('img');im.className='scene';im.alt='';im.src=src;top.insertBefore(im,top.querySelector('.scene-ctl'))};
   $('topNo').hidden=!D.imgs.__top;if(D.imgs.__top){set(D.imgs.__top);top.classList.remove('loading')}else{top.classList.add('loading');const done=src=>{set(src);top.classList.remove('loading')};
     /* header picked in the admin for this language, else images/top.* */
-    const hc=(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{},want=hc[window.HZ_LANG]||hc.bg;
+    const hc=(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{},want=hc[window.HZ_LANG]||(window.HZ_LANG!=='bg'&&hc.en)||hc.bg;
     if(want){const t=new Image();t.onload=()=>done(want);t.onerror=()=>findFile('top',done);t.src=want}else findFile('top',done)}
   const sc=$('scroller');const bg=src=>{if(src){sc.style.backgroundImage='url("'+src+'")';sc.style.backgroundSize=(D.bgSize||300)+'px auto';sc.classList.add('hasbg')}else{sc.style.backgroundImage='';sc.style.backgroundSize='';sc.classList.remove('hasbg')}};
   $('bgSize').value=D.bgSize||300;$('bgSizeVal').textContent=(D.bgSize||300)+' px';
@@ -1313,32 +1334,60 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     row.style.height=row.offsetHeight+'px';void row.offsetHeight;row.style.transition='height .7s cubic-bezier(.65,0,.35,1),opacity .5s';row.style.height='0px';row.style.opacity='0';
     setTimeout(done,720)},sinkEnd)}
 
-/* ===== English version: room names come from the admin (name_en / desc_en), the interface is translated here ===== */
-(()=>{const lb=$('langBtn'),EN=window.HZ_LANG==='en';
-  lb.textContent=EN?'BG':'EN';lb.dataset.tip=EN?'Български':'English';lb.setAttribute('aria-label',EN?'Превключи на български':'Switch to English');
-  lb.onclick=()=>{try{localStorage.setItem('hz-lang',EN?'bg':'en')}catch(e){}const q=location.search.replace(/([?&])lang=(en|bg)&?/,'$1').replace(/[?&]$/,'');location.href=location.pathname+q+location.hash};
-  if(!EN)return;
-  const D={'Стаи':'Rooms','Настройки':'Settings','Затвори':'Close','Скривалище':'Hideout','Нива':'Floors','Махни всички стаи':'Remove all rooms','Натисни пак':'Press again',
-    'Варианти':'Variants','+ Копие като нов вариант':'+ Copy as new variant','Основна':'Main','Обобщение':'Summary','Зареди подредба':'Load a layout',
-    'Постави линк или код от съотборник. Подредбата идва като нов вариант, твоите не се пипат.':'Paste a link or code from a teammate. The layout arrives as a new variant; yours stay untouched.',
-    'Постави код или линк тук':'Paste a code or link here','Зареди':'Load','Зареден ✓':'Loaded ✓','Полето е празно':'The field is empty','Кодът не става':'Invalid code','Копирай от полето':'Copy it from the field',
-    'Сподели подредбата':'Share the layout','Подредбата се пази сама в този браузър. Прати линка на съотборник и той ще види точно нея. Кодът е същото, само по-кратко, за да си го пазиш.':'Your layout saves itself in this browser. Send the link to a teammate and they will see exactly this layout. The code is the same thing, just shorter, so you can keep it.',
-    'Линк':'Link','Код':'Code','Копирай линка':'Copy link','Копирай кода':'Copy code','Как се ползва':'How to use','Пусни тук, за да махнеш стая':'Drop here to remove a room',
-    'Добави етаж':'Add floor','посещения':'visits','онлайн сега':'online now','Всички стаи са сложени.':'All rooms are placed.',
-    'Всички генератори работят с пълна мощ.':'All generators are running at full power.','Липсва Скривалищна База.':'The Hideout Base is missing.',
-    'Изтрий варианта':'Delete variant','Натисни пак за изтриване':'Press again to delete','Изтрий?':'Delete?','Двоен клик за преименуване':'Double-click to rename',
-    'Махни стаята':'Remove room','Махни?':'Remove?','Махни ниво':'Remove floor','Добави ниво':'Add floor','Наляво':'Left','Надясно':'Right',
-    'Код или линк на подредба':'Layout code or link','Линк към подредбата':'Layout link','Код на подредбата':'Layout code','Обобщение и настройки':'Summary and settings',
-    'В момента е заредена от генератор':'Currently powered by a generator','Портфолио в Behance':'Portfolio on Behance','Скрий стаите':'Hide rooms','Търси стая...':'Search rooms...','Търси стая':'Search rooms','Сподели':'Share',
-    'Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.':'The whole floor disappears together with its rooms. If it has rooms, press twice.'};
-  const R=[[/^Махни етаж (\d+)$/,'Remove floor $1'],[/^Изтрий „(.+)“$/,'Delete “$1”'],[/^Вариант (\d+)$/,'Variant $1'],[/^Споделен (\d+)$/,'Shared $1'],[/^Зареден (\d+)$/,'Loaded $1'],
-    [/^Генератор \(ниво (\d+), слот (\d+)\) зарежда (\d) от 2 съседа\.$/,'Generator (floor $1, slot $2) powers $3 of 2 neighbours.'],
-    [/^(.+) \(ниво (\d+)\) няма генератор до себе си\.$/,'$1 (floor $2) has no generator next to it.'],
-    [/^(\d+) сл\. · (\d+)\/(\d+) · зарежда се$/,'$1 cell · $2/$3 · powered'],[/^(\d+) сл\. · (\d+)\/(\d+)$/,'$1 cell · $2/$3'],
-    [/^(\d+) слота? · зарежда съседите си$/,'$1 cell · powers its neighbours'],[/^(\d+) слота? · генераторът я зарежда$/,'$1 cell · powered by generators'],[/^(\d+) слота? · генераторът не я зарежда$/,'$1 cell · not powered by generators'],
-    [/^(.+), ниво (\d+), слот (\d+)$/,'$1, floor $2, slot $3'],[/^Махни (.+)$/,'Remove $1']];
-  const tr=t=>{const k=t.trim();if(!k||!/[А-Яа-я]/.test(k))return null;let out=D[k];if(out==null){for(const [re,to] of R){if(re.test(k)){out=k.replace(re,to);break}}}
-    if(out!=null)out=out.replace(/^(\d+) cell\b/,(m,n)=>n==='1'?m:n+' cells');
+/* ===== Languages: room names come from the admin (name_xx / desc_xx), the interface is translated here ===== */
+(()=>{const LANGS=[['bg','Български'],['en','English'],['pl','Polski'],['de','Deutsch']],L=window.HZ_LANG,lb=$('langBtn'),lm=$('langMenu');
+  lb.innerHTML=L.toUpperCase()+'<svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  lb.setAttribute('aria-label',{bg:'Език',en:'Language',pl:'Język',de:'Sprache'}[L]);
+  lm.innerHTML=LANGS.map(([k,n])=>'<button type="button" role="menuitem" data-l="'+k+'" lang="'+k+'"'+(k===L?' aria-current="true"':'')+'><b>'+k.toUpperCase()+'</b>'+n+'</button>').join('');
+  const open=v=>{lm.hidden=!v;lb.setAttribute('aria-expanded',v?'true':'false')};
+  lb.onclick=e=>{e.stopPropagation();open(lm.hidden)};
+  document.addEventListener('click',e=>{if(!lm.hidden&&!e.target.closest('.langwrap'))open(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!lm.hidden){open(false);lb.focus()}});
+  lm.onclick=e=>{const b=e.target.closest('[data-l]');if(!b)return;const k=b.dataset.l;open(false);if(k===L)return;
+    try{localStorage.setItem('hz-lang',k)}catch(err){}const q=location.search.replace(/([?&])lang=[a-z]+&?/,'$1').replace(/[?&]$/,'');location.href=location.pathname+q+location.hash};
+  if(L==='bg')return;
+  const X={en:0,pl:1,de:2}[L];
+  /* Bulgarian text: [English, Polish, German] */
+  const T={'Стаи':['Rooms','Pokoje','Räume'],'Настройки':['Settings','Ustawienia','Einstellungen'],'Затвори':['Close','Zamknij','Schließen'],'Скривалище':['Hideout','Kryjówka','Versteck'],
+    'Нива':['Floors','Piętra','Etagen'],'Махни всички стаи':['Remove all rooms','Usuń wszystkie pokoje','Alle Räume entfernen'],'Натисни пак':['Press again','Kliknij ponownie','Nochmal drücken'],
+    'Варианти':['Variants','Warianty','Varianten'],'+ Копие като нов вариант':['+ Copy as new variant','+ Kopia jako nowy wariant','+ Als neue Variante kopieren'],'Основна':['Main','Główny','Haupt'],
+    'Обобщение':['Summary','Podsumowanie','Übersicht'],'Зареди подредба':['Load a layout','Wczytaj układ','Layout laden'],
+    'Постави линк или код от съотборник. Подредбата идва като нов вариант, твоите не се пипат.':['Paste a link or code from a teammate. The layout arrives as a new variant; yours stay untouched.','Wklej link lub kod od członka drużyny. Układ pojawi się jako nowy wariant, twoje zostaną nietknięte.','Füge einen Link oder Code von einem Teamkollegen ein. Das Layout kommt als neue Variante, deine bleiben unberührt.'],
+    'Постави код или линк тук':['Paste a code or link here','Wklej tu kod lub link','Code oder Link hier einfügen'],'Зареди':['Load','Wczytaj','Laden'],'Зареден ✓':['Loaded ✓','Wczytano ✓','Geladen ✓'],
+    'Полето е празно':['The field is empty','Pole jest puste','Das Feld ist leer'],'Кодът не става':['Invalid code','Nieprawidłowy kod','Ungültiger Code'],'Копирай от полето':['Copy it from the field','Skopiuj z pola','Aus dem Feld kopieren'],
+    'Сподели подредбата':['Share the layout','Udostępnij układ','Layout teilen'],
+    'Подредбата се пази сама в този браузър. Прати линка на съотборник и той ще види точно нея. Кодът е същото, само по-кратко, за да си го пазиш.':['Your layout saves itself in this browser. Send the link to a teammate and they will see exactly this layout. The code is the same thing, just shorter, so you can keep it.','Układ zapisuje się sam w tej przeglądarce. Wyślij link członkowi drużyny, a zobaczy dokładnie ten układ. Kod to to samo, tylko krótszy, żebyś mógł go zachować.','Dein Layout speichert sich selbst in diesem Browser. Schick den Link einem Teamkollegen und er sieht genau dieses Layout. Der Code ist dasselbe, nur kürzer, damit du ihn aufbewahren kannst.'],
+    'Линк':['Link','Link','Link'],'Код':['Code','Kod','Code'],'Копирай линка':['Copy link','Kopiuj link','Link kopieren'],'Копирай кода':['Copy code','Kopiuj kod','Code kopieren'],
+    'Как се ползва':['How to use','Jak używać','Anleitung'],'Пусни тук, за да махнеш стая':['Drop here to remove a room','Upuść tutaj, aby usunąć pokój','Hier ablegen, um einen Raum zu entfernen'],
+    'Добави етаж':['Add floor','Dodaj piętro','Etage hinzufügen'],'посещения':['visits','odwiedzin','Besuche'],'онлайн сега':['online now','online teraz','gerade online'],
+    'Всички стаи са сложени.':['All rooms are placed.','Wszystkie pokoje są rozmieszczone.','Alle Räume sind platziert.'],
+    'Всички генератори работят с пълна мощ.':['All generators are running at full power.','Wszystkie generatory działają na pełnej mocy.','Alle Generatoren laufen mit voller Leistung.'],
+    'Липсва Скривалищна База.':['The Hideout Base is missing.','Brakuje Bazy Kryjówki.','Die Versteck-Basis fehlt.'],
+    'Изтрий варианта':['Delete variant','Usuń wariant','Variante löschen'],'Натисни пак за изтриване':['Press again to delete','Kliknij ponownie, aby usunąć','Zum Löschen nochmal drücken'],'Изтрий?':['Delete?','Usunąć?','Löschen?'],
+    'Двоен клик за преименуване':['Double-click to rename','Kliknij dwukrotnie, aby zmienić nazwę','Doppelklick zum Umbenennen'],
+    'Махни стаята':['Remove room','Usuń pokój','Raum entfernen'],'Махни?':['Remove?','Usunąć?','Entfernen?'],'Махни ниво':['Remove floor','Usuń piętro','Etage entfernen'],'Добави ниво':['Add floor','Dodaj piętro','Etage hinzufügen'],
+    'Наляво':['Left','W lewo','Links'],'Надясно':['Right','W prawo','Rechts'],
+    'Код или линк на подредба':['Layout code or link','Kod lub link układu','Layout-Code oder Link'],'Линк към подредбата':['Layout link','Link do układu','Layout-Link'],'Код на подредбата':['Layout code','Kod układu','Layout-Code'],
+    'Обобщение и настройки':['Summary and settings','Podsumowanie i ustawienia','Übersicht und Einstellungen'],
+    'В момента е заредена от генератор':['Currently powered by a generator','Obecnie zasilany przez generator','Wird gerade von einem Generator versorgt'],
+    'Портфолио в Behance':['Portfolio on Behance','Portfolio na Behance','Portfolio auf Behance'],'Скрий стаите':['Hide rooms','Ukryj pokoje','Räume ausblenden'],
+    'Търси стая...':['Search rooms...','Szukaj pokoju...','Raum suchen...'],'Търси стая':['Search rooms','Szukaj pokoju','Raum suchen'],'Сподели':['Share','Udostępnij','Teilen'],
+    'Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.':['The whole floor disappears together with its rooms. If it has rooms, press twice.','Całe piętro znika razem z pokojami. Jeśli są na nim pokoje, kliknij dwa razy.','Die ganze Etage verschwindet mit ihren Räumen. Wenn Räume darauf sind, zweimal drücken.'],
+    'Изкопай клетката':['Dig this cell','Wykop to pole','Dieses Feld ausgraben'],'Зарови обратно':['Fill back in','Zasyp z powrotem','Wieder zuschütten'],
+    'Изкопай нова клетка':['Dig a new cell','Wykop nowe pole','Neues Feld ausgraben'],'Няма такава стая.':['No room matches.','Brak takiego pokoju.','Kein passender Raum.']};
+  /* patterns: [regex, English, Polish, German]; §c is the cell count word */
+  const R=[[/^Махни етаж (\d+)$/,'Remove floor $1','Usuń piętro $1','Etage $1 entfernen'],[/^Изтрий „(.+)“$/,'Delete “$1”','Usuń „$1”','„$1“ löschen'],
+    [/^Вариант (\d+)$/,'Variant $1','Wariant $1','Variante $1'],[/^Споделен (\d+)$/,'Shared $1','Udostępniony $1','Geteilt $1'],[/^Зареден (\d+)$/,'Loaded $1','Wczytany $1','Geladen $1'],
+    [/^Генератор \(ниво (\d+), слот (\d+)\) зарежда (\d) от 2 съседа\.$/,'Generator (floor $1, slot $2) powers $3 of 2 neighbours.','Generator (piętro $1, pole $2) zasila $3 z 2 sąsiadów.','Generator (Etage $1, Feld $2) versorgt $3 von 2 Nachbarn.'],
+    [/^(.+) \(ниво (\d+)\) няма генератор до себе си\.$/,'$1 (floor $2) has no generator next to it.','$1 (piętro $2) nie ma obok siebie generatora.','$1 (Etage $2) hat keinen Generator daneben.'],
+    [/^(\d+) сл\. · (\d+)\/(\d+) · зарежда се$/,'$1 §c · $2/$3 · powered','$1 §c · $2/$3 · zasilany','$1 §c · $2/$3 · versorgt'],[/^(\d+) сл\. · (\d+)\/(\d+)$/,'$1 §c · $2/$3','$1 §c · $2/$3','$1 §c · $2/$3'],
+    [/^(\d+) слота? · зарежда съседите си$/,'$1 §c · powers its neighbours','$1 §c · zasila sąsiadów','$1 §c · versorgt seine Nachbarn'],
+    [/^(\d+) слота? · генераторът я зарежда$/,'$1 §c · powered by generators','$1 §c · zasilany przez generatory','$1 §c · von Generatoren versorgt'],
+    [/^(\d+) слота? · генераторът не я зарежда$/,'$1 §c · not powered by generators','$1 §c · niezasilany przez generatory','$1 §c · nicht von Generatoren versorgt'],
+    [/^(.+), ниво (\d+), слот (\d+)$/,'$1, floor $2, slot $3','$1, piętro $2, pole $3','$1, Etage $2, Feld $3'],[/^Махни (.+)$/,'Remove $1','Usuń $1','$1 entfernen']];
+  const cells=n=>L==='en'?(n===1?'cell':'cells'):L==='pl'?(n===1?'pole':(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?'pola':'pól'):(n===1?'Feld':'Felder');
+  const tr=t=>{const k=t.trim();if(!k||!/[А-Яа-я]/.test(k))return null;let out=T[k]?T[k][X]:null;if(out==null){for(const r of R){if(r[0].test(k)){out=k.replace(r[0],r[1+X]);break}}}
+    if(out!=null)out=out.replace(/^(\d+) §c/,(m,n)=>n+' '+cells(+n));
     return out==null?null:t.replace(k,out)};
   const ATTR=['placeholder','aria-label','title','data-tip'];
   const doNode=n=>{if(n.nodeType===3){const v=tr(n.nodeValue);if(v!=null&&v!==n.nodeValue)n.nodeValue=v;return}
@@ -1346,10 +1395,20 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     ATTR.forEach(a=>{if(n.hasAttribute&&n.hasAttribute(a)){const v=tr(n.getAttribute(a));if(v!=null&&v!==n.getAttribute(a))n.setAttribute(a,v)}});
     if((n.tagName==='INPUT'||n.tagName==='TEXTAREA')&&n.readOnly)return;
     n.childNodes.forEach(doNode)};
-  const hp=$('helpPop');hp.querySelector('h3').textContent='How to use';hp.querySelector('.helpbody').innerHTML='<p>Plan your Hero Zero hideout, try out variants and send them to your team. Everything is saved in this browser only.</p>'+
-    '<h4>Rooms</h4><ul><li><b>Place:</b> hover an empty cell and press the orange plus. The rooms drawer opens below. Click or drag a room.</li><li><b>Move:</b> drag the room. Green means it fits, red means it does not. Drop it on another room and they swap.</li><li><b>Remove:</b> hover the room and press the red X in its corner.</li><li>A room at its limit disappears from the drawer. Hover a room to see what it does.</li></ul>'+
-    '<h4>Floors and generators</h4><ul><li><b>Add floor</b> is the orange button at the bottom. The red minus on the left removes a floor together with its rooms.</li><li>A generator powers the rooms to its left and right. The turquoise current shows the power reaches them.</li><li>Settings → Summary lists problems in red.</li></ul>'+
-    '<h4>Variants and sharing</h4><ul><li>Settings → Variants: “+ Copy” makes a new variant. Double-click renames it, X deletes it.</li><li>The share icon at the top gives a link and a code. Whoever opens the link sees your layout.</li><li>Settings → Load a layout: paste a link or code from a teammate.</li></ul>';
+  const HELP={
+    en:['How to use','<p>Plan your Hero Zero hideout, try out variants and send them to your team. Everything is saved in this browser only.</p>'+
+      '<h4>Rooms</h4><ul><li><b>Place:</b> hover an empty cell and press the orange plus. The rooms drawer opens below. Click or drag a room.</li><li><b>Move:</b> drag the room. Green means it fits, red means it does not. Drop it on another room and they swap.</li><li><b>Remove:</b> hover the room and press the red X in its corner.</li><li>A room at its limit disappears from the drawer. Hover a room to see what it does.</li></ul>'+
+      '<h4>Floors and generators</h4><ul><li><b>Add floor</b> is the orange button at the bottom. The red minus on the left removes a floor together with its rooms.</li><li>A generator powers the rooms to its left and right. The turquoise current shows the power reaches them.</li><li>Settings → Summary lists problems in red.</li></ul>'+
+      '<h4>Variants and sharing</h4><ul><li>Settings → Variants: “+ Copy” makes a new variant. Double-click renames it, X deletes it.</li><li>The share icon at the top gives a link and a code. Whoever opens the link sees your layout.</li><li>Settings → Load a layout: paste a link or code from a teammate.</li></ul>'],
+    pl:['Jak używać','<p>Zaplanuj kryjówkę w Hero Zero, wypróbuj warianty i wyślij je drużynie. Wszystko zapisuje się tylko w tej przeglądarce.</p>'+
+      '<h4>Pokoje</h4><ul><li><b>Dodaj:</b> najedź na puste pole i kliknij pomarańczowy plus. Poniżej otworzy się szuflada z pokojami. Kliknij lub przeciągnij pokój.</li><li><b>Przenieś:</b> przeciągnij pokój. Zielony znaczy, że pasuje, czerwony, że nie. Upuść go na inny pokój, a zamienią się miejscami.</li><li><b>Usuń:</b> najedź na pokój i kliknij czerwony X w rogu.</li><li>Pokój, który osiągnął limit, znika z szuflady. Najedź na pokój, aby zobaczyć, co robi.</li></ul>'+
+      '<h4>Piętra i generatory</h4><ul><li><b>Dodaj piętro</b> to pomarańczowy przycisk na dole. Czerwony minus po lewej usuwa piętro razem z pokojami.</li><li>Generator zasila pokoje po lewej i prawej stronie. Turkusowy prąd pokazuje, że zasilanie do nich dociera.</li><li>Ustawienia → Podsumowanie pokazuje problemy na czerwono.</li></ul>'+
+      '<h4>Warianty i udostępnianie</h4><ul><li>Ustawienia → Warianty: „+ Kopia” tworzy nowy wariant. Podwójne kliknięcie zmienia nazwę, X usuwa.</li><li>Ikona udostępniania na górze daje link i kod. Kto otworzy link, zobaczy twój układ.</li><li>Ustawienia → Wczytaj układ: wklej link lub kod od członka drużyny.</li></ul>'],
+    de:['Anleitung','<p>Plane dein Versteck in Hero Zero, probiere Varianten aus und schick sie deinem Team. Alles wird nur in diesem Browser gespeichert.</p>'+
+      '<h4>Räume</h4><ul><li><b>Platzieren:</b> fahre über ein leeres Feld und drück das orange Plus. Unten öffnet sich die Raumleiste. Klicke oder ziehe einen Raum.</li><li><b>Verschieben:</b> zieh den Raum. Grün heißt, er passt, rot heißt, er passt nicht. Lass ihn auf einem anderen Raum los und sie tauschen.</li><li><b>Entfernen:</b> fahre über den Raum und drück das rote X in der Ecke.</li><li>Ein Raum am Limit verschwindet aus der Leiste. Fahre über einen Raum, um zu sehen, was er macht.</li></ul>'+
+      '<h4>Etagen und Generatoren</h4><ul><li><b>Etage hinzufügen</b> ist der orange Knopf unten. Das rote Minus links entfernt eine Etage samt Räumen.</li><li>Ein Generator versorgt die Räume links und rechts von ihm. Der türkise Strom zeigt, dass die Energie ankommt.</li><li>Einstellungen → Übersicht zeigt Probleme in Rot.</li></ul>'+
+      '<h4>Varianten und Teilen</h4><ul><li>Einstellungen → Varianten: „+ Kopie“ erstellt eine neue Variante. Doppelklick benennt sie um, X löscht sie.</li><li>Das Teilen-Symbol oben gibt dir einen Link und einen Code. Wer den Link öffnet, sieht dein Layout.</li><li>Einstellungen → Layout laden: füge einen Link oder Code von einem Teamkollegen ein.</li></ul>']};
+  const hp=$('helpPop');hp.querySelector('h3').textContent=HELP[L][0];hp.querySelector('.helpbody').innerHTML=HELP[L][1];
   doNode(document.body);
   new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='characterData')doNode(m.target);else if(m.type==='attributes')doNode(m.target);else m.addedNodes.forEach(doNode)}))
     .observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR});
@@ -1376,7 +1435,7 @@ function buryCell(f){const n=dugOf(f)-1;
 function renderGhost(fl){const old=$('ghostFloor');if(old)old.remove();if(S.floors>=40||dugOf(S.floors-1)<S.cols)return;
   const row=document.createElement('div');row.id='ghostFloor';row.className='floor digrow';const g=document.createElement('div');g.className='grid';g.style.setProperty('--cols',S.cols+1);g.style.setProperty('--rc',S.cols);
   for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell '+(c===S.cols-1?'dig':'dirt');cell.dataset.f=S.floors;cell.dataset.c=c;cell.style.gridColumn=(c+1);
-    if(c===S.cols-1)cell.title=window.HZ_LANG==='en'?'Dig a new cell':'Изкопай нова клетка';g.appendChild(cell)}
+    if(c===S.cols-1)cell.title='Изкопай нова клетка';g.appendChild(cell)}
   const sh=document.createElement('div');sh.className='shaft';sh.style.gridColumn=(S.cols+1);g.appendChild(sh);
   row.appendChild(g);fl.appendChild(row)}
 
@@ -1388,7 +1447,7 @@ function renderGhost(fl){const old=$('ghostFloor');if(old)old.remove();if(S.floo
   box.addEventListener('click',()=>{box.classList.add('open');inp.focus()});inp.addEventListener('focus',sync);inp.addEventListener('blur',()=>setTimeout(sync,0));
   window.filterPalette=()=>{const q=($('palQ').value||'').trim().toLowerCase();const pal=$('palette');let n=0;
     pal.querySelectorAll('.pal-item').forEach(it=>{const nm=(it.querySelector('.pal-name')||{}).textContent||'';const hit=!q||nm.toLowerCase().includes(q);it.classList.toggle('nomatch',!hit);if(hit&&!it.classList.contains('full'))n++});
-    let none=pal.querySelector('.pal-none');if(q&&!n){if(!none){none=document.createElement('div');none.className='pal-none';pal.appendChild(none)}none.textContent=window.HZ_LANG==='en'?'No room matches.':'Няма такава стая.'}else if(none)none.remove();
+    let none=pal.querySelector('.pal-none');if(q&&!n){if(!none){none=document.createElement('div');none.className='pal-none';pal.appendChild(none)}none.textContent='Няма такава стая.'}else if(none)none.remove();
     pal.scrollLeft=0};
   $('palQ').addEventListener('input',filterPalette);
   $('palQ').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';filterPalette()}})})();
