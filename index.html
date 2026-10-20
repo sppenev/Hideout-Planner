@@ -1,0 +1,1395 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero Zero Hideout Planner - планер за скривалището | Delta Uno</title>
+<meta name="description" content="Неофициален планер за скривалището в Hero Zero. Подреди стаите по етажите, виж кои са заредени от генератора и сподели подредбата с отбора с един линк. Безплатно, без регистрация.">
+<meta name="keywords" content="Hero Zero, Hero Zero hideout, hideout planner, скривалище, планер за скривалище, Hero Zero скривалище, стаи, генератор, подредба на стаи, Delta Uno, hideout layout, Hero Zero planner">
+<meta name="author" content="eLeS">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#1d1712">
+<link rel="canonical" href="https://sppenev.github.io/Hideout-Planner/">
+<link rel="alternate" hreflang="bg" href="https://sppenev.github.io/Hideout-Planner/?lang=bg">
+<link rel="alternate" hreflang="en" href="https://sppenev.github.io/Hideout-Planner/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://sppenev.github.io/Hideout-Planner/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hideout Planner · Delta Uno">
+<meta property="og:title" content="Hero Zero Hideout Planner - планер за скривалището">
+<meta property="og:description" content="Неофициален планер за скривалището в Hero Zero. Подреди стаите по етажите, виж кои са заредени от генератора и сподели подредбата с отбора с един линк. Безплатно, без регистрация.">
+<meta property="og:url" content="https://sppenev.github.io/Hideout-Planner/">
+<meta property="og:image" content="https://sppenev.github.io/Hideout-Planner/images/headers/header-mvdt6xqc.jpg">
+<meta property="og:locale" content="bg_BG">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hero Zero Hideout Planner - планер за скривалището">
+<meta name="twitter:description" content="Неофициален планер за скривалището в Hero Zero. Подреди стаите по етажите, виж кои са заредени от генератора и сподели подредбата с отбора с един линк. Безплатно, без регистрация.">
+<meta name="twitter:image" content="https://sppenev.github.io/Hideout-Planner/images/headers/header-mvdt6xqc.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Hero Zero Hideout Planner","alternateName":"Hideout Planner - Delta Uno","url":"https://sppenev.github.io/Hideout-Planner/","description":"Unofficial hideout planner for Hero Zero: place rooms on floors, see which rooms the generators power and share the layout with your team. Free, no sign-up.","applicationCategory":"GameApplication","operatingSystem":"Any (web browser)","inLanguage":["bg","en"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"author":{"@type":"Person","name":"eLeS","url":"https://www.behance.net/sppenev"}}
+</script>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/favicon.png">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: comic cut-away of an underground bunker. Soil and rock frame the floors; rooms are outlined comic panels with their own illustrations. Single deliberate look (works on light and dark hosts). */
+:root{
+  color-scheme:dark;
+  --sky:#2b3a55; --soil:#5b4330; --soil-dark:#3f2e21; --rock:#7a6250;
+  --concrete:#c9c3b6; --concrete-dark:#a59e8f; --wall:#e8e2d3;
+  --ink:#16120f; --paper:#fff8e8; --muted:#d9cdb8; --hint:#b9ab95;
+  --panel:#2a211a; --panel-2:#352a21; --panel-line:#4d3d2f;
+  --hero:#ffcc2e; --hero-ink:#2a1d00; --ok:#5fd17a; --bad:#ff5a4e; --wire:#ffe25c;
+  --c-core:#3f7fd9; --c-res:#ff9f1c; --c-gen:#ffd23f; --c-prod:#2ec4a6; --c-war:#ef4b5a; --c-sup:#9b72e8; --c-cus:#8d99a6;
+  --f-display:"Russo One","Rubik",system-ui,sans-serif;
+  --f-body:"Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cellw:104px; --cellh:104px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--panel);color:var(--paper);font-family:var(--f-body);font-size:14px;line-height:1.45;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.5px);background-size:9px 9px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(24px,3.4vw,36px);margin:0;color:var(--hero);letter-spacing:.01em;
+  text-shadow:3px 3px 0 var(--ink);-webkit-text-stroke:1px var(--ink);text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;max-width:64ch}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;color:inherit;cursor:pointer}
+.step{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:9px;background:var(--panel-2);overflow:hidden;box-shadow:2px 2px 0 var(--ink)}
+.step span{font-size:11px;color:var(--muted);padding:0 10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.step b{min-width:26px;text-align:center;font-variant-numeric:tabular-nums}
+.step button{border:0;background:transparent;width:32px;height:34px;font-size:17px;font-weight:700}
+.step button:hover{background:var(--panel-line)}
+.btn{border:2px solid var(--ink);background:var(--panel-2);border-radius:9px;padding:7px 12px;font-weight:700;box-shadow:2px 2px 0 var(--ink)}
+.btn:hover{background:var(--panel-line)}
+.btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primary{background:var(--hero);color:var(--hero-ink)}
+.btn.danger{color:var(--bad)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.room:focus-visible,.pal-item:focus-visible{outline:3px solid var(--hero);outline-offset:2px}
+
+.main{display:grid;grid-template-columns:270px minmax(0,1fr) 280px;gap:16px;align-items:start}
+@media (max-width:1100px){.main{grid-template-columns:minmax(0,1fr)}.side-r{order:3}.side-l{order:2}.stage{order:1}}
+
+.panel{background:var(--panel-2);border:2px solid var(--ink);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:3px 3px 0 var(--ink)}
+.panel h2{font-family:var(--f-display);font-weight:400;font-size:14px;margin:0;color:var(--hero);letter-spacing:.04em;text-transform:uppercase}
+.hint{color:var(--hint);font-size:12.5px;margin:0}
+
+/* palette */
+.palette{display:flex;flex-direction:column;gap:6px;max-height:640px;overflow:auto;padding:2px 4px 2px 2px}
+@media (max-width:1100px){.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));max-height:none}}
+.pal-item{display:flex;align-items:center;gap:8px;padding:5px 6px;border:2px solid var(--ink);border-radius:9px;background:var(--panel);touch-action:none;user-select:none;cursor:grab}
+.pal-item:hover{background:var(--panel-line)}
+.pal-item.full{opacity:.4;cursor:not-allowed}
+.pal-ico{width:40px;height:40px;flex:none;border-radius:7px;border:2px solid var(--ink);display:grid;place-items:center;background:var(--wall)}
+.pal-ico svg{width:30px;height:30px}
+.pal-txt{flex:1;min-width:0}
+.pal-name{font-weight:700;font-size:13px;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pal-meta{font-size:11px;color:var(--hint);font-variant-numeric:tabular-nums}
+.icon-btn{border:0;background:transparent;width:28px;height:28px;border-radius:6px;color:var(--hint);flex:none;font-size:15px}
+.icon-btn:hover{background:var(--panel-2);color:var(--paper)}
+.trash{border:2px dashed var(--panel-line);border-radius:10px;padding:12px;text-align:center;color:var(--hint);font-size:12.5px;font-weight:500}
+body.dragging .trash{border-color:var(--bad);color:var(--bad)}
+.trash.hot{background:rgba(255,90,78,.15)}
+
+/* variants */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tab{border:2px solid var(--ink);background:var(--panel-2);border-radius:9px 9px 0 0;padding:6px 12px;font-weight:700;font-size:13px;color:var(--muted)}
+.tab.on{background:var(--hero);color:var(--hero-ink)}
+.tab.add{border-style:dashed;border-color:var(--panel-line);color:var(--hint);border-radius:9px}
+
+/* stage: bunker cut-away */
+.stage{min-width:0;display:flex;flex-direction:column;gap:10px}
+.bunker{border:3px solid var(--ink);border-radius:14px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);background:var(--soil)}
+.topside{height:min(400px,50vh);position:relative;background:linear-gradient(var(--sky),#3c4f6e);border-bottom:3px solid var(--ink);overflow:hidden}
+.topside svg{position:absolute;inset:0;width:100%;height:100%}
+.topside img.scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom}
+.scene-ctl{position:absolute;z-index:4;display:flex;gap:6px;flex-wrap:wrap}
+.topside .scene-ctl{right:10px;top:10px}
+.bunker{position:relative}
+.bg-ctl{right:10px;bottom:10px}
+.scene-ctl .btn{padding:4px 9px;font-size:12px;background:rgba(42,33,26,.85)}
+.scroller.hasbg{background-size:auto;background-repeat:repeat;background-position:center top}
+.scroller{overflow-x:auto;padding:14px 14px 18px;
+  background:
+    radial-gradient(circle at 20% 30%,var(--rock) 0 6px,transparent 7px),
+    radial-gradient(circle at 70% 60%,var(--soil-dark) 0 9px,transparent 10px),
+    radial-gradient(circle at 45% 85%,var(--rock) 0 4px,transparent 5px),
+    var(--soil);
+  background-size:140px 120px,190px 150px,110px 90px,auto}
+.floors{display:flex;flex-direction:column;gap:16px;width:max-content;min-width:100%}
+.floor{display:flex;gap:10px;align-items:stretch}
+.flabel{width:52px;flex:none;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--hero);color:var(--hero-ink);
+  border:3px solid var(--ink);border-radius:10px;font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.06em;box-shadow:2px 2px 0 var(--ink);line-height:1.1}
+.flabel b{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:0}
+.grid{display:grid;grid-template-columns:repeat(var(--cols),var(--cellw));grid-template-rows:var(--cellh);column-gap:8px;padding:8px;
+  background:repeating-linear-gradient(90deg,var(--concrete) 0 46px,var(--concrete-dark) 46px 48px);border:3px solid var(--ink);border-radius:10px;position:relative}
+.grid::before{content:"";position:absolute;left:0;right:0;top:-3px;height:7px;background:repeating-linear-gradient(90deg,#3a3a3a 0 14px,#666 14px 16px);border-bottom:2px solid var(--ink)}
+.cell{grid-row:1;border:2px dashed rgba(22,18,15,.35);border-radius:8px;background:rgba(255,255,255,.18);position:relative}
+.cell::after{content:attr(data-n);position:absolute;right:6px;bottom:4px;font-weight:800;font-size:11px;color:rgba(22,18,15,.35)}
+.cell.ok{background:rgba(95,209,122,.45);border:3px solid var(--ok)}
+.cell.bad{background:rgba(255,90,78,.4);border:3px solid var(--bad)}
+
+.room{grid-row:1;z-index:1;border:3px solid var(--ink);border-radius:10px;overflow:visible;display:flex;flex-direction:column;touch-action:none;user-select:none;cursor:grab;position:relative;min-width:0;
+  background:var(--wall);box-shadow:3px 3px 0 var(--ink);color:var(--ink)}
+.room .art{flex:1;min-height:0;position:relative;border-radius:7px 7px 0 0;overflow:hidden;
+  background:radial-gradient(rgba(22,18,15,.12) 1px,transparent 1.4px) 0 0/6px 6px,linear-gradient(var(--tint),color-mix(in srgb,var(--tint) 70%,#000));display:flex;align-items:center;justify-content:center;gap:4px}
+.room .art svg{height:62px;width:62px;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.35))}
+.room .art img.pic,.pal-ico img.pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.pal-ico{position:relative;overflow:hidden}
+.imgrow{display:flex;align-items:center;gap:8px}
+.imgprev{width:52px;height:52px;border:2px solid var(--ink);border-radius:8px;background:var(--panel);flex:none;position:relative;overflow:hidden;display:grid;place-items:center}
+.imgprev svg{width:36px;height:36px}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.room .plate{background:var(--paper);border-top:3px solid var(--ink);padding:3px 6px 4px;font-weight:800;font-size:10.5px;line-height:1.15;text-transform:uppercase;letter-spacing:.02em;
+  border-radius:0 0 7px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.room .sz{position:absolute;left:5px;top:4px;background:rgba(22,18,15,.55);color:var(--paper);font-size:10px;font-weight:700;border-radius:5px;padding:0 5px}
+.room.sel{outline:4px solid var(--hero);outline-offset:3px}
+.room.moving{opacity:.25}
+body.dragging .room{pointer-events:none}
+.bolt{position:absolute;top:-11px;right:-11px;width:28px;height:28px;border-radius:50%;background:var(--c-gen);border:3px solid var(--ink);display:grid;place-items:center;z-index:3;animation:pulse 1.6s ease-in-out infinite}
+.bolt svg{width:14px;height:14px}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.cable{position:absolute;top:44%;height:10px;width:14px;border:2px solid var(--ink);z-index:2;background:#555}
+.cable.l{left:-13px;border-right:0}.cable.r{right:-13px;border-left:0}
+.cable.on{background:repeating-linear-gradient(90deg,var(--wire) 0 4px,#fff6a8 4px 8px);background-size:16px 100%;animation:flow .5s linear infinite}
+.cable.r.on{animation-direction:reverse}
+@keyframes flow{to{background-position:16px 0}}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;opacity:.95;box-shadow:8px 10px 0 rgba(0,0,0,.45)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px;border:2px solid var(--ink)}
+#status{min-height:20px;font-size:13px;color:var(--muted);font-weight:500}
+#status.err{color:var(--bad)}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:var(--panel);border:2px solid var(--ink);border-radius:9px;padding:7px 10px}
+.kpi small{display:block;font-size:10.5px;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.kpi b{font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--hero);font-variant-numeric:tabular-nums}
+.warn{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.warn li{font-size:12.5px;padding:6px 8px;border-radius:7px;background:var(--panel);border-left:4px solid #e8382a}
+.warn li.good{border-left-color:var(--ok)}
+.sel-info{font-size:13px}
+.sel-info .k{color:var(--hint);font-size:12px}
+form{display:flex;flex-direction:column;gap:8px}
+label{font-size:12px;color:var(--hint);display:flex;flex-direction:column;gap:3px;font-weight:500}
+label.row{flex-direction:row;align-items:center;gap:6px;color:var(--paper)}
+input[type=text],input[type=number],select,textarea{font:inherit;color:var(--paper);background:var(--panel);border:2px solid var(--ink);border-radius:7px;padding:6px 8px;width:100%}
+input:disabled,select:disabled{opacity:.5}
+textarea{font-family:ui-monospace,Consolas,monospace;font-size:11px;height:84px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+details summary{cursor:pointer;font-family:var(--f-display);color:var(--hero);text-transform:uppercase;font-size:14px;letter-spacing:.04em}
+@media (prefers-reduced-motion:reduce){.bolt,.cable.on{animation:none}}
+
+/* game layout: one long full-width scene, rooms tray docked at the bottom, settings in a side drawer */
+body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:1600px}
+.main{display:block}
+.stage{width:100%}
+.floors{width:100%}
+.grid{grid-template-columns:repeat(var(--cols),minmax(var(--cellw),1fr));grid-template-rows:clamp(96px,9vw,150px);flex:1;min-width:0}
+.room .art svg{height:min(62px,55%);width:auto;max-width:30%}
+.side-l{position:fixed;left:0;right:0;bottom:0;z-index:30;border-radius:14px 14px 0 0;border-bottom:0;box-shadow:0 -4px 0 var(--ink);
+  flex-direction:row;align-items:stretch;gap:10px;padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.side-l>h2,.side-l>.hint{display:none}
+.side-l .palette{display:flex;flex-direction:row;flex:1;min-width:0;max-height:none;overflow-x:auto;overflow-y:hidden;gap:8px;padding:2px 2px 6px}
+.side-l .pal-item{flex:none;width:170px}
+.side-l .trash{flex:none;width:110px;display:grid;place-items:center;padding:6px;font-size:12px}
+@media (max-width:600px){.side-l .trash{width:72px;font-size:11px}.side-l .pal-item{width:150px}}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:40;width:min(340px,92vw);overflow-y:auto;background:var(--panel);border-left:3px solid var(--ink);box-shadow:-4px 0 0 var(--ink);
+  padding:calc(14px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) calc(160px + env(safe-area-inset-bottom,0px)) 14px;transform:translateX(105%);transition:transform .2s ease}
+.drawer.open{transform:none}
+.drawer-head{display:flex;justify-content:space-between;align-items:center}
+#status{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:45;background:rgba(22,18,15,.88);padding:6px 14px;border-radius:9px;max-width:90vw;text-align:center;pointer-events:none}
+#status{display:none!important}
+body.tray-open #status{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+
+/* clean scene: no page chrome, no boxes */
+body{padding:0;margin:0;background:var(--soil)}
+/* hero image full width, soil pattern full width, floors boxed in a centered container */
+.floors{width:auto;min-width:0;max-width:1440px;margin:0 auto;position:relative}
+/* 6th column: decorative elevator shaft, one continuous strip over all floors, nothing can be placed there */
+.shaft{grid-row:1}
+.elevator{position:absolute;top:0;bottom:0;z-index:0;pointer-events:none;background-repeat:repeat-y;background-size:100% auto;background-position:center top;
+  background-color:rgba(0,0,0,.25);background-image:repeating-linear-gradient(90deg,transparent 0 18%,rgba(255,248,232,.25) 18% 21%,transparent 21% 79%,rgba(255,248,232,.25) 79% 82%,transparent 82%)}
+.scroller{padding-top:28px;padding-bottom:60px}
+body:not(.tray-open){padding-bottom:0}
+.wrap{max-width:none;gap:0}
+.wrap>header{display:none}
+.legend{display:none}
+.bunker{border:0;border-radius:0;box-shadow:none}
+.topside{border-bottom:0;z-index:3;box-shadow:0 4px 0 rgba(0,0,0,.55),0 14px 28px 4px rgba(0,0,0,.85),0 40px 70px 10px rgba(0,0,0,.6)}
+.scroller{position:relative;z-index:1;padding-top:44px!important}
+.scroller::before{content:"";position:absolute;left:0;right:0;top:0;height:90px;pointer-events:none;z-index:0;background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.35) 45%,transparent)}
+.scroller>.floors{position:relative;z-index:1}
+.topside .scene-ctl,.bg-ctl{display:none}
+.scroller{padding:18px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));min-height:60vh}
+.floors{gap:14px}
+.grid{background:none;border:0;padding:0;column-gap:8px}
+.grid::before{display:none}
+.cell{border:2px dashed rgba(255,248,232,.22);background:rgba(0,0,0,.12)}
+.cell::after{color:rgba(255,248,232,.35)}
+.flabel{width:34px;background:rgba(22,18,15,.55);color:var(--paper);border:0;box-shadow:none;font-size:9px}
+.flabel b{font-size:15px;color:var(--hero)}
+/* rooms drawer slides up and down smoothly */
+.side-l{display:flex;transform:translateY(calc(100% + 48px));visibility:hidden;transition:transform .45s cubic-bezier(.22,1,.36,1),visibility 0s linear .45s}
+body.tray-open .side-l{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.22,1,.36,1),visibility 0s}
+@media (prefers-reduced-motion:reduce){.side-l,body.tray-open .side-l{transition:none}}
+.fab{position:fixed;z-index:35;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;gap:8px}
+.fab .btn{background:rgba(22,18,15,.82);border-color:rgba(0,0,0,.6)}
+.fab .btn[aria-pressed="true"]{background:var(--hero);color:var(--hero-ink)}
+.drawer .toolbar{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+.drawer .step{justify-content:space-between}
+.drawer .tabs .tab{border-radius:9px}
+.drawer .scene-ctl{position:static;display:flex}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+/* cells touch each other: no gap horizontally or vertically */
+.floors{gap:0}
+.grid{column-gap:0;row-gap:0}
+.cell,.room,.room .art,.room .plate,.elevator,.shaft{border-radius:0}
+/* no boost badge in the corner */
+.bolt{display:none}
+/* power runs along the whole wall between the generator and its neighbour: a blue electric arc that keeps flickering */
+.cable{top:0;bottom:0;height:auto;width:44px;border:0;background:none;z-index:4;pointer-events:none}
+.cable.l{left:-23.5px}.cable.r{right:-23.5px}
+.cable:not(.on){display:none}
+.cable.on,.cable.r.on{animation:none;background:none;box-shadow:none}
+.cable canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cable .arc-glow{fill:none;stroke:#3d9bff;stroke-width:7;stroke-opacity:.35;stroke-linejoin:round}
+.cable .arc-mid{fill:none;stroke:#8fd4ff;stroke-width:3;stroke-opacity:.8;stroke-linejoin:round}
+.cable .arc-core{fill:none;stroke:#ffffff;stroke-width:1.2;stroke-linejoin:round}
+.cable .arc-ghost{fill:none;stroke:#bfe6ff;stroke-width:1;stroke-opacity:.45;stroke-linejoin:round}
+.cable .arc-branch{fill:none;stroke:#cfeeff;stroke-width:1;stroke-opacity:.85;stroke-linejoin:round}
+.flabel{display:none}
+/* rooms drawer: opens when you click an empty cell, closes with the arrow; the add-floor button stays reachable above it */
+body.tray-open .scroller{padding-bottom:200px!important}
+.side-l{overflow:visible}
+.trayclose{position:absolute;left:50%;top:-34px;transform:translateX(-50%);width:64px;height:34px;border:2px solid var(--ink);border-bottom:0;border-radius:12px 12px 0 0;
+  background:var(--panel-2);color:var(--paper);display:grid;place-items:center;cursor:pointer;padding:0}
+.trayclose:hover{background:var(--panel-line)}
+.trayclose svg{width:22px;height:22px}
+.floors .cell:not(.taken){cursor:pointer}
+.floors .cell.pick{box-shadow:inset 0 0 0 9999px rgba(255,204,46,.22)}
+/* hover on an empty cell: orange round button with a thick white plus */
+.floors .cell:not(.taken)::after{content:"";display:block!important;position:absolute;left:50%;top:50%;width:min(44px,30%);aspect-ratio:1;transform:translate(-50%,-50%) scale(.85);
+  background:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%2240%25%22%20cy%3D%2232%25%22%20r%3D%2270%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffc260%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23ff8a1a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d45a00%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22w%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9dde3%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2246%22%20fill%3D%22%232a1400%22/%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2241%22%20fill%3D%22url%28%23g%29%22/%3E%3Cellipse%20cx%3D%2244%22%20cy%3D%2227%22%20rx%3D%2224%22%20ry%3D%2211%22%20fill%3D%22%23fff%22%20opacity%3D%22.32%22/%3E%3Cpath%20d%3D%22M41%2022h18v19h19v18H59v19H41V59H22V41h19z%22%20fill%3D%22url%28%23w%29%22%20stroke%3D%22%235a2a00%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') center/contain no-repeat;opacity:0;transition:opacity .15s,transform .15s;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+.floors .cell:not(.taken):hover::after,.floors .cell.pick::after{opacity:1;transform:translate(-50%,-50%) scale(1)}
+body.dragging .floors .cell::after{opacity:0!important}
+/* quick floor controls: remove button sits in the floor's piece of the elevator, add button under the last floor */
+.floors .shaft{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
+.fdel{opacity:0;transition:opacity .15s,background .15s;min-width:30px;height:30px;border-radius:15px;border:0;padding:0 8px;background:rgba(22,18,15,.85);color:var(--paper);font-size:18px;font-weight:700;line-height:1;cursor:pointer;white-space:nowrap}
+.floor:hover .fdel,.fdel:focus-visible,.fdel.armed{opacity:1}
+.fdel:hover{background:rgba(22,18,15,1)}
+.fdel.armed{background:var(--bad);font-size:12px}
+@media (hover:none){.fdel{opacity:.85}}
+body.dragging .fdel{display:none}
+.addfloor{display:block;margin:16px auto 0;padding:10px 20px;border:0;background:rgba(22,18,15,.7);color:var(--paper);font:inherit;font-weight:700;cursor:pointer}
+.addfloor:hover{background:rgba(22,18,15,.92)}
+.addfloor:focus-visible{outline:3px solid var(--hero);outline-offset:2px}
+/* room tooltip */
+.tip{position:fixed;left:0;top:0;z-index:60;max-width:280px;pointer-events:none;background:rgba(22,18,15,.95);color:var(--paper);border:2px solid var(--ink);
+  box-shadow:0 8px 24px rgba(0,0,0,.5);padding:10px 12px;font-size:13px;line-height:1.4;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tip.show{opacity:1;transform:none}
+.tip b{display:block;font-size:14px;color:var(--hero);margin-bottom:3px}
+.tip .meta{margin-top:6px;font-size:11.5px;color:var(--hint)}
+.tip .on{color:#6ff0e0}
+/* game proportions: a room is 542 x 305, the elevator is 144 wide; height follows width */
+.floors .grid{grid-template-columns:repeat(var(--rc,5),minmax(0,542fr)) minmax(0,144fr);grid-template-rows:auto}
+.floors .cell{aspect-ratio:542/305;height:auto;min-height:0}
+.floors .room{contain:size;min-height:0}
+/* generator always on top so its electricity is never hidden under a neighbour */
+.floors .room.is-gen{z-index:6}
+.floors .room .art{min-height:0;overflow:hidden}
+/* header picture: an image object at full screen width, the header takes the picture's own height */
+.topside.hasimg{height:auto}
+.topside.hasimg img.scene{position:static;display:block;width:100%;height:auto;max-height:480px;object-fit:cover;object-position:center bottom}
+.topside.hasimg>svg{display:none}
+/* room = invisible cell with the picture inside: no name plate, no badge, no border, no shadow, no background, no rounding */
+.room{border:0;box-shadow:none;background:none;border-radius:0;outline:none}
+.room .plate,.room .sz{display:none}
+.room .art{background:none;border-radius:0}
+.room.sel{outline:none}
+.floors .cell{border:0;background:none;border-radius:0}
+.floors .cell::after{display:none}
+/* empty cell picture (images/empty.png or uploaded), drawn under the drag highlight */
+.floors .cell{background-image:var(--empty-img,none);background-size:cover;background-position:center;background-repeat:no-repeat}
+.floors .cell.taken{background-image:none}
+.floors .cell.ok{box-shadow:inset 0 0 0 9999px rgba(95,209,122,.35)}
+.floors .cell.bad{box-shadow:inset 0 0 0 9999px rgba(255,90,78,.35)}
+.room.shift{transition:transform .32s cubic-bezier(.2,.8,.2,1);z-index:3}
+@media (prefers-reduced-motion:reduce){.room.shift{transition:none}}
+/* remove-floor button: red round button with a white minus at the left edge of the floor, only on hover */
+.floors .floor{position:relative}
+.fdel{position:absolute;left:-17px;top:50%;transform:translateY(-50%);z-index:8;width:34px;min-width:0;height:34px;padding:0;border:0;border-radius:50%;
+  background:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%2240%25%22%20cy%3D%2232%25%22%20r%3D%2270%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff8a7a%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23e8382a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a81c12%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22w%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9dde3%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2246%22%20fill%3D%22%232a0804%22/%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2241%22%20fill%3D%22url%28%23g%29%22/%3E%3Cellipse%20cx%3D%2244%22%20cy%3D%2227%22%20rx%3D%2224%22%20ry%3D%2211%22%20fill%3D%22%23fff%22%20opacity%3D%22.3%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2241%22%20width%3D%2256%22%20height%3D%2218%22%20rx%3D%223%22%20fill%3D%22url%28%23w%29%22%20stroke%3D%22%235a0f08%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') center/contain no-repeat;font-size:0;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
+.fdel:hover{background:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%2240%25%22%20cy%3D%2232%25%22%20r%3D%2270%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff8a7a%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23e8382a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a81c12%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22w%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9dde3%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2246%22%20fill%3D%22%232a0804%22/%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2241%22%20fill%3D%22url%28%23g%29%22/%3E%3Cellipse%20cx%3D%2244%22%20cy%3D%2227%22%20rx%3D%2224%22%20ry%3D%2211%22%20fill%3D%22%23fff%22%20opacity%3D%22.3%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2241%22%20width%3D%2256%22%20height%3D%2218%22%20rx%3D%223%22%20fill%3D%22url%28%23w%29%22%20stroke%3D%22%235a0f08%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') center/contain no-repeat;transform:translateY(-50%) scale(1.08)}
+.fdel.armed{width:auto;padding:0 12px;border-radius:17px;background:#d8301f;color:#fff;font-size:12px;font-weight:700;border:2px solid #2a0804}
+/* admin panel */
+.admin{position:fixed;inset:0;z-index:80;background:rgba(10,7,5,.72);display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;
+  padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.admin-box{width:min(1180px,100%);background:var(--panel);border:3px solid var(--ink);border-radius:14px;box-shadow:6px 6px 0 var(--ink);padding:18px;display:flex;flex-direction:column;gap:12px}
+.admin-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.admin-head h2{font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:22px}
+.admin-list{display:flex;flex-direction:column;gap:8px}
+.ad-row{display:grid;grid-template-columns:150px minmax(150px,1fr) auto 70px 120px minmax(180px,1.4fr) auto;gap:10px;align-items:center;background:var(--panel-2);border:2px solid var(--ink);border-radius:10px;padding:8px}
+.ad-thumb{width:150px;aspect-ratio:542/305;position:relative;overflow:hidden;background:var(--panel);border-radius:6px;display:grid;place-items:center;cursor:pointer}
+.ad-thumb.w2{aspect-ratio:1084/305}.ad-thumb.w3{aspect-ratio:1626/305}.ad-thumb.w4{aspect-ratio:2168/305}
+.ad-thumb svg{width:40%;height:auto}
+.ad-thumb img.pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ad-thumb input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ad-thumb .ad-hint{position:absolute;left:0;right:0;bottom:0;background:rgba(22,18,15,.75);font-size:10.5px;text-align:center;padding:2px;color:var(--paper)}
+.ad-row label{font-size:11px}
+.ad-seg{display:inline-flex;border:2px solid var(--ink);border-radius:8px;overflow:hidden}
+.ad-seg button{border:0;background:var(--panel);color:var(--paper);width:32px;height:32px;font-weight:700}
+.ad-seg button.on{background:var(--hero);color:var(--hero-ink)}
+.ad-row textarea{font-family:inherit;font-size:12.5px;height:52px}
+.ad-del{color:var(--bad)}
+.ad-del.armed{background:var(--bad);color:#fff}
+.ad-tag{font-size:10.5px;color:var(--hint)}
+@media (max-width:900px){.ad-row{grid-template-columns:120px 1fr}.ad-thumb{width:120px}.ad-row>.ad-wide{grid-column:1/-1}}
+.pal-item .icon-btn,#sEdit,.typepanel{display:none!important}
+
+/* red X on a placed room: shows on hover, removes the room */
+.floors .room .rdel{position:absolute;top:8px;right:8px;z-index:9;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%2240%25%22%20cy%3D%2232%25%22%20r%3D%2270%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff8a7a%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23e8382a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a81c12%22%2F%3E%3C%2FradialGradient%3E%3ClinearGradient%20id%3D%22w%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9dde3%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2246%22%20fill%3D%22%232a0804%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2241%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cellipse%20cx%3D%2244%22%20cy%3D%2227%22%20rx%3D%2224%22%20ry%3D%2211%22%20fill%3D%22%23fff%22%20opacity%3D%22.3%22%2F%3E%3Cpath%20d%3D%22M42%2024h16v18h18v16H58v18H42V58H24V42h18z%22%20transform%3D%22rotate%2845%2050%2050%29%22%20fill%3D%22url%28%23w%29%22%20stroke%3D%22%235a0f08%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E') center/contain no-repeat;cursor:pointer;
+  opacity:0;transform:scale(.85);transition:opacity .15s,transform .15s;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
+.floors .room:hover .rdel,.floors .room:focus-within .rdel{opacity:1;transform:scale(1)}
+.floors .room .rdel:hover{transform:scale(1.1)}
+@media (hover:none){.floors .room .rdel{opacity:.9;transform:none}}
+body.dragging .floors .room .rdel{display:none}
+
+/* rooms drawer: bigger cards, picture on top, name under it */
+.side-l .pal-item{width:210px;flex-direction:column;align-items:stretch;gap:6px;padding:6px}
+.side-l .pal-ico{width:100%;height:auto;aspect-ratio:542/305;border-radius:6px}
+.side-l .pal-ico svg{width:46%;height:auto}
+.side-l .pal-ico img.pic{object-position:0% 50%}
+.side-l .pal-name{-webkit-line-clamp:1;display:block;white-space:nowrap;text-overflow:ellipsis}
+@media (max-width:600px){.side-l .pal-item{width:170px}}
+body.tray-open .scroller{padding-bottom:280px!important}
+
+/* rooms that reached their limit are hidden from the drawer */
+.side-l .pal-item.full{display:none}
+.pal-done{align-self:center;color:var(--hint);font-size:13px;padding:0 12px;white-space:nowrap}
+
+/* drawer arrows and mouse-wheel scrolling */
+.palwrap{position:relative;flex:1;min-width:0;display:flex}
+.palwrap .palette{flex:1;scroll-behavior:smooth}
+.palarrow{position:absolute;top:50%;z-index:3;width:40px;height:40px;margin-top:-23px;border-radius:50%;border:2px solid var(--ink);background:var(--hero);color:var(--hero-ink);
+  display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:opacity .2s,transform .15s}
+.palarrow:hover{transform:scale(1.08)}
+.palarrow svg{width:20px;height:20px}
+.palarrow.l{left:4px}.palarrow.r{right:4px}
+.palarrow[disabled]{opacity:0;pointer-events:none}
+
+/* no placeholder flash on reload: drawn icons and the drawn header only show if the real picture is missing */
+.room .art:has(img.pic) svg,.pal-ico:has(img.pic) svg{display:none}
+.pal-ico:has(img.pic){background:var(--panel-2)!important}
+.topside.loading{height:min(480px,30vw);background:#16120f}
+.topside.loading>svg{display:none}
+
+/* add-floor button: big glossy orange pill so it can't be missed */
+.addfloor{display:flex;align-items:center;gap:10px;margin:22px auto 0;padding:10px 26px 10px 12px;border:3px solid #2a1400;border-radius:999px;
+  background:linear-gradient(#ffc260,#ff8a1a 55%,#d45a00);color:#fff;font:inherit;font-size:17px;font-weight:800;letter-spacing:.02em;text-shadow:0 2px 0 #7a3300;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 5px 0 #2a1400,0 10px 22px rgba(0,0,0,.55);cursor:pointer;transition:transform .12s,box-shadow .12s,filter .12s}
+.addfloor:hover{background:linear-gradient(#ffc260,#ff8a1a 55%,#d45a00);filter:brightness(1.08);transform:translateY(-2px);box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 7px 0 #2a1400,0 14px 26px rgba(0,0,0,.6)}
+.addfloor:active{transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 2px 0 #2a1400,0 6px 12px rgba(0,0,0,.5)}
+.addfloor .plus{width:30px;height:30px;border-radius:50%;background:#fff;color:#d45a00;display:grid;place-items:center;font-size:24px;line-height:1;text-shadow:none;box-shadow:inset 0 -2px 0 #d9dde3,0 0 0 2px #7a3300}
+
+/* share fields: read-only, copy icon on the left, green check after copying */
+.sharef{margin-top:10px}
+.sharel{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--hint);margin-bottom:4px}
+.copyrow{display:flex;align-items:stretch;border:2px solid var(--ink);border-radius:8px;background:rgba(0,0,0,.25);overflow:visible}
+.copyrow input,.copyrow textarea{flex:1;min-width:0;border:0!important;background:transparent!important;color:var(--hint);font:12px/1.4 ui-monospace,Consolas,monospace;padding:8px 10px;resize:none;outline:none;cursor:default;box-shadow:none!important}
+.copyrow textarea{word-break:break-all;overflow:hidden}
+.cpy{position:relative;flex:none;width:38px;border:0;border-right:2px solid var(--ink);background:var(--panel-2);color:var(--paper);display:grid;place-items:center;cursor:pointer;padding:0;border-radius:6px 0 0 6px}
+.cpy:hover{background:var(--panel-line);color:var(--hero)}
+.cpy svg{width:18px;height:18px}
+.cpy.ok{color:#3ddc84}
+.cpy[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);z-index:5;pointer-events:none}
+.cpy.ok[data-tip]:hover::after{content:"Копирано!";color:#3ddc84}
+html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
+
+/* variant tabs: red x to delete (second click confirms), double-click name to rename */
+.tabw{position:relative;display:inline-flex}
+.tabx{position:absolute;top:-8px;right:-8px;z-index:2;min-width:20px;height:20px;padding:0 5px;border-radius:10px;border:2px solid #2a0804;background:#e8382a;color:#fff;font-size:14px;font-weight:800;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s;display:grid;place-items:center}
+.tabw:hover .tabx,.tabx:focus-visible,.tabx.armed{opacity:1}
+.tabx.armed{font-size:11px;padding:0 7px}
+@media (hover:none){.tabx{opacity:.9}}
+.tabx[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);pointer-events:none}
+.tabedit{width:150px;font:inherit;font-size:13px;font-weight:700;padding:5px 10px;border:2px solid var(--hero);border-radius:9px;background:var(--panel-2);color:var(--paper)}
+
+/* ===== cartoon settings drawer: soft blobs, few borders, one accent ===== */
+#drawer{top:10px;right:10px;bottom:10px;width:min(340px,calc(100vw - 20px));background:#2b231d;border:0;box-shadow:0 18px 50px rgba(0,0,0,.6),inset 0 0 0 2px rgba(255,255,255,.04);
+  border-radius:34px 26px 30px 38px / 28px 36px 26px 32px;padding:18px 16px;gap:12px!important;transform:translateX(calc(100% + 30px));transition:transform .5s cubic-bezier(.34,1.4,.64,1)}
+#drawer.open{transform:none}
+#drawer .drawer-head h2{font-size:22px!important;color:#fff4dc!important;letter-spacing:.02em}
+#drawer .drawer-head .btn{width:38px;height:38px;padding:0;border-radius:50% 46% 52% 48%;font-size:0;background:rgba(255,255,255,.08);border:0;box-shadow:0 3px 0 rgba(0,0,0,.35);position:relative}
+#drawer .drawer-head .btn::before{content:"×";font-size:24px;line-height:38px;color:#fff4dc}
+#drawer .drawer-head .btn:hover{background:#e8382a;transform:rotate(90deg);transition:transform .25s,background .2s}
+#drawer .panel{background:rgba(255,255,255,.045);border:0;box-shadow:none;padding:14px 14px 16px;gap:10px}
+#drawer .panel:nth-of-type(odd){border-radius:24px 18px 26px 16px / 18px 26px 16px 24px}
+#drawer .panel:nth-of-type(even){border-radius:18px 26px 16px 24px / 26px 16px 24px 18px}
+#drawer .panel h2{color:#d9c7a8;font-size:13px;letter-spacing:.08em}
+#drawer .btn{border:0;background:rgba(255,255,255,.09);color:#fff4dc;border-radius:16px 14px 17px 13px;box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .15s cubic-bezier(.34,1.8,.64,1),background .15s}
+#drawer .btn:hover{background:rgba(255,255,255,.15);transform:translateY(-2px) rotate(-1deg)}
+#drawer .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+#drawer .btn.danger,#drawer #clearBtn{color:#ff8a7a;background:rgba(232,56,42,.12)}
+#drawer .btn.danger:hover,#drawer #clearBtn:hover{background:#e8382a;color:#fff}
+#drawer .step{border:0;box-shadow:none;background:rgba(0,0,0,.22);border-radius:22px 18px 20px 24px;padding:4px}
+#drawer .step span{color:#d9c7a8}
+#drawer .step b{color:#fff4dc;font-size:18px}
+#drawer .step button{width:34px;height:34px;border-radius:50% 45% 52% 48%;background:rgba(255,255,255,.09);color:#fff4dc;box-shadow:0 2px 0 rgba(0,0,0,.35);transition:transform .15s cubic-bezier(.34,1.8,.64,1)}
+#drawer .step button:hover{background:var(--hero);color:var(--hero-ink);transform:scale(1.12) rotate(-6deg)}
+#drawer .tabs .tab{border:0;background:rgba(255,255,255,.09);color:#d9c7a8;border-radius:16px 13px 17px 12px;box-shadow:0 3px 0 rgba(0,0,0,.3);transition:transform .15s cubic-bezier(.34,1.8,.64,1)}
+#drawer .tabs .tab:hover{transform:translateY(-2px) rotate(-1.5deg)}
+#drawer .tabs .tab.on{background:var(--hero);color:var(--hero-ink)}
+#drawer .tabs .tab.add{background:transparent;box-shadow:none;border:2px dashed rgba(255,255,255,.18)}
+#drawer .warn li{background:rgba(232,56,42,.1);border-left:5px solid #e8382a;border-radius:6px 16px 14px 6px;color:#ffe2dc}
+#drawer .warn li.good{background:rgba(47,181,106,.12);border-left-color:#2fb56a;color:#d8f7e3}
+#drawer input[type=text],#drawer textarea{border:0;background:rgba(0,0,0,.25);border-radius:14px 12px 15px 11px;color:#fff4dc;padding:10px 12px}
+#drawer .hint{color:#a8977d}
+#drawer.open .panel{animation:pop .45s cubic-bezier(.34,1.5,.64,1) both}
+#drawer.open .panel:nth-of-type(2){animation-delay:.05s}#drawer.open .panel:nth-of-type(3){animation-delay:.1s}#drawer.open .panel:nth-of-type(4){animation-delay:.15s}#drawer.open .panel:nth-of-type(5){animation-delay:.2s}#drawer.open .panel:nth-of-type(6){animation-delay:.25s}
+@keyframes pop{from{opacity:0;transform:translateX(24px) scale(.96)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#drawer,#drawer.open .panel{transition:none;animation:none}}
+/* share button + popover */
+.fab .iconbtn{width:42px;padding:0;display:grid;place-items:center;position:relative}
+.fab .iconbtn svg{width:20px;height:20px}
+.fab .iconbtn[aria-expanded="true"]{background:var(--hero);color:var(--hero-ink)}
+.fab .iconbtn[data-tip]:hover::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);right:0;white-space:nowrap;background:#16120f;color:var(--paper);font-size:12px;font-weight:600;padding:5px 8px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);pointer-events:none}
+.fab .iconbtn[aria-expanded="true"]::after{display:none}
+.sharepop{position:fixed;z-index:36;top:calc(64px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));width:min(380px,calc(100vw - 24px));background:#2b231d;color:var(--paper);
+  border-radius:30px 22px 28px 34px / 24px 32px 22px 28px;padding:16px 18px 18px;box-shadow:0 18px 50px rgba(0,0,0,.65),inset 0 0 0 2px rgba(255,255,255,.04);transform-origin:top right;animation:popin .4s cubic-bezier(.34,1.6,.64,1)}
+.sharepop[hidden]{display:none!important}
+@keyframes popin{from{opacity:0;transform:scale(.8) rotate(2deg)}to{opacity:1;transform:none}}
+.sharepop-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sharepop h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:20px;color:#fff4dc}
+.sharepop .hint{color:#a8977d;margin:4px 0 0}
+.xbtn{width:34px;height:34px;border:0;border-radius:50% 46% 52% 48%;background:rgba(255,255,255,.08);color:#fff4dc;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .25s,background .2s}
+.xbtn:hover{background:#e8382a;transform:rotate(90deg)}
+.sharepop .copyrow{border:0;background:rgba(0,0,0,.28);border-radius:14px 12px 15px 11px}
+.sharepop .cpy{border-right:0;background:rgba(255,255,255,.09);border-radius:13px 0 0 11px}
+.sharepop .sharel{color:#d9c7a8}
+
+.helppop{width:min(420px,calc(100vw - 24px));max-height:calc(100vh - 90px);overflow-y:auto}
+.helpbody{font-size:13.5px;line-height:1.5;color:#e9dcc4}
+.helpbody p{margin:6px 0 4px;color:#a8977d}
+.helpbody h4{margin:14px 0 6px;font-family:var(--f-display);font-weight:400;font-size:15px;color:var(--hero)}
+.helpbody ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.helpbody b{color:#fff4dc}
+
+/* footer credit */
+.credit{margin:48px auto 8px;text-align:center;font-size:13px;color:rgba(255,240,220,.6);text-shadow:0 1px 2px rgba(0,0,0,.8);letter-spacing:.03em}
+.credit a{color:var(--hero);font-weight:800;text-decoration:none;border-bottom:2px dotted rgba(255,204,46,.6);padding-bottom:1px;transition:color .15s,border-color .15s}
+.credit a:hover{color:#fff4dc;border-bottom-color:#fff4dc}
+
+/* top-right buttons: dark cartoon bubbles with a hand-drawn white outline; share is the yellow accent */
+.fab{gap:10px}
+.fab .btn{background:#1d1712;color:#fff4dc;border:solid #fff4dc;border-width:2px 3px 4px 2.5px;border-radius:18px 14px 20px 13px / 14px 20px 13px 18px;
+  box-shadow:0 4px 0 rgba(0,0,0,.55),0 8px 18px rgba(0,0,0,.45);font-weight:800;padding:8px 16px;transition:transform .18s cubic-bezier(.34,1.8,.64,1),background .15s,color .15s}
+.fab .btn:nth-child(2n){border-width:3px 2px 2.5px 4px;border-radius:14px 19px 13px 20px / 20px 13px 18px 14px}
+.fab .btn:hover{background:#2c231b;transform:translateY(-3px) rotate(-2deg)}
+.fab .btn:nth-child(2n):hover{transform:translateY(-3px) rotate(2deg)}
+.fab .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.55)}
+.fab .btn[aria-pressed="true"],.fab #helpBtn[aria-expanded="true"]{background:#fff4dc;color:#1d1712}
+.fab .iconbtn{width:44px;height:42px;padding:0}
+.fab #shareBtn{background:#FBB437;color:#1d1712}
+.fab #shareBtn:hover{background:#ffc75e}
+.fab #shareBtn[aria-expanded="true"]{background:#fff4dc;color:#1d1712}
+
+/* live stats above the credit */
+.credit .live{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;color:rgba(255,240,220,.75)}
+.credit .live[hidden]{display:none}
+.credit .live b{color:#fff4dc;font-weight:800;margin-right:4px}
+.credit .live .sep{width:4px;height:4px;border-radius:50%;background:rgba(255,240,220,.4)}
+.credit .live .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3ddc84;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:livepulse 1.8s infinite}
+@keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(61,220,132,.6)}70%{box-shadow:0 0 0 8px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
+@media (prefers-reduced-motion:reduce){.credit .live .dot{animation:none}}
+
+/* new floor: unfolds down with a bounce, cells pop in one by one, a puff of dust, the button squishes */
+.floor.fresh{transform-origin:50% 0;animation:floorDrop 1.2s cubic-bezier(.34,1.45,.64,1) both}
+@keyframes floorDrop{0%{opacity:0;transform:translateY(-30px) scaleY(.15)}60%{opacity:1}100%{opacity:1;transform:none}}
+.floor.fresh .cell,.floor.fresh .shaft{animation:cellPop .8s cubic-bezier(.34,1.7,.64,1) both;animation-delay:calc(.4s + var(--i,0) * .13s)}
+@keyframes cellPop{0%{opacity:0;transform:scale(.55) translateY(14px)}100%{opacity:1;transform:none}}
+.dust{position:absolute;z-index:6;width:var(--s);height:var(--s);border-radius:50%;background:radial-gradient(circle at 35% 35%,#f3dfc0,#b38a63 70%);pointer-events:none;opacity:0;
+  animation:dustFly var(--d) cubic-bezier(.2,.7,.3,1) forwards;animation-delay:var(--w)}
+@keyframes dustFly{0%{opacity:.95;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4)}}
+.addfloor.squish{animation:squish .6s cubic-bezier(.34,1.8,.64,1)}
+@keyframes squish{0%{transform:none}30%{transform:scale(1.15,.8)}60%{transform:scale(.92,1.08)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.floor.fresh,.floor.fresh .cell,.floor.fresh .shaft,.addfloor.squish{animation:none}.dust{display:none}}
+
+/* removing a floor: rooms and cells sink away one by one (right to left), then the row folds shut with a puff */
+.floor.leaving{pointer-events:none;overflow:hidden}
+.floor.leaving .fdel{display:none}
+.floor.leaving .cell,.floor.leaving .shaft,.floor.leaving .room{animation:cellSink .6s cubic-bezier(.55,-.4,.7,.6) both;animation-delay:calc(var(--j,0) * .11s)}
+@keyframes cellSink{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(26px) scale(.5) rotate(var(--r,0deg))}}
+
+.fab .langbtn{font-size:13px;font-weight:900;letter-spacing:.04em}
+
+/* logo top-left in the button bar; height set in the admin (logoH) */
+.toplogo{position:fixed;z-index:35;top:calc(12px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));height:var(--logo-h,56px);width:auto;max-width:45vw;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));pointer-events:none}
+
+/* left group: logo + language button */
+.fab.fab-left{right:auto;left:max(16px,env(safe-area-inset-left,0px));align-items:center;gap:14px}
+.fab-left .toplogo{position:static;max-width:40vw}
+.fab-left .iconbtn[data-tip]:hover::after{right:auto;left:0}
+
+.scroller{position:relative;z-index:1;padding-top:5px!important}
+
+/* digging states: soil (invisible), shovel cell, fill-back button */
+.floors .cell.dirt{visibility:hidden;pointer-events:none}
+.floors .cell.dig{background-image:var(--dig-img,none);background-size:cover;background-position:center;background-repeat:no-repeat;cursor:pointer}
+.floors .cell.dig::after{display:none!important}
+.floors .cell .bury{position:absolute;left:6px;top:6px;z-index:5;width:26px;height:26px;border-radius:50%;border:2px solid #fff4dc;background:#1d1712;color:#fff4dc;font-size:14px;font-weight:900;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s;padding:0}
+.floors .cell:hover .bury{opacity:1}
+@media (hover:none){.floors .cell .bury{opacity:.8}}
+body.dragging .floors .cell .bury{display:none}
+
+
+/* search in the rooms drawer: a small tab on the drawer's top edge, opens into a field */
+.palsearch{position:absolute;left:16px;top:-34px;height:34px;width:52px;z-index:2;border:2px solid var(--ink);border-bottom:0;border-radius:12px 12px 0 0;background:var(--panel-2);
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap;gap:0;align-items:center;overflow:hidden;cursor:pointer;transition:width .3s cubic-bezier(.34,1.4,.64,1);margin:0}
+.palsearch svg{flex:none;width:18px;height:18px;margin:0 6px 0 15px;color:#fff4dc;pointer-events:none}
+.palsearch input{flex:1;min-width:0;height:100%;width:auto!important;box-shadow:none!important;font:inherit;font-size:13px;color:#fff4dc;background:transparent;border:0;outline:none;padding:0 10px 0 0;opacity:0;transition:opacity .2s}
+.palsearch.open{width:230px;cursor:text}
+.palsearch.open input{opacity:1}
+.palsearch:hover{background:var(--panel-line)}
+.pal-none{align-self:center;color:var(--hint);font-size:13px;padding:0 12px;white-space:nowrap}
+.side-l .pal-item.nomatch{display:none}
+
+.side-l .palwrap{min-height:172px}
+@media (max-width:600px){.side-l .palwrap{min-height:150px}}
+</style>
+</head>
+<body>
+
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="fab fab-left">
+  <img class="toplogo" id="topLogo" alt="Hideout Planner" src="images/logo.png" onerror="this.remove()">
+  <button class="btn iconbtn langbtn" id="langBtn" type="button"></button>
+</div>
+<div class="fab">
+  <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
+  <button class="btn iconbtn" id="shareBtn" type="button" aria-label="Сподели подредбата" aria-expanded="false" aria-controls="sharePop" data-tip="Сподели подредбата"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+  <button class="btn" id="trayBtn" type="button" aria-pressed="false">Стаи</button>
+  <button class="btn" id="gearBtn" type="button" aria-controls="drawer">Настройки</button>
+</div>
+<div class="sharepop helppop" id="helpPop" hidden role="dialog" aria-label="Как се ползва">
+  <div class="sharepop-head"><h3>Как се ползва</h3><button class="xbtn" type="button" id="helpClose" aria-label="Затвори">×</button></div>
+  <div class="helpbody">
+    <p>Подреждаш скривалището си от Hero Zero, пробваш варианти и ги пращаш на отбора. Всичко се пази само в този браузър.</p>
+    <h4>Стаи</h4>
+    <ul>
+      <li><b>Сложи:</b> посочи празна клетка и натисни оранжевия плюс. Отдолу излизат стаите. Цъкни или влачи стая.</li>
+      <li><b>Премести:</b> влачи стаята. Зелено значи може, червено значи не. Върху друга стая двете се разменят.</li>
+      <li><b>Махни:</b> посочи стаята и натисни червеното Х в ъгъла.</li>
+      <li>Стая с достигнат лимит изчезва от чекмеджето. Посочи стая, за да видиш какво прави.</li>
+    </ul>
+    <h4>Етажи и генератори</h4>
+    <ul>
+      <li><b>Добави етаж</b> е оранжевият бутон отдолу. Червеният минус вляво маха етажа заедно със стаите.</li>
+      <li>Генераторът зарежда стаите вляво и вдясно. Тюркоазеният ток показва, че стига.</li>
+      <li>В Настройки → Обобщение проблемите са в червено.</li>
+    </ul>
+    <h4>Варианти и споделяне</h4>
+    <ul>
+      <li>Настройки → Варианти: „+ Копие“ прави нов вариант. Двоен клик го преименува, Х го трие.</li>
+      <li>Иконката за споделяне горе дава линк и код. Който отвори линка, вижда подредбата ти.</li>
+      <li>Настройки → Зареди подредба: постави линк или код от съотборник.</li>
+    </ul>
+  </div>
+</div>
+<div class="sharepop" id="sharePop" hidden role="dialog" aria-label="Сподели подредбата">
+  <div class="sharepop-head"><h3>Сподели подредбата</h3><button class="xbtn" type="button" id="shareClose" aria-label="Затвори">×</button></div>
+        <p class="hint">Подредбата се пази сама в този браузър. Прати линка на съотборник и той ще види точно нея. Кодът е същото, само по-кратко, за да си го пазиш.</p>
+        <div class="sharef"><span class="sharel">Линк</span><div class="copyrow"><button class="cpy" type="button" data-copy="shareLink" data-tip="Копирай линка" aria-label="Копирай линка"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg></button><input type="text" id="shareLink" readonly tabindex="-1" aria-label="Линк към подредбата"></div></div>
+        <div class="sharef"><span class="sharel">Код</span><div class="copyrow"><button class="cpy" type="button" data-copy="shareCode" data-tip="Копирай кода" aria-label="Копирай кода"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg></button><textarea id="shareCode" readonly tabindex="-1" rows="2" aria-label="Код на подредбата"></textarea></div></div>
+      </div>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Hideout Planner</h1>
+      <p class="sub">Неофициален планер за скривалището в Hero Zero. Влачи стаи върху нивата, мести ги, пускай ги в кошчето. Генераторът пуска ток към стаите вляво и вдясно.</p>
+    </div>
+    <div class="toolbar">
+      <div class="step"><span>Нива</span><button id="fMinus" aria-label="Махни ниво">−</button><b id="fVal">4</b><button id="fPlus" aria-label="Добави ниво">+</button></div>
+      <div class="step" hidden><span>Слотове</span><button id="cMinus" aria-label="По-малко слотове">−</button><b id="cVal">5</b><button id="cPlus" aria-label="Повече слотове">+</button></div>
+      <button class="btn danger" id="clearBtn">Махни всички стаи</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="panel side-l">
+      <button class="trayclose" id="trayClose" type="button" aria-label="Скрий стаите"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <h2>Стаи</h2>
+      <p class="hint">Хвани и пусни върху свободен слот. Моливът сменя име, размер и лимит.</p>
+      <div class="palette" id="palette"></div>
+      <div class="trash" id="trash">Пусни тук, за да махнеш стая</div>
+    </aside>
+
+    <section class="stage">
+      <div class="tabs" id="tabs"></div>
+      <div class="bunker">
+        <div class="topside loading" id="topside">
+          <div class="scene-ctl">
+            <span class="btn filebtn">Картинка горе<input type="file" id="topFile" accept="image/*" aria-label="Картинка за горната част"></span>
+            <button class="btn" type="button" id="topNo" hidden>Махни</button>
+          </div>
+          <svg viewBox="0 0 800 58" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <rect x="0" y="44" width="800" height="14" fill="#4f8a3a"/>
+            <path d="M0 44h800" stroke="#16120f" stroke-width="3"/>
+            <g stroke="#16120f" stroke-width="3" stroke-linejoin="round">
+              <path d="M330 44V22l40-16 40 16v22z" fill="#e8e2d3"/>
+              <path d="M322 24l48-20 48 20" fill="none"/>
+              <rect x="357" y="28" width="26" height="16" fill="#3f2e21"/>
+              <rect x="338" y="24" width="12" height="10" fill="#9fd3ff"/>
+              <rect x="390" y="24" width="12" height="10" fill="#9fd3ff"/>
+              <path d="M640 44V30h50v14" fill="#ef4b5a"/>
+              <circle cx="120" cy="34" r="12" fill="#3f8a2e"/><path d="M120 46v-6" />
+              <circle cx="560" cy="36" r="9" fill="#3f8a2e"/>
+            </g>
+          </svg>
+        </div>
+        <div class="scroller" id="scroller"><div class="floors" id="floors"></div><footer class="credit"><div class="live" id="liveStats" hidden><span><b id="statVisits">0</b> посещения</span><span class="sep"></span><span><i class="dot" aria-hidden="true"></i><b id="statOnline">1</b> онлайн сега</span></div>Built with ☕ by <a href="https://www.behance.net/sppenev" target="_blank" rel="noopener" title="Портфолио в Behance">eLeS</a> · 2026</footer></div>
+        <div class="scene-ctl bg-ctl">
+          <span class="btn filebtn">Фон под земята<input type="file" id="bgFile" accept="image/*" aria-label="Картинка за фона под земята"></span>
+          <button class="btn" type="button" id="bgNo" hidden>Махни</button>
+        </div>
+      </div>
+      <div id="status" aria-live="polite"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <aside class="side-r drawer" id="drawer" style="display:flex;flex-direction:column;gap:14px;min-width:0" aria-label="Обобщение и настройки">
+      <div class="drawer-head"><h2 style="font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:16px">Настройки</h2><button class="btn" id="drawerClose" type="button">Затвори</button></div>
+      <div class="panel">
+        <h2>Обобщение</h2>
+        <div class="kpis" hidden>
+          <div class="kpi"><small>Заети слотове</small><b id="kSlots">0/0</b></div>
+          <div class="kpi"><small>Стаи</small><b id="kRooms">0</b></div>
+          <div class="kpi"><small>Генератори</small><b id="kGens">0</b></div>
+          <div class="kpi"><small>Заредени</small><b id="kBoost">0</b></div>
+        </div>
+        <ul class="warn" id="warn"></ul>
+      </div>
+
+      <div class="panel" hidden>
+        <h2>Избрана стая</h2>
+        <div class="sel-info" id="selInfo"></div>
+      </div>
+
+      <div class="panel typepanel">
+        <h2 id="formTitle">Нова стая</h2>
+        <form id="typeForm">
+          <label>Име<input type="text" id="tName" maxlength="32" placeholder="напр. Склад за трофеи" required></label>
+          <div class="two">
+            <label>Размер (слота)<select id="tSize"><option>1</option><option>2</option><option>3</option></select></label>
+            <label>Лимит (бр.)<input type="number" id="tLimit" min="1" max="20" value="1"></label>
+          </div>
+          <label>Вид<select id="tCat"></select></label>
+          <label>Рисунка по подразбиране<select id="tIcon"></select></label>
+          <div class="imgrow">
+            <div class="imgprev" id="tPrev"></div>
+            <div class="btns">
+              <span class="btn filebtn">Своя картинка<input type="file" id="tFile" accept="image/*" aria-label="Избери своя картинка"></span>
+              <button class="btn" type="button" id="tNoImg">Махни</button>
+            </div>
+          </div>
+          <label>Описание (показва се при посочване)<textarea id="tDesc" maxlength="240" style="font-family:inherit;font-size:13px;height:64px" placeholder="За какво служи стаята"></textarea></label>
+          <label class="row"><input type="checkbox" id="tBoost"> Генераторът я зарежда</label>
+          <div class="btns">
+            <button class="btn primary" type="submit" id="tSubmit">Създай</button>
+            <button class="btn" type="button" id="tCancel" hidden>Отказ</button>
+            <button class="btn danger" type="button" id="tDelete" hidden>Изтрий типа</button>
+            <button class="btn" type="button" id="tReset" hidden>По подразбиране</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Зареди подредба</h2>
+        <p class="hint">Постави линк или код от съотборник. Подредбата идва като нов вариант, твоите не се пипат.</p>
+        <input type="text" id="io" aria-label="Код или линк на подредба" placeholder="Постави код или линк тук" autocomplete="off" spellcheck="false">
+        <div class="btns"><button class="btn" id="loadBtn" type="button">Зареди</button></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* language: ?lang=en|bg in the address wins, then the saved choice, default Bulgarian */
+(function(){var q=(location.search.match(/[?&]lang=(en|bg)/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
+  /* no choice yet: Bulgarian browsers get Bulgarian, everyone else English */
+  if(!L){var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);L=langs.some(function(x){return /^bg\b/i.test(x||'')})?'bg':'en'}
+  if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L==='en'?'en':'bg';document.documentElement.lang=window.HZ_LANG})();
+</script>
+<script src="rooms.js"></script>
+<script>if(window.ROOMS_CONFIG&&+window.ROOMS_CONFIG.logoH)document.documentElement.style.setProperty('--logo-h',(+window.ROOMS_CONFIG.logoH)+'px');
+</script>
+<script src="firebase-config.js"></script>
+<script>
+/* original room illustrations, drawn for this planner */
+const K='stroke="#16120f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"';
+const ICONS={
+ base:`<svg viewBox="0 0 48 48"><g ${K}><path d="M6 42V18L24 6l18 12v24z" fill="#3f7fd9"/><rect x="17" y="26" width="14" height="16" fill="#ffd23f"/><path d="M24 6V1M24 1h8v5h-8" fill="#ef4b5a"/><rect x="10" y="22" width="6" height="6" fill="#9fd3ff"/><rect x="32" y="22" width="6" height="6" fill="#9fd3ff"/></g></svg>`,
+ gen:`<svg viewBox="0 0 48 48"><g ${K}><rect x="8" y="10" width="32" height="32" rx="5" fill="#555"/><circle cx="24" cy="26" r="11" fill="#ffd23f"/><path d="M26 16l-7 11h6l-3 10 8-12h-6z" fill="#16120f"/><path d="M14 6v4M34 6v4"/></g></svg>`,
+ glue:`<svg viewBox="0 0 48 48"><g ${K}><path d="M14 16h20v24a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="#fff8e8"/><rect x="18" y="8" width="12" height="8" fill="#ff9f1c"/><path d="M21 4h6v4h-6z" fill="#ef4b5a"/><path d="M14 26h20" /><path d="M20 30c0 4 8 4 8 0" fill="#ff9f1c"/><path d="M36 30v6a2 2 0 0 0 4 0c0-3-2-6-2-6z" fill="#ff9f1c"/></g></svg>`,
+ stone:`<svg viewBox="0 0 48 48"><g ${K}><path d="M10 42l4-18 6-6 4 10-2 14z" fill="#2ec4a6"/><path d="M22 42l2-24 7-10 6 14-3 20z" fill="#7ff0d6"/><path d="M33 42l2-12 6-4 2 16z" fill="#2ec4a6"/><path d="M4 42h40"/></g></svg>`,
+ xp:`<svg viewBox="0 0 48 48"><g ${K}><path d="M19 6h10M21 6v12L10 38a3 3 0 0 0 3 4h22a3 3 0 0 0 3-4L27 18V6" fill="#fff8e8"/><path d="M14 31h20l3 7a3 3 0 0 1-3 4H14a3 3 0 0 1-3-4z" fill="#9b72e8"/><circle cx="22" cy="35" r="2" fill="#fff"/><circle cx="28" cy="27" r="1.6" fill="#fff"/></g></svg>`,
+ work:`<svg viewBox="0 0 48 48"><g ${K}><circle cx="17" cy="30" r="10" fill="#8d99a6"/><circle cx="17" cy="30" r="4" fill="#fff8e8"/><path d="M28 20l12-12 4 4-12 12" fill="#ff9f1c"/><path d="M26 22l4 4" /><path d="M7 30h-3M17 20v-3M27 30h3M17 40v3"/></g></svg>`,
+ forge:`<svg viewBox="0 0 48 48"><g ${K}><path d="M6 18h30c0 6-4 9-10 9v5h6v8H14v-8h6v-5C12 27 6 24 6 18z" fill="#555"/><path d="M36 18l8-4" /><path d="M30 6l6 8M26 8l3 6" stroke="#ff9f1c"/></g></svg>`,
+ atk:`<svg viewBox="0 0 48 48"><g ${K}><rect x="10" y="14" width="24" height="22" rx="5" fill="#8d99a6"/><rect x="14" y="20" width="16" height="7" fill="#16120f"/><circle cx="18" cy="23.5" r="2" fill="#ef4b5a" stroke="none"/><circle cx="26" cy="23.5" r="2" fill="#ef4b5a" stroke="none"/><path d="M22 14V8"/><circle cx="22" cy="7" r="2" fill="#ef4b5a"/><path d="M36 26h8l-4-4M44 26l-4 4" stroke="#ef4b5a"/><path d="M14 36v6M30 36v6"/></g></svg>`,
+ def:`<svg viewBox="0 0 48 48"><g ${K}><path d="M24 4l16 6v12c0 10-7 17-16 22C15 39 8 32 8 22V10z" fill="#3f7fd9"/><rect x="16" y="16" width="16" height="13" rx="3" fill="#8d99a6"/><rect x="19" y="20" width="10" height="4" fill="#16120f"/><circle cx="21.5" cy="22" r="1.3" fill="#5fd17a" stroke="none"/><circle cx="26.5" cy="22" r="1.3" fill="#5fd17a" stroke="none"/></g></svg>`,
+ post:`<svg viewBox="0 0 48 48"><g ${K}><path d="M8 42h32l-4-12H12z" fill="#555"/><path d="M14 30a10 10 0 0 1 20 0" fill="#8d99a6"/><path d="M28 22l14-8" stroke-width="5"/><path d="M28 22l14-8" stroke="#8d99a6" stroke-width="2"/></g></svg>`,
+ store:`<svg viewBox="0 0 48 48"><g ${K}><rect x="6" y="26" width="16" height="16" fill="#c98a4a"/><rect x="26" y="26" width="16" height="16" fill="#c98a4a"/><rect x="16" y="10" width="16" height="16" fill="#e0a868"/><path d="M6 26l16 16M22 26L6 42M26 26l16 16M42 26L26 42M16 10l16 16M32 10L16 26"/></g></svg>`,
+ cbu:`<svg viewBox="0 0 48 48"><g ${K}><rect x="6" y="18" width="24" height="22" rx="5" fill="#8d99a6"/><rect x="10" y="24" width="16" height="6" fill="#16120f"/><path d="M38 40V12M30 20l8-8 8 8" stroke="#5fd17a" stroke-width="3.5"/></g></svg>`,
+ robot:`<svg viewBox="0 0 48 48"><g ${K}><rect x="12" y="20" width="24" height="18" rx="4" fill="#ffd23f"/><path d="M10 20a14 10 0 0 1 28 0z" fill="#ff9f1c"/><circle cx="19" cy="28" r="3" fill="#fff8e8"/><circle cx="29" cy="28" r="3" fill="#fff8e8"/><path d="M18 34h12M8 26H4M40 26h4"/><path d="M14 38v5M34 38v5"/></g></svg>`,
+ spec:`<svg viewBox="0 0 48 48"><g ${K}><ellipse cx="16" cy="38" rx="10" ry="4" fill="#ffd23f"/><path d="M6 32v6M26 32v6"/><ellipse cx="16" cy="32" rx="10" ry="4" fill="#ffd23f"/><ellipse cx="16" cy="26" rx="10" ry="4" fill="#ffd23f"/><path d="M28 22l6-8 5 5 6-10" fill="none" stroke="#5fd17a" stroke-width="3"/></g></svg>`,
+ trade:`<svg viewBox="0 0 48 48"><g ${K}><path d="M8 16h26l-6-6M8 16l0 0" fill="none" stroke-width="4" stroke="#ff9f1c"/><path d="M8 16h26l-6-6M34 16l-6 6" fill="none"/><path d="M40 32H14l6-6M14 32l6 6" fill="none"/><circle cx="8" cy="16" r="4" fill="#ff9f1c"/><circle cx="40" cy="32" r="4" fill="#2ec4a6"/></g></svg>`,
+ r42:`<svg viewBox="0 0 48 48"><g ${K}><rect x="10" y="6" width="28" height="38" rx="3" fill="#9b72e8"/><circle cx="32" cy="27" r="2" fill="#ffd23f"/><text x="22" y="24" text-anchor="middle" font-family="Rubik,sans-serif" font-weight="800" font-size="12" fill="#fff8e8" stroke="none">42</text></g></svg>`,
+ cyber:`<svg viewBox="0 0 48 48"><g ${K}><rect x="12" y="12" width="24" height="24" rx="3" fill="#2ec4a6"/><rect x="18" y="18" width="12" height="12" fill="#16120f"/><path d="M18 12V6M24 12V6M30 12V6M18 36v6M24 36v6M30 36v6M12 18H6M12 24H6M12 30H6M36 18h6M36 24h6M36 30h6"/></g></svg>`,
+ troph:`<svg viewBox="0 0 48 48"><g ${K}><path d="M14 6h20v10a10 10 0 0 1-20 0z" fill="#ffd23f"/><path d="M14 10H7c0 6 3 9 8 10M34 10h7c0 6-3 9-8 10" fill="none"/><path d="M24 26v8" /><rect x="15" y="34" width="18" height="8" fill="#c98a4a"/></g></svg>`,
+ club:`<svg viewBox="0 0 48 48"><g ${K}><path d="M12 22c0-9 6-14 14-14s12 5 12 12v8c0 5-4 8-8 8H18c-4 0-6-3-6-6z" fill="#ef4b5a"/><path d="M12 24c-5 0-6 8 0 8" fill="#ef4b5a"/><rect x="16" y="36" width="18" height="8" rx="2" fill="#fff8e8"/><path d="M22 18c4 0 8 2 8 6"/></g></svg>`,
+ bar:`<svg viewBox="0 0 48 48"><g ${K}><path d="M10 14h22v26a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="#ffb627"/><path d="M32 20h4a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-4" fill="none"/><path d="M8 14c0-5 4-8 8-6 2-4 8-4 10 0 4-2 8 1 8 6z" fill="#fff8e8"/></g></svg>`,
+ scout:`<svg viewBox="0 0 48 48"><g ${K}><circle cx="14" cy="32" r="9" fill="#555"/><circle cx="34" cy="32" r="9" fill="#555"/><circle cx="14" cy="32" r="5" fill="#9fd3ff"/><circle cx="34" cy="32" r="5" fill="#9fd3ff"/><path d="M10 24l4-14h6l2 14M38 24l-4-14h-6l-2 14" fill="#8d99a6"/><path d="M22 28h4"/></g></svg>`,
+ acad:`<svg viewBox="0 0 48 48"><g ${K}><path d="M24 8L2 18l22 10 22-10z" fill="#3f7fd9"/><path d="M12 23v10c0 4 6 7 12 7s12-3 12-7V23" fill="#3f7fd9"/><path d="M42 20v12"/><circle cx="42" cy="34" r="2" fill="#ffd23f"/></g></svg>`,
+ star:`<svg viewBox="0 0 48 48"><g ${K}><path d="M24 4l6 13 14 2-10 10 2 14-12-7-12 7 2-14L4 19l14-2z" fill="#ffd23f"/></g></svg>`,
+ box:`<svg viewBox="0 0 48 48"><g ${K}><path d="M6 16l18-9 18 9v18l-18 9-18-9z" fill="#c98a4a"/><path d="M6 16l18 9 18-9M24 25v18"/></g></svg>`,
+ heart:`<svg viewBox="0 0 48 48"><g ${K}><path d="M24 42S6 30 6 18a9 9 0 0 1 18-3 9 9 0 0 1 18 3c0 12-18 24-18 24z" fill="#ef4b5a"/></g></svg>`
+};
+const ICON_NAMES={base:'Сграда',gen:'Генератор',glue:'Туба',stone:'Кристали',xp:'Колба',work:'Зъбно колело',forge:'Наковалня',atk:'Атакуващ бот',def:'Щит с бот',post:'Кула',store:'Сандъци',cbu:'Бот със стрелка',robot:'Работен бот',spec:'Монети',trade:'Обмен',r42:'Врата 42',cyber:'Чип',troph:'Купа',club:'Ръкавица',bar:'Халба',scout:'Бинокъл',acad:'Шапка',star:'Звезда',box:'Кутия',heart:'Сърце'};
+/* electric current: a thin turquoise wavy line in the middle of the wall, tapered at both ends, with a soft glow; it wriggles in place */
+const ARC='<canvas aria-hidden="true"></canvas>';
+const ARCS=new WeakMap(),calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function wave(st){const pts=[];for(let i=0;i<=48;i++){const t=i/48;
+    pts.push({t,x:st.amp*Math.sin(2*Math.PI*st.k*t+st.ph)+st.amp*.45*Math.sin(2*Math.PI*st.k*2.3*t-st.ph*1.7)+(Math.random()-.5)*.8})}return pts}
+function drawLine(g,pts,y,len,cx,alpha){
+  const layers=[[6,'rgba(40,215,200,'+(.28*alpha)+')',10],[2.6,'rgba(110,240,225,'+(.9*alpha)+')',4],[1.1,'rgba(225,255,250,'+alpha+')',0]];
+  for(const [lw,col,blur] of layers){g.strokeStyle=col;g.shadowColor='#2fd6c6';g.shadowBlur=blur;g.lineCap='round';g.lineJoin='round';
+    for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],tm=(a.t+b.t)/2;g.lineWidth=Math.max(.3,lw*Math.pow(Math.sin(Math.PI*tm),.7));
+      g.beginPath();g.moveTo(cx+a.x,y+a.t*len);g.lineTo(cx+b.x,y+b.t*len);g.stroke()}}}
+let lastT=0;
+function arcLoop(ts){const dt=Math.min(.05,(ts-(lastT||ts))/1000);lastT=ts;const dpr=window.devicePixelRatio||1;
+  document.querySelectorAll('.cable.on canvas').forEach(cv=>{const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+    if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+    const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+    let st=ARCS.get(cv);if(!st){st={ph:Math.random()*6,k:3+Math.random()*1.5,amp:2.6,flick:1,ft:0};ARCS.set(cv,st)}
+    if(!calm){st.ph+=dt*7;st.ft-=dt;if(st.ft<=0){st.flick=Math.random()<.08?.5:.85+Math.random()*.15;st.ft=.05+Math.random()*.1}}
+    const len=h*.6;drawLine(g,wave(st),(h-len)/2,len,w/2,calm?1:st.flick)});
+  if(!calm||!arcLoop.once){arcLoop.once=true;requestAnimationFrame(arcLoop)}}
+requestAnimationFrame(arcLoop);
+const BOLT='<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7 0 1.5 7H5.5L4.5 12 10.5 4.5H6.5Z" fill="#16120f"/></svg>';
+
+const CATS={core:['Основни','--c-core'],res:['Ресурси','--c-res'],gen:['Енергия','--c-gen'],prod:['Производство','--c-prod'],war:['Битка и защита','--c-war'],sup:['Бонуси и помощни','--c-sup'],cus:['Собствени','--c-cus']};
+const BASE_TYPES={
+  base:{name:'Скривалищна База',size:3,limit:1,cat:'core',boost:true},
+  gen:{name:'Генераторна стая',size:1,limit:3,cat:'gen',boost:false,isGen:true},
+  glue:{name:'Фабрика за Супер Лепило',size:1,limit:3,cat:'res',boost:true},
+  stone:{name:'Мина за зеронит',size:1,limit:3,cat:'res',boost:true},
+  xp:{name:'Стая на безкрайното познание',size:2,limit:1,cat:'res',boost:true},
+  work:{name:'Работилница',size:2,limit:1,cat:'prod',boost:true},
+  forge:{name:'Ковачница на героя',size:1,limit:1,cat:'prod',boost:false},
+  atk:{name:'Атак-о-бото Фабрика',size:1,limit:1,cat:'war',boost:true},
+  def:{name:'Защит-о-бото Фабрика',size:1,limit:1,cat:'war',boost:true},
+  post:{name:'Защитен пост',size:2,limit:1,cat:'war',boost:false},
+  store:{name:'Роботен Склад',size:1,limit:1,cat:'war',boost:false},
+  cbu:{name:'Подобрител на Бойни Бот Единици',size:1,limit:1,cat:'war',boost:false},
+  robot:{name:'Подобрител на Работни Роботи',size:1,limit:1,cat:'sup',boost:false},
+  spec:{name:'Брокерен център',size:2,limit:1,cat:'sup',boost:false},
+  trade:{name:'Търговия',size:1,limit:1,cat:'sup',boost:false},
+  r42:{name:'Стая 42.0 Бета',size:1,limit:1,cat:'sup',boost:false},
+  cyber:{name:'Кибер Изследователска Лаборатория',size:1,limit:1,cat:'sup',boost:false},
+  troph:{name:'Трофейна зала',size:1,limit:1,cat:'sup',boost:false},
+  club:{name:'Частен боен клуб',size:1,limit:1,cat:'sup',boost:false},
+  bar:{name:'Спортен бар',size:1,limit:1,cat:'sup',boost:false},
+  scout:{name:'Разузнавателен център',size:1,limit:1,cat:'sup',boost:false},
+  acad:{name:'Академия',size:1,limit:1,cat:'sup',boost:false}
+};
+const DESC={
+  base:'Произвежда монети. Нивото ѝ определя максималното ниво на другите стаи и колко суперлепило и зеронит можеш да държиш.',
+  gen:'Зарежда стаите вляво и вдясно от себе си: повече продукция и по-голям склад.',
+  glue:'Произвежда суперлепило, единият от двата ресурса за строеж.',
+  stone:'Добива зеронит, другият ресурс за строеж.',
+  xp:'Произвежда опит (XP).',
+  work:'Изработва модификации за екипировката.',
+  forge:'Изработва предмети с ресурси от скривалището.',
+  atk:'Произвежда атакуващи ботове за нападения на чужди скривалища.',
+  def:'Произвежда защитни ботове, които пазят скривалището.',
+  post:'Защитава скривалището заедно със защитните ботове.',
+  store:'Увеличава колко атакуващи и защитни бота можеш да имаш.',
+  cbu:'Вдига нивото и атрибутите на бойните ботове.',
+  robot:'Ускорява работния робот, който строи и разширява стаите.',
+  spec:'Намалява цената в монети за подобряване на стаите.',
+  trade:'Обменя суперлепило за зеронит и обратно.',
+  r42:'Повишава ефективността на Стаята на безкрайното познание.',
+  cyber:'Подобрява основните умения и атрибутите на новите предмети.',
+  troph:'Увеличава наградите от дуели и лигата.',
+  club:'Увеличава куража (дуели) и адреналина (лига).',
+  bar:'Увеличава опита от мисиите.',
+  scout:'Увеличава монетите от мисиите.',
+  acad:'Позволява вдигане на умения с монети на по-ниска цена.'};
+/* rooms.js (made with admin.html) defines the room list; when it is present nobody can change room types from this page */
+const LOCKED=!!(window.ROOMS_CONFIG&&Array.isArray(window.ROOMS_CONFIG.rooms));
+if(LOCKED){Object.keys(BASE_TYPES).forEach(k=>delete BASE_TYPES[k]);Object.keys(DESC).forEach(k=>delete DESC[k]);
+  window.ROOMS_CONFIG.rooms.forEach(r=>{if(!r||!r.id)return;BASE_TYPES[r.id]={name:(window.HZ_LANG==='en'&&r.name_en)||r.name||r.id,size:Math.max(1,Math.min(3,+r.size||1)),limit:Math.max(1,+r.limit||1),cat:r.cat||'cus',boost:!!r.boost,isGen:!!r.gen,icon:r.icon||(ICONS[r.id]?r.id:'box')};DESC[r.id]=(window.HZ_LANG==='en'&&r.desc_en)||r.desc||''})}
+const KEY='hz-hideout-planner-v2';
+const SAMPLE_ROOMS=[
+ {t:'base',f:0,c:0},{t:'gen',f:0,c:3},{t:'stone',f:0,c:4},
+ {t:'glue',f:1,c:0},{t:'gen',f:1,c:1},{t:'stone',f:1,c:2},{t:'spec',f:1,c:3},
+ {t:'work',f:2,c:0},{t:'gen',f:2,c:2},{t:'xp',f:2,c:3},
+ {t:'glue',f:3,c:0},{t:'post',f:3,c:1},{t:'store',f:3,c:3},{t:'def',f:3,c:4}];
+let D, S, uid=1, selId=null, editType=null;
+const $=id=>document.getElementById(id);
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* default for a first visit: one floor with the Hideout Base on the left */
+function sampleLayout(name){return {name:name||'Основна',cols:5,floors:1,rooms:[{id:uid++,t:'base',f:0,c:0}]}}
+function fromData(d){
+  const out={over:d.over||{},custom:d.custom||{},hidden:d.hidden||{},imgs:d.imgs||{},bgSize:d.bgSize||300,layouts:[],active:0};
+  const src=d.layouts||[{name:'Основна',cols:d.cols,floors:d.floors,rooms:d.rooms||[]}];
+  src.forEach(l=>{const L={name:l.name||'Вариант',cols:l.cols||5,floors:l.floors||4,rooms:[],dug:Array.isArray(l.dug)?l.dug.slice():undefined};
+    (l.rooms||[]).forEach(r=>{if((BASE_TYPES[r.t]&&!out.hidden[r.t])||out.custom[r.t])L.rooms.push({id:uid++,t:r.t,f:r.f,c:r.c})});out.layouts.push(L)});
+  if(!out.layouts.length)out.layouts.push(sampleLayout());
+  out.active=Math.min(d.active||0,out.layouts.length-1);return out}
+function toData(withImgs){return {v:2,bgSize:D.bgSize,imgs:withImgs?D.imgs:undefined,over:D.over,custom:D.custom,hidden:D.hidden,active:D.active,layouts:D.layouts.map(l=>({name:l.name,cols:l.cols,floors:l.floors,dug:l.dug,rooms:l.rooms.map(r=>({t:r.t,f:r.f,c:r.c}))}))}}
+function typeOf(id){const b=BASE_TYPES[id];if(b)return Object.assign({icon:id,desc:DESC[id]||''},b,D.over[id]||{});return D.custom[id]||null}
+function allTypeIds(){return Object.keys(BASE_TYPES).filter(k=>!D.hidden[k]).concat(Object.keys(D.custom))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(toData(false)))}catch(e){}}
+function saveImgs(){try{localStorage.setItem(KEY+'-img',JSON.stringify(D.imgs))}catch(e){say('Картинката е сложена, но браузърът няма място да я запомни. Използвай папката images.',true)}}
+function load(){let d=null;try{const v=localStorage.getItem(KEY);if(v)d=fromData(JSON.parse(v))}catch(e){}
+  if(!d)d={over:{},custom:{},hidden:{},imgs:{},bgSize:300,layouts:[sampleLayout('Основна')],active:0};
+  /* scene pictures now come only from the site's images folder (set in the admin), same for everyone */
+  d.imgs={};d.bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;return d}
+function catColor(cat){return 'var('+(CATS[cat]||CATS.cus)[1]+')'}
+function count(t){return S.rooms.filter(r=>r.t===t).length}
+function say(msg,err){const s=$('status');s.textContent=msg||'';s.className=err?'err':''}
+function icon(t){return ICONS[t.icon]||ICONS.box}
+/* pictures: own upload first, then images/<id>.png|jpg|webp next to this file, then the built-in drawing */
+const EXTS=['png','jpg','jpeg','webp'],FOUND={},MISSING=new Set();
+function picHTML(id){if(D.imgs[id])return '<img class="pic" alt="" src="'+D.imgs[id]+'">';if(MISSING.has(id))return '';
+  const i=FOUND[id]!=null?FOUND[id]:0;return '<img class="pic" alt="" src="images/'+id+'.'+EXTS[i]+'" data-id="'+id+'" data-i="'+i+'" onload="picOk(this)" onerror="picFail(this)">'}
+window.picOk=img=>{FOUND[img.dataset.id]=+img.dataset.i};
+window.picFail=img=>{const id=img.dataset.id,i=+img.dataset.i+1;if(i<EXTS.length&&FOUND[id]==null){img.dataset.i=i;img.src='images/'+id+'.'+EXTS[i]}else{MISSING.add(id);delete FOUND[id];img.remove()}};
+
+function occupant(f,c){return S.rooms.find(r=>r.f===f&&c>=r.c&&c<r.c+typeOf(r.t).size)}
+/* digging: each floor has `dug` cells counted from the elevator (right); the next one left is the shovel, the rest is soil */
+function dugOf(f,L){L=L||S;return (L.dug&&L.dug[f]!=null)?Math.max(0,Math.min(L.cols,L.dug[f])):L.cols}
+function isDug(f,c,L){L=L||S;return c>=L.cols-dugOf(f,L)}
+function fits(t,f,c,ignore){const sz=typeOf(t).size;if(f<0||f>=S.floors||c<0||c+sz>S.cols||!isDug(f,c))return false;
+  for(let i=c;i<c+sz;i++){const o=occupant(f,i);if(o&&o.id!==ignore)return false}return true}
+/* swap: rooms that sit inside the target spot move into the place the dragged room leaves */
+function planSwap(id,f,c){const r=S.rooms.find(x=>x.id===id);if(!r)return null;const sz=typeOf(r.t).size;
+  if(f<0||f>=S.floors||c<0||c+sz>S.cols)return null;
+  const occ=S.rooms.filter(o=>o.id!==id&&o.f===f&&o.c<c+sz&&o.c+typeOf(o.t).size>c);if(!occ.length)return null;
+  if(occ.some(o=>o.c<c||o.c+typeOf(o.t).size>c+sz))return null;
+  const same=r.f===f,overlap=same&&c<r.c+sz&&r.c<c+sz;
+  const moves=occ.map(o=>{let nf=r.f,nc;if(overlap)nc=c>r.c?o.c-sz:o.c+sz;else nc=r.c+(o.c-c);return {o,f:nf,c:nc}});
+  const pos=new Map(S.rooms.map(x=>[x.id,{f:x.f,c:x.c}]));pos.set(id,{f,c});moves.forEach(m=>pos.set(m.o.id,{f:m.f,c:m.c}));
+  const taken={};for(const x of S.rooms){const p=pos.get(x.id),w=typeOf(x.t).size;if(p.c<0||p.c+w>S.cols)return null;
+    for(let i=p.c;i<p.c+w;i++){const k=p.f+':'+i;if(taken[k])return null;taken[k]=1}}
+  return moves}
+/* small room dropped on a bigger one: the big room moves over to where the small one was */
+function planReverse(id,f,c){const a=S.rooms.find(x=>x.id===id);if(!a)return null;const big=occupant(f,c);if(!big||big.id===id)return null;
+  const bs=typeOf(big.t).size;if(bs<=typeOf(a.t).size)return null;
+  const pref=big.c+a.c-c,cands=[pref];for(let k=1;k<bs;k++){cands.push(pref-k,pref+k)}
+  for(const cb of cands){if(cb<0||cb+bs>S.cols||a.c<cb||a.c>=cb+bs)continue;const mv=planSwap(big.id,a.f,cb);if(!mv)continue;
+    const mine=mv.find(m=>m.o.id===id);if(!mine)continue;
+    return {f:mine.f,c:mine.c,moves:mv.filter(m=>m.o.id!==id).concat([{o:big,f:a.f,c:cb}])}}
+  return null}
+/* clear rules for dropping:
+   - on another room: the two rooms swap places as whole rooms (wherever on it you let go)
+   - on an empty cell: the room goes there, nudged sideways only as much as needed to fit */
+function freeExcept(f,c,sz,ids){if(f<0||f>=S.floors||c<0||c+sz>S.cols||!isDug(f,c))return false;for(let i=c;i<c+sz;i++){const o=occupant(f,i);if(o&&!ids.includes(o.id))return false}return true}
+function planRoomSwap(aId,bId){const A=S.rooms.find(x=>x.id===aId),B=S.rooms.find(x=>x.id===bId);if(!A||!B||A===B)return null;
+  const sA=typeOf(A.t).size,sB=typeOf(B.t).size;
+  if(A.f===B.f){const f=A.f,lo=Math.min(A.c,B.c),hi=Math.max(A.c+sA,B.c+sB);
+    const units=[];for(let i=lo;i<hi;){const o=occupant(f,i);if(o){units.push(o);i=o.c+typeOf(o.t).size}else{units.push(null);i++}}
+    const ia=units.indexOf(A),ib=units.indexOf(B);units[ia]=B;units[ib]=A;
+    let x=lo,res=null;const moves=[];units.forEach(u=>{if(u){if(u===A)res={f,c:x};else if(u.c!==x)moves.push({o:u,f,c:x});x+=typeOf(u.t).size}else x++});
+    return {f:res.f,c:res.c,moves}}
+  /* different floors: the bigger room's strip is swapped as a whole, so smaller rooms around it travel together */
+  const strip=(f,c,len)=>{if(c<0||c+len>S.cols||!isDug(f,c))return null;const ins=S.rooms.filter(o=>o.f===f&&o.c<c+len&&o.c+typeOf(o.t).size>c);
+    return ins.every(o=>o.c>=c&&o.c+typeOf(o.t).size<=c+len)?ins:null};
+  const order=(base,lo,hi)=>{const a=[];for(let c=lo;c<=hi;c++)a.push(c);return a.sort((x,y)=>Math.abs(x-base)-Math.abs(y-base))};
+  if(sA>=sB){for(const st of order(B.c,B.c-(sA-sB),B.c)){const ins=strip(B.f,st,sA);if(!ins)continue;
+      return {f:B.f,c:st,moves:ins.map(o=>({o,f:A.f,c:A.c+(o.c-st)}))}}return null}
+  const pref=A.c-((typeof dropCell==='number'?dropCell:B.c)-B.c);
+  for(const st of order(pref,A.c-(sB-sA),A.c)){const ins=strip(A.f,st,sB);if(!ins)continue;
+    const mine=ins.find(o=>o.id===A.id);return {f:B.f,c:B.c+(mine.c-st),moves:[{o:B,f:A.f,c:st}].concat(ins.filter(o=>o.id!==A.id).map(o=>({o,f:B.f,c:B.c+(o.c-st)})))}}
+  return null}
+let dropCell=null;
+function nearestFit(type,f,want,cur,ignore){const sz=typeOf(type).size;const cands=[];for(let c=cur-sz+1;c<=cur;c++)cands.push(c);
+  cands.sort((x,y)=>Math.abs(x-want)-Math.abs(y-want));return cands.find(c=>fits(type,f,c,ignore))}
+function boostInfo(){const boosted=new Set(),gens=[];
+  S.rooms.filter(r=>typeOf(r.t).isGen).forEach(g=>{const L=occupant(g.f,g.c-1),R=occupant(g.f,g.c+typeOf(g.t).size);
+    const lOk=!!(L&&typeOf(L.t).boost),rOk=!!(R&&typeOf(R.t).boost);if(lOk)boosted.add(L.id);if(rOk)boosted.add(R.id);gens.push({g,lOk,rOk})});
+  return {boosted,gens}}
+
+function roomEl(id){const t=typeOf(id);const el=document.createElement('div');el.className='room';el.style.setProperty('--tint',catColor(t.cat));
+  const n=Math.max(1,t.size);let art='';for(let i=0;i<Math.min(n,3);i++)art+=icon(t);
+  el.innerHTML='<div class="art">'+(n>1?art:icon(t))+picHTML(id)+'<span class="sz">'+t.size+'</span></div><div class="plate"></div>';
+  el.querySelector('.plate').textContent=t.name;return el}
+
+function render(){
+  $('fVal').textContent=S.floors;$('cVal').textContent=S.cols;
+  const fl=$('floors');fl.innerHTML='';const {boosted,gens}=boostInfo();
+  for(let f=0;f<S.floors;f++){
+    const row=document.createElement('div');row.className='floor';
+    row.innerHTML='<div class="flabel"><span>Ниво</span><b>'+(f+1)+'</b></div>';
+    const g=document.createElement('div');g.className='grid';g.style.setProperty('--cols',S.cols);
+    for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell';cell.dataset.f=f;cell.dataset.c=c;cell.dataset.n=c+1;cell.style.gridColumn=(c+1);if(occupant(f,c))cell.classList.add('taken');const nd=S.cols-dugOf(f);if(c<nd-1)cell.classList.add('dirt');else if(c===nd-1){cell.classList.add('dig');cell.title=window.HZ_LANG==='en'?'Dig this cell':'Изкопай клетката'}else if(c===nd&&!occupant(f,c)){const fb=document.createElement('button');fb.type='button';fb.className='bury';fb.title=window.HZ_LANG==='en'?'Fill back in':'Зарови обратно';fb.textContent='↺';fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=e=>{e.stopPropagation();buryCell(f)};cell.appendChild(fb)}g.appendChild(cell)}
+    const sh=document.createElement('div');sh.className='shaft';
+    if(S.floors>1){const fb=document.createElement('button');fb.type='button';fb.className='fdel';fb.textContent='';fb.setAttribute('aria-label','Махни етаж '+(f+1));
+      fb.addEventListener('pointerdown',e=>e.stopPropagation());fb.onclick=()=>removeFloor(f,fb);row.appendChild(fb)}sh.style.gridColumn=(S.cols+1);g.appendChild(sh);g.style.setProperty('--cols',S.cols+1);g.style.setProperty('--rc',S.cols);
+    S.rooms.filter(r=>r.f===f).forEach(r=>{const t=typeOf(r.t);const el=roomEl(r.t);
+      el.style.gridColumn=(r.c+1)+' / span '+t.size;el.dataset.id=r.id;el.tabIndex=0;
+      el.setAttribute('aria-label',t.name+', ниво '+(f+1)+', слот '+(r.c+1));
+      if(r.id===selId)el.classList.add('sel');if(t.isGen)el.classList.add('is-gen');
+      if(boosted.has(r.id))el.insertAdjacentHTML('beforeend','<span class="bolt" title="Заредена от генератор">'+BOLT+'</span>');
+      if(t.isGen){const gi=gens.find(x=>x.g.id===r.id);
+        if(r.c>0&&gi.lOk)el.insertAdjacentHTML('beforeend','<span class="cable l on">'+ARC+'</span>');
+        if(r.c+t.size<S.cols&&gi.rOk)el.insertAdjacentHTML('beforeend','<span class="cable r on">'+ARC+'</span>')}
+      el.addEventListener('pointerdown',e=>beginRoomDrag(e,r));
+      const xb=document.createElement('button');xb.type='button';xb.className='rdel';xb.title='Махни стаята';xb.setAttribute('aria-label','Махни '+t.name);
+      xb.addEventListener('pointerdown',e=>e.stopPropagation());xb.onclick=e=>{e.stopPropagation();hideTip();removeRoom(r.id)};el.appendChild(xb);
+      el.addEventListener('keydown',e=>roomKey(e,r));
+      g.appendChild(el)});
+    row.appendChild(g);fl.appendChild(row)}
+  const ev=document.createElement('div');ev.className='elevator';ev.id='elevator';fl.appendChild(ev);
+  let ab=document.getElementById('addFloor');if(!ab){ab=document.createElement('button');ab.id='addFloor';ab.type='button';ab.className='addfloor';ab.innerHTML='<span class="plus" aria-hidden="true">+</span>Добави етаж';
+    ab.onclick=()=>{if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}addFloorAction(ab)};fl.after(ab)}
+  renderGhost(fl);placeElevator();applyElevator();
+  renderTabs();renderPalette();renderStats(boosted,gens);renderSel();updateShare();save()}
+
+function renderTabs(){const tb=$('tabs');tb.innerHTML='';
+  D.layouts.forEach((l,i)=>{const w=document.createElement('span');w.className='tabw';
+    const b=document.createElement('button');b.type='button';b.className='tab'+(i===D.active?' on':'');b.textContent=l.name;b.title='Двоен клик за преименуване';
+    b.onclick=()=>{if(i===D.active)return;D.active=i;S=D.layouts[i];selId=null;render()};
+    b.ondblclick=()=>{const inp=document.createElement('input');inp.type='text';inp.className='tabedit';inp.value=l.name;inp.maxLength=24;w.replaceChild(inp,b);inp.focus();inp.select();
+      let done=false;const fin=ok=>{if(done)return;done=true;const v=inp.value.trim();if(ok&&v)l.name=v;render()};
+      inp.onkeydown=e=>{if(e.key==='Enter')fin(true);else if(e.key==='Escape')fin(false)};inp.onblur=()=>fin(true)};
+    w.appendChild(b);
+    if(i>0&&D.layouts.length>1){const x=document.createElement('button');x.type='button';x.className='tabx';x.setAttribute('aria-label','Изтрий „'+l.name+'“');x.dataset.tip='Изтрий варианта';x.textContent='×';
+      x.onclick=e=>{e.stopPropagation();if(!x.classList.contains('armed')){x.classList.add('armed');x.textContent='Изтрий?';x.dataset.tip='Натисни пак за изтриване';clearTimeout(x._t);x._t=setTimeout(()=>{if(x.isConnected){x.classList.remove('armed');x.textContent='×';x.dataset.tip='Изтрий варианта'}},3000);return}
+        D.layouts.splice(i,1);if(D.active>=i)D.active=Math.max(0,D.active-1);S=D.layouts[D.active];selId=null;render()};w.appendChild(x)}
+    tb.appendChild(w)});
+  const add=document.createElement('button');add.type='button';add.className='tab add';add.textContent='+ Копие като нов вариант';
+  add.onclick=()=>{const L=clone(S);L.name='Вариант '+(D.layouts.length+1);L.rooms.forEach(r=>r.id=uid++);D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;render()};
+  tb.appendChild(add)}
+
+function renderPalette(){const p=$('palette');p.innerHTML='';
+  allTypeIds().forEach(id=>{const t=typeOf(id),n=count(id),full=n>=t.limit;
+    const it=document.createElement('div');it.className='pal-item'+(full?' full':'');it.tabIndex=0;
+    it.innerHTML='<span class="pal-ico">'+icon(t)+picHTML(id)+'</span><div class="pal-txt"><div class="pal-name"></div><div class="pal-meta">'+t.size+' сл. · '+n+'/'+t.limit+(t.boost?' · зарежда се':'')+'</div></div><button class="icon-btn" aria-label="Редактирай">✎</button>';
+    it.querySelector('.pal-ico').style.background=catColor(t.cat);it.querySelector('.pal-name').textContent=t.name;it.dataset.type=id;
+    const eb=it.querySelector('.icon-btn');eb.addEventListener('click',e=>{e.stopPropagation();startEdit(id)});eb.addEventListener('pointerdown',e=>e.stopPropagation());
+    it.addEventListener('pointerdown',e=>{if(full){say('Лимитът за „'+t.name+'“ е достигнат ('+t.limit+').',true);return}beginPaletteDrag(e,id)});
+    it.addEventListener('keydown',e=>{if(e.key==='Enter'&&!full)autoPlace(id)});
+    p.appendChild(it)});
+  if(!p.querySelector('.pal-item:not(.full)')){const d=document.createElement('div');d.className='pal-done';d.textContent='Всички стаи са сложени.';p.appendChild(d)}
+  if(typeof filterPalette==='function')filterPalette()
+  const lg=$('legend');lg.innerHTML='';Object.keys(CATS).forEach(k=>{const s=document.createElement('span');s.innerHTML='<i></i>'+CATS[k][0];s.querySelector('i').style.background=catColor(k);lg.appendChild(s)})}
+
+function renderStats(boosted,gens){let used=0;S.rooms.forEach(r=>used+=typeOf(r.t).size);
+  $('kSlots').textContent=used+'/'+S.cols*S.floors;$('kRooms').textContent=S.rooms.length;$('kGens').textContent=gens.length;$('kBoost').textContent=boosted.size;
+  const w=$('warn');w.innerHTML='';const items=[];
+  if(!S.rooms.some(r=>r.t==='base'))items.push(['Липсва Скривалищна База.',false]);
+  gens.forEach(x=>{const u=(x.lOk?1:0)+(x.rOk?1:0);if(u<2)items.push(['Генератор (ниво '+(x.g.f+1)+', слот '+(x.g.c+1)+') зарежда '+u+' от 2 съседа.',false])});
+  S.rooms.forEach(r=>{if(['base','glue','stone','xp'].includes(r.t)&&!boosted.has(r.id))items.push([typeOf(r.t).name+' (ниво '+(r.f+1)+') няма генератор до себе си.',false])});
+  if(!items.length)items.push(['Всички генератори работят с пълна мощ.',true]);
+  items.slice(0,8).forEach(([m,g])=>{const li=document.createElement('li');li.textContent=m;if(g)li.className='good';w.appendChild(li)})}
+
+function renderSel(){const box=$('selInfo');const r=S.rooms.find(x=>x.id===selId);
+  const varCtl='<div style="margin-top:12px;padding-top:10px;border-top:2px solid var(--panel-line)"><label>Име на варианта<input type="text" id="lName" maxlength="24"></label><div class="btns" style="margin-top:6px"><button class="btn danger" id="lDel" type="button">Изтрий варианта</button></div></div>';
+  if(!r){box.innerHTML='<p class="hint">Кликни стая в скривалището. Стрелките я местят, Delete я маха.</p>'+varCtl}
+  else{const t=typeOf(r.t);box.innerHTML='<div style="font-weight:800;margin-bottom:4px"></div><div class="k">Ниво '+(r.f+1)+' · слот '+(r.c+1)+' · '+t.size+' сл. · '+(CATS[t.cat]||CATS.cus)[0]+'</div><div class="btns" style="margin-top:8px"><button class="btn" id="sEdit">Редактирай типа</button><button class="btn danger" id="sDel">Махни</button></div>'+varCtl;
+    box.firstChild.textContent=t.name;$('sDel').onclick=()=>removeRoom(r.id);$('sEdit').onclick=()=>startEdit(r.t)}
+  const ln=$('lName');ln.value=S.name;ln.onchange=()=>{S.name=ln.value.trim()||S.name;render()};
+  let armed=false;$('lDel').onclick=()=>{if(D.layouts.length<2){say('Това е единственият вариант.',true);return}
+    if(!armed){armed=true;$('lDel').textContent='Натисни пак за изтриване';return}
+    D.layouts.splice(D.active,1);D.active=0;S=D.layouts[0];selId=null;say('Вариантът е изтрит.');render()}}
+
+function removeFloor(f,btn){const has=S.rooms.some(r=>r.f===f);
+  if(has&&!btn.classList.contains('armed')){btn.classList.add('armed');btn.textContent='Махни?';setTimeout(()=>{if(btn.isConnected){btn.classList.remove('armed');btn.textContent=''}},3000);return}
+  const row=btn.closest('.floor');if(row&&!row.classList.contains('leaving')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){removeFloorFx(row,()=>doRemoveFloor(f,has));return}
+  doRemoveFloor(f,has)}
+function doRemoveFloor(f,has){
+  S.rooms=S.rooms.filter(r=>r.f!==f);S.rooms.forEach(r=>{if(r.f>f)r.f--});if(S.dug)S.dug.splice(f,1);S.floors--;if(selId&&!S.rooms.some(r=>r.id===selId))selId=null;
+  say('Етаж '+(f+1)+' е махнат'+(has?' заедно със стаите си.':'.'));render()}
+function removeRoom(id){S.rooms=S.rooms.filter(r=>r.id!==id);if(selId===id)selId=null;say('Стаята е махната.');render()}
+function autoPlace(t){for(let f=0;f<S.floors;f++)for(let c=0;c<S.cols;c++)if(fits(t,f,c)){const id=uid++;S.rooms.push({id,t,f,c});selId=id;say('Добавена на ниво '+(f+1)+', слот '+(c+1)+'.');render();return}say('Няма свободно място за тази стая.',true)}
+function roomKey(e,r){const d={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]}[e.key];
+  if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();removeRoom(r.id);return}
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();selId=r.id;render();focusRoom(r.id);return}
+  if(d){e.preventDefault();const nf=r.f+d[0],nc=r.c+d[1];if(fits(r.t,nf,nc,r.id)){r.f=nf;r.c=nc;selId=r.id;render();focusRoom(r.id)}else say('Там е заето.',true)}}
+function focusRoom(id){const el=document.querySelector('.room[data-id="'+id+'"]');if(el)el.focus()}
+
+/* drag and drop with pointer events: mouse and touch */
+let drag=null;
+function cellW(){const c=document.querySelector('.cell');return c?c.getBoundingClientRect().width:112}
+function cellH(){const c=document.querySelector('.cell');return c?c.getBoundingClientRect().height:104}
+function beginRoomDrag(e,r){if(e.button>0)return;const isTouch=e.pointerType!=='mouse';const rect=e.currentTarget.getBoundingClientRect();const cw=cellW();
+  drag={type:r.t,roomId:r.id,grabPx:e.clientX-rect.left,grabPy:e.clientY-rect.top,grabCells:Math.max(0,Math.floor((e.clientX-rect.left)/cw)),sx:e.clientX,sy:e.clientY,started:false,w:rect.width,h:rect.height,touch:isTouch};arm(e)}
+function beginPaletteDrag(e,t){if(e.button>0)return;const cw=cellW(),h=cellH();
+  drag={type:t,roomId:null,grabPx:cw/2,grabPy:h/2,grabCells:0,sx:e.clientX,sy:e.clientY,started:false,w:typeOf(t).size*cw,h};arm(e)}
+/* tooltip: hover on desktop, tap-and-hold feel on touch (shows after a tap, hides after a moment) */
+let tipTimer=null;
+function tipHTML(typeId,roomId){const t=typeOf(typeId);if(!t)return '';const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let h='<b>'+esc(t.name)+'</b>'+(t.desc?esc(t.desc):'');
+  const parts=[t.size+(t.size>1?' слота':' слот')];if(t.isGen)parts.push('зарежда съседите си');else parts.push(t.boost?'генераторът я зарежда':'генераторът не я зарежда');
+  h+='<div class="meta">'+parts.join(' · ')+'</div>';
+  if(roomId!=null&&!t.isGen){const {boosted}=boostInfo();if(boosted.has(+roomId))h+='<div class="meta on">В момента е заредена от генератор</div>'}
+  return h}
+function showTip(html,x,y){const tp=$('tip');if(!html){hideTip();return}tp.innerHTML=html;tp.classList.add('show');
+  const r=tp.getBoundingClientRect(),W=innerWidth,H=innerHeight;let L=x+16,T=y+18;if(L+r.width>W-8)L=x-r.width-16;if(T+r.height>H-8)T=y-r.height-14;
+  tp.style.left=Math.max(8,L)+'px';tp.style.top=Math.max(8,T)+'px'}
+function hideTip(){$('tip').classList.remove('show');clearTimeout(tipTimer)}
+document.addEventListener('pointerover',e=>{if(drag||e.pointerType!=='mouse')return;const fd=e.target.closest('.fdel');
+  if(fd){const n=fd.getAttribute('aria-label').replace(/\D+/g,'');showTip('<b>Махни етаж '+n+'</b>Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.',e.clientX,e.clientY);return}const rm=e.target.closest('.room[data-id],.pal-item');if(!rm)return;
+  const tid=rm.dataset.type||(S.rooms.find(r=>r.id===+rm.dataset.id)||{}).t;showTip(tipHTML(tid,rm.dataset.id),e.clientX,e.clientY)});
+document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse'||!$('tip').classList.contains('show'))return;if(drag){hideTip();return}
+  if(!e.target.closest('.room[data-id],.pal-item,.fdel')){hideTip();return}const tp=$('tip');const r=tp.getBoundingClientRect();let L=e.clientX+16,T=e.clientY+18;
+  if(L+r.width>innerWidth-8)L=e.clientX-r.width-16;if(T+r.height>innerHeight-8)T=e.clientY-r.height-14;tp.style.left=Math.max(8,L)+'px';tp.style.top=Math.max(8,T)+'px'});
+document.addEventListener('pointerout',e=>{if(e.pointerType==='mouse'&&e.target.closest('.room[data-id],.pal-item,.fdel')&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.room[data-id],.pal-item,.fdel')))hideTip()});
+function tapTip(el,typeId,roomId){const r=el.getBoundingClientRect();showTip(tipHTML(typeId,roomId),r.left+r.width/2,r.top+r.height/2);clearTimeout(tipTimer);tipTimer=setTimeout(hideTip,3000)}
+function arm(e){hideTip();e.preventDefault();window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onUp);window.addEventListener('pointercancel',onCancel)}
+function startGhost(){const g=roomEl(drag.type);g.classList.add('ghost');g.style.width=drag.w+'px';g.style.height=drag.h+'px';document.body.appendChild(g);drag.ghost=g;
+  document.body.classList.add('dragging');if(drag.roomId){const el=document.querySelector('.room[data-id="'+drag.roomId+'"]');if(el)el.classList.add('moving')}}
+function clearHi(){document.querySelectorAll('.cell.ok,.cell.bad').forEach(c=>c.classList.remove('ok','bad'));$('trash').classList.remove('hot')}
+let scrollV=0,scrollT=null;
+function autoScroll(y){const tray=document.querySelector('.side-l').getBoundingClientRect().top;const lo=tray-60,hi=70;
+  scrollV=y>lo&&y<tray?Math.min(24,(y-lo)/3):y<hi?-Math.min(24,(hi-y)/3):0;
+  if(scrollV&&!scrollT)scrollT=setInterval(()=>{if(!scrollV||!drag){clearInterval(scrollT);scrollT=null;return}window.scrollBy(0,scrollV)},16)}
+function onMove(e){if(!drag)return;if(drag.started)autoScroll(e.clientY);if(!drag.started){if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<5)return;drag.started=true;startGhost()}
+  drag.ghost.style.transform='translate('+(e.clientX-drag.grabPx)+'px,'+(e.clientY-drag.grabPy)+'px) rotate(-2deg)';
+  clearHi();if(drag.target&&drag.target.plan)previewPlan(null);drag.target=null;const el=document.elementFromPoint(e.clientX,e.clientY);if(!el)return;
+  if(el.closest('#trash')||el.closest('#palette')){drag.target={trash:true};$('trash').classList.add('hot');return}
+  const cell=el.closest('.cell');if(!cell)return;const f=+cell.dataset.f,cur=+cell.dataset.c,sz=typeOf(drag.type).size;
+  let ok=false,plan=null,tf=f,tc=cur-drag.grabCells;const under=occupant(f,cur);
+  if(under&&under.id!==drag.roomId){
+    if(drag.roomId){dropCell=cur;const sw=planRoomSwap(drag.roomId,under.id);if(sw){ok=true;plan=sw.moves;tf=sw.f;tc=sw.c}else{tc=under.c}}
+    else tc=under.c}
+  else{const c=nearestFit(drag.type,f,cur-drag.grabCells,cur,drag.roomId);if(c!=null){ok=true;tc=c}else tc=Math.max(0,Math.min(S.cols-sz,cur-drag.grabCells))}
+  drag.target={f:tf,c:tc,ok,plan};previewPlan(plan);
+  for(let i=Math.max(0,tc);i<Math.min(S.cols,tc+sz);i++){const ce=document.querySelector('.cell[data-f="'+tf+'"][data-c="'+i+'"]');if(ce)ce.classList.add(ok?'ok':'bad')}}
+/* live preview: rooms that will be swapped slide toward their new spot while you hover */
+const calmMove=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function cellBox(f,c){const e=document.querySelector('.cell[data-f="'+f+'"][data-c="'+c+'"]');return e?e.getBoundingClientRect():null}
+function previewPlan(plan){const want=new Map();(plan||[]).forEach(m=>want.set(m.o.id,m));
+  document.querySelectorAll('.room[data-id]').forEach(el=>{const m=want.get(+el.dataset.id);
+    if(m){const a=cellBox(m.o.f,m.o.c),b=cellBox(m.f,m.c);if(a&&b){el.classList.add('shift');el.style.transform='translate('+(b.left-a.left)+'px,'+(b.top-a.top)+'px)'}}
+    else if(el.style.transform){el.classList.add('shift');el.style.transform=''}})}
+/* FLIP: after a change, every room glides from where it was on screen to its new place */
+function snapRooms(){const m={};document.querySelectorAll('.room[data-id]').forEach(el=>{m[el.dataset.id]=el.getBoundingClientRect()});return m}
+function flip(snap){if(calmMove)return;const els=[];document.querySelectorAll('.room[data-id]').forEach(el=>{const o=snap[el.dataset.id];if(!o)return;const n=el.getBoundingClientRect();
+    const dx=o.left-n.left,dy=o.top-n.top,sx=o.width/n.width,sy=o.height/n.height;if(Math.abs(dx)<1&&Math.abs(dy)<1&&Math.abs(sx-1)<.01)return;
+    el.style.transformOrigin='0 0';el.style.transform='translate('+dx+'px,'+dy+'px) scale('+sx+','+sy+')';els.push(el)});
+  if(!els.length)return;els[0].getBoundingClientRect();
+  requestAnimationFrame(()=>els.forEach(el=>{el.classList.add('shift');el.style.transform='';el.addEventListener('transitionend',()=>{el.classList.remove('shift');el.style.transformOrigin=''},{once:true})}))}
+function endDrag(){scrollV=0;window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onUp);window.removeEventListener('pointercancel',onCancel);
+  if(drag&&drag.ghost)drag.ghost.remove();document.body.classList.remove('dragging');clearHi();drag=null}
+function onCancel(){const snap=snapRooms();if(drag&&drag.ghost&&drag.roomId)snap[drag.roomId]=drag.ghost.getBoundingClientRect();endDrag();render();flip(snap)}
+function onUp(){const d=drag;if(!d)return;
+  if(!d.started){endDrag();if(d.roomId){selId=d.roomId;render();focusRoom(d.roomId);const el=document.querySelector('.room[data-id="'+d.roomId+'"]');if(el&&d.touch)tapTip(el,d.type,d.roomId)}else if(pendingCell&&fits(d.type,pendingCell.f,pendingCell.c)){const id=uid++;S.rooms.push({id,t:d.type,f:pendingCell.f,c:pendingCell.c});selId=id;pendingCell=null;say('Добавено: '+typeOf(d.type).name+'.');render()}else{if(pendingCell)say('Тази стая не се събира в избраната клетка, сложих я на първото свободно място.');pendingCell=null;autoPlace(d.type)}return}
+  const tg=d.target;const snap=snapRooms();const gr=d.ghost?d.ghost.getBoundingClientRect():null;
+  if(gr&&d.roomId)snap[d.roomId]=gr;endDrag();
+  if(tg&&tg.trash){if(d.roomId)removeRoom(d.roomId);else render();return}
+  if(tg&&tg.ok){if(d.roomId){const r=S.rooms.find(x=>x.id===d.roomId);if(tg.plan)tg.plan.forEach(m=>{m.o.f=m.f;m.o.c=m.c});r.f=tg.f;r.c=tg.c;selId=r.id;say(tg.plan?'Стаите си смениха местата.':'Преместено на ниво '+(tg.f+1)+', слот '+(tg.c+1)+'.')}
+    else{const id=uid++;S.rooms.push({id,t:d.type,f:tg.f,c:tg.c});selId=id;if(gr)snap[id]=gr;say('Добавено: '+typeOf(d.type).name+'.')}}
+  else if(tg)say('Не се събира там: заето или излиза извън нивото.',true);
+  render();flip(snap)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag)onCancel()});
+
+$('fPlus').onclick=()=>addFloorAction();
+function setDrawer(o){$('drawer').classList.toggle('open',o);$('gearBtn').setAttribute('aria-expanded',o)}
+$('gearBtn').onclick=()=>setDrawer(!$('drawer').classList.contains('open'));
+let pendingCell=null;
+function setTray(o){document.body.classList.toggle('tray-open',o);$('trayBtn').setAttribute('aria-pressed',o);if(!o){pendingCell=null;document.querySelectorAll('.cell.pick').forEach(x=>x.classList.remove('pick'))}}
+$('trayClose').onclick=()=>setTray(false);
+$('floors').addEventListener('click',e=>{if(drag)return;const c=e.target.closest('.cell');if(!c||c.classList.contains('taken')||c.classList.contains('dirt'))return;
+  if(c.classList.contains('dig')){digCell(+c.dataset.f,+c.dataset.c,c);return}
+  document.querySelectorAll('.cell.pick').forEach(x=>x.classList.remove('pick'));c.classList.add('pick');pendingCell={f:+c.dataset.f,c:+c.dataset.c};setTray(true);
+  say('Избери стая от долу, за да я сложиш тук, или я влачи където искаш.')});
+$('trayBtn').onclick=()=>setTray(!document.body.classList.contains('tray-open'));
+/* move all tools into the drawer */
+(()=>{const dr=$('drawer'),head=dr.querySelector('.drawer-head');const box=document.createElement('div');box.className='panel';
+  box.innerHTML='<h2>Скривалище</h2>';box.appendChild(document.querySelector('.wrap>header .toolbar'));
+  const vt=document.createElement('div');vt.className='panel';vt.innerHTML='<h2>Варианти</h2>';vt.appendChild($('tabs'));
+  const sc=document.createElement('div');sc.className='panel';sc.innerHTML='<h2>Картинки на сцената</h2><p class="hint">Или сложи top.png и bg.png в папката images.</p>';
+  sc.appendChild(document.querySelector('.topside .scene-ctl'));sc.appendChild(document.querySelector('.bg-ctl'));
+  const sz=document.createElement('label');sz.innerHTML='<span style="display:flex;justify-content:space-between">Размер на патърна <b id="bgSizeVal" style="color:var(--paper)">300 px</b></span><input type="range" id="bgSize" min="60" max="1200" step="10" value="300">';sc.appendChild(sz);
+  const em=document.createElement('div');em.className='scene-ctl';em.innerHTML='<span class="btn filebtn">Празна клетка<input type="file" id="emptyFile" accept="image/*" aria-label="Картинка за празните клетки"></span><button class="btn" type="button" id="emptyNo" hidden>Махни</button>';sc.appendChild(em);
+  const el=document.createElement('div');el.className='scene-ctl';el.innerHTML='<span class="btn filebtn">Асансьор<input type="file" id="elvFile" accept="image/*" aria-label="Картинка за асансьора"></span><button class="btn" type="button" id="elvNo" hidden>Махни</button>';sc.appendChild(el);
+  sc.querySelector('.hint').textContent='Или сложи top.png, bg.png, elevator.png и empty.png в папката images.';
+  sc.hidden=true;head.after(box,vt,sc)})();
+$('drawerClose').onclick=()=>setDrawer(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drag)setDrawer(false)});
+$('fMinus').onclick=()=>{if(S.floors<=1)return;if(S.rooms.some(r=>r.f===S.floors-1)){say('Най-долното ниво не е празно. Махни стаите от него първо.',true);return}if(S.dug)S.dug.length=Math.min(S.dug.length,S.floors-1);S.floors--;render()};
+$('cPlus').onclick=()=>{if(S.cols>=12)return;S.cols++;render()};
+$('cMinus').onclick=()=>{if(S.cols<=3)return;if(S.rooms.some(r=>r.c+typeOf(r.t).size>S.cols-1)){say('Има стаи в последния слот. Премести ги първо.',true);return}S.cols--;render()};
+let clearArmed=false;
+$('clearBtn').onclick=()=>{if(!clearArmed){clearArmed=true;$('clearBtn').textContent='Натисни пак';setTimeout(()=>{clearArmed=false;$('clearBtn').textContent='Махни всички стаи'},3000);return}
+  clearArmed=false;$('clearBtn').textContent='Махни всички стаи';S.rooms=[];selId=null;say('Всички стаи са махнати.');render()};
+
+/* create and edit room types */
+Object.keys(CATS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=CATS[k][0];$('tCat').appendChild(o)});
+Object.keys(ICONS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=ICON_NAMES[k]||k;$('tIcon').appendChild(o)});
+let pendingImg;
+function showPrev(){const id=editType;let src=pendingImg===undefined?(id?D.imgs[id]:null):pendingImg;
+  const t=id?typeOf(id):{icon:$('tIcon').value};$('tPrev').innerHTML=src?'<img class="pic" alt="" src="'+src+'">':(id&&pendingImg!==null?icon(t)+picHTML(id):icon(t))}
+function resetForm(){editType=null;pendingImg=undefined;$('tFile').value='';$('typeForm').reset();$('tCat').value='cus';$('tIcon').value='star';['tCat','tBoost','tIcon'].forEach(i=>$(i).disabled=false);
+  $('formTitle').textContent='Нова стая';$('tSubmit').textContent='Създай';['tCancel','tDelete','tReset'].forEach(i=>$(i).hidden=true);showPrev()}
+function startEdit(id){setDrawer(true);const t=typeOf(id);editType=id;const builtin=!!BASE_TYPES[id];pendingImg=undefined;$('tFile').value='';
+  $('tName').value=t.name;$('tSize').value=t.size;$('tLimit').value=t.limit;$('tCat').value=t.cat;$('tIcon').value=t.icon||'box';$('tBoost').checked=!!t.boost;$('tDesc').value=t.desc||'';
+  ['tCat','tBoost'].forEach(i=>$(i).disabled=builtin);
+  $('formTitle').textContent='Редакция';$('tSubmit').textContent='Запази';$('tCancel').hidden=false;$('tDelete').hidden=builtin;$('tReset').hidden=!builtin;showPrev();$('tName').focus()}
+$('tCancel').onclick=resetForm;
+$('tIcon').onchange=showPrev;
+$('tNoImg').onclick=()=>{pendingImg=null;$('tFile').value='';showPrev()};
+$('tFile').onchange=()=>{const f=$('tFile').files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{const im=new Image();im.onload=()=>{const m=320,k=Math.min(1,m/Math.max(im.width,im.height));const cv=document.createElement('canvas');cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
+    cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);let u=cv.toDataURL('image/webp',.85);if(!u.startsWith('data:image/webp'))u=cv.toDataURL('image/png');pendingImg=u;showPrev();say('Картинката е избрана. Натисни „'+$('tSubmit').textContent+'“.')};
+    im.onerror=()=>say('Този файл не е картинка, която браузърът може да отвори.',true);im.src=rd.result};rd.readAsDataURL(f)};
+function applyImg(id){if(pendingImg===undefined)return;if(pendingImg)D.imgs[id]=pendingImg;else delete D.imgs[id];MISSING.delete(id);saveImgs()}
+$('tReset').onclick=()=>{const id=editType;delete D.over[id];D.layouts.forEach(L=>{const keep=S;S=L;L.rooms=L.rooms.filter(r=>r.t!==id||fits(id,r.f,r.c,r.id));S=keep});resetForm();say('Стаята е върната по подразбиране.');render()};
+$('tDelete').onclick=()=>{const id=editType;delete D.custom[id];delete D.imgs[id];saveImgs();D.layouts.forEach(L=>L.rooms=L.rooms.filter(r=>r.t!==id));resetForm();say('Типът е изтрит.');render()};
+function allFit(id){const keep=S;let ok=true;D.layouts.forEach(L=>{S=L;L.rooms.filter(r=>r.t===id).forEach(r=>{if(!fits(id,r.f,r.c,r.id))ok=false})});S=keep;return ok}
+$('typeForm').addEventListener('submit',e=>{e.preventDefault();const size=+$('tSize').value,limit=Math.max(1,Math.min(20,+$('tLimit').value||1)),name=$('tName').value.trim(),ic=$('tIcon').value;
+  if(!name){$('tName').focus();return}
+  if(editType){const id=editType;const builtin=!!BASE_TYPES[id];const before=builtin?clone(D.over[id]||null):clone(D.custom[id]);
+    if(builtin){const b=BASE_TYPES[id];const o={};if(name!==b.name)o.name=name;if(size!==b.size)o.size=size;if(limit!==b.limit)o.limit=limit;if(ic!==id)o.icon=ic;{const ds=$('tDesc').value.trim();if(ds!==(DESC[id]||''))o.desc=ds}if(Object.keys(o).length)D.over[id]=o;else delete D.over[id]}
+    else D.custom[id]=Object.assign({},D.custom[id],{name,size,limit,cat:$('tCat').value,boost:$('tBoost').checked,icon:ic,desc:$('tDesc').value.trim()});
+    if(!allFit(id)){if(builtin){if(before)D.over[id]=before;else delete D.over[id]}else D.custom[id]=before;
+      say('Новият размер не се събира там, където е поставена стаята. Направи място и опитай пак.',true);render();return}
+    applyImg(id);say('Промените са запазени.');resetForm();render();return}
+  const id='c'+Date.now().toString(36);D.custom[id]={name,size,limit,cat:$('tCat').value,boost:$('tBoost').checked,isGen:false,icon:ic,desc:$('tDesc').value.trim()};applyImg(id);
+  say('Създадена е стая „'+name+'“. Влачи я от списъка.');resetForm();render()});
+
+/* short share code: floors split by "~", each floor lists its rooms left to right by id, "_" is an empty cell */
+function layoutCode(L){const out=[];for(let f=0;f<L.floors;f++){const row=[];let c=0;
+    while(c<L.cols){const r=L.rooms.find(x=>x.f===f&&x.c===c);if(r){row.push(r.t);c+=Math.max(1,typeOf(r.t)?typeOf(r.t).size:1)}else{row.push('_');c++}}
+    while(row.length&&row[row.length-1]==='_')row.pop();const dg=dugOf(f,L);out.push((dg<L.cols?dg+':':'')+row.join('.'))}return out.join('~')}
+function codeLayout(code,name){const fl=code.split('~');if(!fl.length||fl.length>40)return null;const keep=S;
+  const L={name,cols:5,floors:fl.length,rooms:[],dug:[]};S=L;
+  fl.forEach((row,f)=>{const m=row.match(/^(\d):(.*)$/);L.dug[f]=m?Math.min(5,+m[1]):5;if(m)row=m[2];let c=0;row.split('.').filter(Boolean).forEach(t=>{if(t==='_'){c++;return}const ty=typeOf(t);if(!ty||D.hidden[t]){c++;return}
+    if(fits(t,f,c))L.rooms.push({id:uid++,t,f,c});c+=ty.size})});S=keep;return L}
+function shareLink(){return location.origin+location.pathname+'#p='+layoutCode(S)}
+function flash(btn,txt){const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent=txt;clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=o},1800)}
+function copyText(v,btn,ok){$('io').value=v;try{navigator.clipboard.writeText(v).then(()=>flash(btn,ok),()=>{$('io').select();flash(btn,'Копирай от полето')})}catch(err){$('io').select();flash(btn,'Копирай от полето')}}
+function updateShare(){const l=$('shareLink'),c=$('shareCode');if(!l||!c)return;l.value=shareLink();c.value=layoutCode(S);c.style.height='auto';c.style.height=c.scrollHeight+'px'}
+document.addEventListener('click',e=>{const b=e.target.closest('.cpy');if(!b)return;const f=$(b.dataset.copy);if(!f)return;const v=f.value;
+  const done=()=>{if(!b.dataset.ico)b.dataset.ico=b.innerHTML;b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';b.classList.add('ok');clearTimeout(b._t);b._t=setTimeout(()=>{b.innerHTML=b.dataset.ico;b.classList.remove('ok')},2000)};
+  const fallback=()=>{f.removeAttribute('readonly');f.select();try{document.execCommand('copy');done()}catch(err){}f.setAttribute('readonly','');getSelection().removeAllRanges()};
+  try{navigator.clipboard.writeText(v).then(done,fallback)}catch(err){fallback()}});
+function addShared(L){D.layouts.push(L);D.active=D.layouts.length-1;S=L;selId=null;render()}
+$('loadBtn').onclick=()=>{let v=$('io').value.trim();if(!v){flash($('loadBtn'),'Полето е празно');return}
+  const m=v.match(/#p=(.*)$/);if(m)v=decodeURIComponent(m[1]);
+  if(/^[A-Za-z0-9_.~:-]*$/.test(v)){const L=codeLayout(v,'Зареден '+(D.layouts.length+1));if(L){addShared(L);flash($('loadBtn'),'Зареден ✓');$('io').value='';return}}
+  try{D=fromData(JSON.parse(decodeURIComponent(escape(atob(v)))));D.imgs={};S=D.layouts[D.active];selId=null;render();flash($('loadBtn'),'Зареден ✓')}catch(err){flash($('loadBtn'),'Кодът не става')}};
+
+/* scene pictures: the area above the base (top) and the underground background (bg) */
+function readImg(file,max,cb){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const cv=document.createElement('canvas');
+  cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);let u=cv.toDataURL('image/webp',.85);if(!u.startsWith('data:image/webp'))u=cv.toDataURL('image/jpeg',.85);cb(u)};
+  im.onerror=()=>say('Този файл не е картинка, която браузърът може да отвори.',true);im.src=rd.result};rd.readAsDataURL(file)}
+function findFile(name,cb,i=0){if(i>=EXTS.length)return cb(null);const t=new Image();const u='images/'+name+'.'+EXTS[i];t.onload=()=>cb(u);t.onerror=()=>findFile(name,cb,i+1);t.src=u}
+function applyScene(){
+  const top=$('topside');top.querySelectorAll('img.scene').forEach(e=>e.remove());top.classList.remove('hasimg');const set=src=>{if(!src)return;top.classList.add('hasimg');const im=document.createElement('img');im.className='scene';im.alt='';im.src=src;top.insertBefore(im,top.querySelector('.scene-ctl'))};
+  $('topNo').hidden=!D.imgs.__top;if(D.imgs.__top){set(D.imgs.__top);top.classList.remove('loading')}else{top.classList.add('loading');const done=src=>{set(src);top.classList.remove('loading')};
+    /* header picked in the admin for this language, else images/top.* */
+    const hc=(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{},want=hc[window.HZ_LANG]||hc.bg;
+    if(want){const t=new Image();t.onload=()=>done(want);t.onerror=()=>findFile('top',done);t.src=want}else findFile('top',done)}
+  const sc=$('scroller');const bg=src=>{if(src){sc.style.backgroundImage='url("'+src+'")';sc.style.backgroundSize=(D.bgSize||300)+'px auto';sc.classList.add('hasbg')}else{sc.style.backgroundImage='';sc.style.backgroundSize='';sc.classList.remove('hasbg')}};
+  $('bgSize').value=D.bgSize||300;$('bgSizeVal').textContent=(D.bgSize||300)+' px';
+  $('bgNo').hidden=!D.imgs.__bg;if(D.imgs.__bg)bg(D.imgs.__bg);else{bg(null);findFile('bg',bg)}}
+$('topFile').onchange=()=>{const f=$('topFile').files[0];if(!f)return;readImg(f,1600,u=>{D.imgs.__top=u;saveImgs();applyScene();say('Картинката горе е сложена.')});$('topFile').value=''};
+$('bgFile').onchange=()=>{const f=$('bgFile').files[0];if(!f)return;readImg(f,1600,u=>{D.imgs.__bg=u;saveImgs();applyScene();say('Фонът е сложен.')});$('bgFile').value=''};
+$('topNo').onclick=()=>{delete D.imgs.__top;saveImgs();applyScene();say('Картинката горе е махната.')};
+$('bgNo').onclick=()=>{delete D.imgs.__bg;saveImgs();applyScene();say('Фонът е махнат.')};
+$('bgSize').oninput=()=>{D.bgSize=+$('bgSize').value;$('bgSizeVal').textContent=D.bgSize+' px';const sc=$('scroller');if(sc.classList.contains('hasbg'))sc.style.backgroundSize=D.bgSize+'px auto'};
+$('bgSize').onchange=()=>save();
+function placeElevator(){const fl=$('floors'),ev=$('elevator'),sh=fl&&fl.querySelector('.shaft');if(!ev||!sh)return;const a=fl.getBoundingClientRect(),b=sh.getBoundingClientRect();ev.style.left=(b.left-a.left)+'px';ev.style.width=b.width+'px'}
+let elvSrc=null;
+function applyElevator(){const ev=$('elevator');if(!ev)return;const src=D.imgs.__elv||elvSrc;if(src){ev.style.backgroundImage='url("'+src+'")'}$('elvNo').hidden=!D.imgs.__elv}
+findFile('elevator',u=>{elvSrc=u;applyElevator()});
+let emptySrc=null;
+function applyEmpty(){const src=D.imgs.__empty||emptySrc;document.documentElement.style.setProperty('--empty-img',src?'url("'+src+'")':'none');$('emptyNo').hidden=!D.imgs.__empty}
+findFile('empty',u=>{emptySrc=u;applyEmpty()});
+$('emptyFile').onchange=()=>{const f=$('emptyFile').files[0];if(!f)return;readImg(f,1100,u=>{D.imgs.__empty=u;saveImgs();applyEmpty();say('Картинката за празните клетки е сложена.')});$('emptyFile').value=''};
+$('emptyNo').onclick=()=>{delete D.imgs.__empty;saveImgs();applyEmpty();say('Картинката за празните клетки е махната.')};
+window.addEventListener('resize',placeElevator);
+$('elvFile').onchange=()=>{const f=$('elvFile').files[0];if(!f)return;readImg(f,800,u=>{D.imgs.__elv=u;saveImgs();render();say('Асансьорът е сложен.')});$('elvFile').value=''};
+$('elvNo').onclick=()=>{delete D.imgs.__elv;saveImgs();render();say('Картинката на асансьора е махната.')};
+D=load();D.hidden=D.hidden||{};if(LOCKED){D.over={};D.custom={};D.hidden={}}
+/* rooms whose size changed may now overlap: keep what fits, move the rest to a free spot, drop only if there is no room at all */
+function repairLayouts(){const keep=S;D.layouts.forEach(L=>{S=L;const all=L.rooms;L.rooms=[];const later=[];
+  all.forEach(r=>{if(typeOf(r.t)&&!D.hidden[r.t]&&fits(r.t,r.f,r.c))L.rooms.push(r);else if(typeOf(r.t)&&!D.hidden[r.t])later.push(r)});
+  later.forEach(r=>{for(let f=0;f<L.floors;f++)for(let c=0;c<L.cols;c++)if(fits(r.t,f,c)){r.f=f;r.c=c;L.rooms.push(r);return}})});S=keep||D.layouts[D.active]}
+repairLayouts();
+S=D.layouts[D.active];
+/* opened from a shared link: add that layout as a new variant (yours stay untouched), then clean the address bar */
+{const m=location.hash.match(/^#p=(.*)$/);if(m){const L=codeLayout(decodeURIComponent(m[1]),'Споделен '+(D.layouts.length+1));if(L){D.layouts.push(L);D.active=D.layouts.length-1;S=L}
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}}
+resetForm();render();applyScene();applyEmpty();
+
+/* rooms drawer: arrows to scroll left/right, and the mouse wheel scrolls it sideways */
+(()=>{const pal=$('palette');const wrap=document.createElement('div');wrap.className='palwrap';pal.parentNode.insertBefore(wrap,pal);wrap.appendChild(pal);
+  const mk=(cls,d,label)=>{const b=document.createElement('button');b.type='button';b.className='palarrow '+cls;b.setAttribute('aria-label',label);
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="'+d+'"/></svg>';wrap.appendChild(b);return b};
+  const L=mk('l','M15 5l-7 7 7 7','Наляво'),R=mk('r','M9 5l7 7-7 7','Надясно');
+  const step=()=>Math.max(200,pal.clientWidth*0.8);
+  L.onclick=()=>pal.scrollBy({left:-step()});R.onclick=()=>pal.scrollBy({left:step()});
+  const upd=()=>{L.disabled=pal.scrollLeft<=2;R.disabled=pal.scrollLeft+pal.clientWidth>=pal.scrollWidth-2};
+  pal.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);new MutationObserver(()=>requestAnimationFrame(upd)).observe(pal,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  document.body.addEventListener('transitionend',upd);
+  pal.addEventListener('wheel',e=>{if(pal.scrollWidth<=pal.clientWidth)return;const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(!d)return;e.preventDefault();
+    pal.style.scrollBehavior='auto';pal.scrollLeft+=d*(e.deltaMode===1?40:1);pal.style.scrollBehavior=''},{passive:false});
+  requestAnimationFrame(upd)})();
+
+/* share popover */
+(()=>{const b=$('shareBtn'),pop=$('sharePop');const set=o=>{pop.hidden=!o;b.setAttribute('aria-expanded',o);if(o){updateShare();setDrawer(false)}};
+  b.onclick=e=>{e.stopPropagation();set(pop.hidden)};$('shareClose').onclick=()=>set(false);
+  document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!b.contains(e.target))set(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
+  $('gearBtn').addEventListener('click',()=>set(false))})();
+
+/* help popover */
+(()=>{const b=$('helpBtn'),pop=$('helpPop');const set=o=>{pop.hidden=!o;b.setAttribute('aria-expanded',o);if(o){setDrawer(false);$('sharePop').hidden=true;$('shareBtn').setAttribute('aria-expanded',false)}};
+  b.onclick=e=>{e.stopPropagation();set(pop.hidden)};$('helpClose').onclick=()=>set(false);
+  document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!b.contains(e.target))set(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
+  $('shareBtn').addEventListener('click',()=>set(false));$('gearBtn').addEventListener('click',()=>set(false))})();
+
+/* live stats in the footer: total visits + people online now (Firebase Realtime Database, set in firebase-config.js) */
+(()=>{const cfg=window.FIREBASE_CONFIG;if(!cfg||!cfg.databaseURL)return;
+  const load=src=>new Promise((res,rej)=>{const t=document.createElement('script');t.src=src;t.onload=res;t.onerror=rej;document.head.appendChild(t)});
+  const B='https://www.gstatic.com/firebasejs/10.12.2/';
+  load(B+'firebase-app-compat.js').then(()=>load(B+'firebase-database-compat.js')).then(()=>{
+    firebase.initializeApp(cfg);const db=firebase.database();const fmt=n=>Number(n||0).toLocaleString('bg-BG');
+    /* one visit per browser session, so a refresh does not count again */
+    let seen=false;try{seen=sessionStorage.getItem('hz-visit')==='1'}catch(e){}
+    if(!seen){db.ref('stats/visits').transaction(v=>(v||0)+1);try{sessionStorage.setItem('hz-visit','1')}catch(e){}}
+    db.ref('stats/visits').on('value',s=>{$('statVisits').textContent=fmt(s.val());$('liveStats').hidden=false});
+    /* presence: each open tab adds itself and is removed automatically when it closes */
+    const me=db.ref('online').push();
+    db.ref('.info/connected').on('value',s=>{if(s.val()===true){me.onDisconnect().remove();me.set(true)}});
+    db.ref('online').on('value',s=>{$('statOnline').textContent=fmt(Math.max(1,s.numChildren()))});
+  }).catch(()=>{});
+})();
+
+/* new floor effect */
+function newFloorFx(btn){const rows=document.querySelectorAll('#floors .floor:not(.digrow)');const row=rows[rows.length-1];if(!row)return;
+  if(btn){btn.classList.remove('squish');void btn.offsetWidth;btn.classList.add('squish')}
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){row.scrollIntoView({block:'nearest'});return}
+  row.querySelectorAll('.cell,.shaft').forEach((c,i)=>c.style.setProperty('--i',i));row.classList.add('fresh');
+  row.addEventListener('animationend',e=>{if(e.target===row)row.classList.remove('fresh')},{once:false});
+  setTimeout(()=>row.classList.remove('fresh'),2600);
+  const fl=$('floors'),fr=fl.getBoundingClientRect();
+  setTimeout(()=>{const r=row.getBoundingClientRect();const y=r.bottom-fr.top-6;
+    for(let k=0;k<22;k++){const d=document.createElement('span');d.className='dust';const left=k%2===0;
+      const x0=left?(r.left-fr.left)+Math.random()*r.width*0.5:(r.left-fr.left)+r.width*0.5+Math.random()*r.width*0.5;
+      d.style.left=x0+'px';d.style.top=y+'px';d.style.setProperty('--s',(8+Math.random()*14)+'px');
+      d.style.setProperty('--x',((Math.random()-.5)*160)+'px');d.style.setProperty('--y',(-10-Math.random()*50)+'px');
+      d.style.setProperty('--d',(1+Math.random()*.6)+'s');d.style.setProperty('--w',(Math.random()*.25)+'s');
+      fl.appendChild(d);setTimeout(()=>d.remove(),2200)}},650);
+  setTimeout(()=>{const ab=$('addFloor');(ab||row).scrollIntoView({block:'nearest',behavior:'smooth'})},120)}
+
+function puff(x,y,n,spread){const fl=$('floors');for(let k=0;k<n;k++){const d=document.createElement('span');d.className='dust';
+  d.style.left=(x+(Math.random()-.5)*spread)+'px';d.style.top=y+'px';d.style.setProperty('--s',(8+Math.random()*14)+'px');
+  d.style.setProperty('--x',((Math.random()-.5)*160)+'px');d.style.setProperty('--y',((Math.random()-.5)*70)+'px');
+  d.style.setProperty('--d',(1+Math.random()*.6)+'s');d.style.setProperty('--w',(Math.random()*.2)+'s');fl.appendChild(d);setTimeout(()=>d.remove(),2200)}}
+function removeFloorFx(row,done){row.classList.add('leaving');
+  const parts=[...row.querySelectorAll('.cell,.shaft,.room')].sort((a,b)=>b.getBoundingClientRect().left-a.getBoundingClientRect().left);
+  parts.forEach((el,i)=>{el.style.setProperty('--j',i);el.style.setProperty('--r',((Math.random()-.5)*16)+'deg')});
+  const sinkEnd=600+parts.length*110;
+  setTimeout(()=>{const fr=$('floors').getBoundingClientRect(),r=row.getBoundingClientRect();puff(r.left-fr.left+r.width/2,r.top-fr.top+r.height/2,26,r.width*.9);
+    row.style.height=row.offsetHeight+'px';void row.offsetHeight;row.style.transition='height .7s cubic-bezier(.65,0,.35,1),opacity .5s';row.style.height='0px';row.style.opacity='0';
+    setTimeout(done,720)},sinkEnd)}
+
+/* ===== English version: room names come from the admin (name_en / desc_en), the interface is translated here ===== */
+(()=>{const lb=$('langBtn'),EN=window.HZ_LANG==='en';
+  lb.textContent=EN?'BG':'EN';lb.dataset.tip=EN?'Български':'English';lb.setAttribute('aria-label',EN?'Превключи на български':'Switch to English');
+  lb.onclick=()=>{try{localStorage.setItem('hz-lang',EN?'bg':'en')}catch(e){}const q=location.search.replace(/([?&])lang=(en|bg)&?/,'$1').replace(/[?&]$/,'');location.href=location.pathname+q+location.hash};
+  if(!EN)return;
+  const D={'Стаи':'Rooms','Настройки':'Settings','Затвори':'Close','Скривалище':'Hideout','Нива':'Floors','Махни всички стаи':'Remove all rooms','Натисни пак':'Press again',
+    'Варианти':'Variants','+ Копие като нов вариант':'+ Copy as new variant','Основна':'Main','Обобщение':'Summary','Зареди подредба':'Load a layout',
+    'Постави линк или код от съотборник. Подредбата идва като нов вариант, твоите не се пипат.':'Paste a link or code from a teammate. The layout arrives as a new variant; yours stay untouched.',
+    'Постави код или линк тук':'Paste a code or link here','Зареди':'Load','Зареден ✓':'Loaded ✓','Полето е празно':'The field is empty','Кодът не става':'Invalid code','Копирай от полето':'Copy it from the field',
+    'Сподели подредбата':'Share the layout','Подредбата се пази сама в този браузър. Прати линка на съотборник и той ще види точно нея. Кодът е същото, само по-кратко, за да си го пазиш.':'Your layout saves itself in this browser. Send the link to a teammate and they will see exactly this layout. The code is the same thing, just shorter, so you can keep it.',
+    'Линк':'Link','Код':'Code','Копирай линка':'Copy link','Копирай кода':'Copy code','Как се ползва':'How to use','Пусни тук, за да махнеш стая':'Drop here to remove a room',
+    'Добави етаж':'Add floor','посещения':'visits','онлайн сега':'online now','Всички стаи са сложени.':'All rooms are placed.',
+    'Всички генератори работят с пълна мощ.':'All generators are running at full power.','Липсва Скривалищна База.':'The Hideout Base is missing.',
+    'Изтрий варианта':'Delete variant','Натисни пак за изтриване':'Press again to delete','Изтрий?':'Delete?','Двоен клик за преименуване':'Double-click to rename',
+    'Махни стаята':'Remove room','Махни?':'Remove?','Махни ниво':'Remove floor','Добави ниво':'Add floor','Наляво':'Left','Надясно':'Right',
+    'Код или линк на подредба':'Layout code or link','Линк към подредбата':'Layout link','Код на подредбата':'Layout code','Обобщение и настройки':'Summary and settings',
+    'В момента е заредена от генератор':'Currently powered by a generator','Портфолио в Behance':'Portfolio on Behance','Скрий стаите':'Hide rooms','Търси стая...':'Search rooms...','Търси стая':'Search rooms','Сподели':'Share',
+    'Целият етаж изчезва заедно със стаите на него. Ако на него има стаи, натискаш два пъти.':'The whole floor disappears together with its rooms. If it has rooms, press twice.'};
+  const R=[[/^Махни етаж (\d+)$/,'Remove floor $1'],[/^Изтрий „(.+)“$/,'Delete “$1”'],[/^Вариант (\d+)$/,'Variant $1'],[/^Споделен (\d+)$/,'Shared $1'],[/^Зареден (\d+)$/,'Loaded $1'],
+    [/^Генератор \(ниво (\d+), слот (\d+)\) зарежда (\d) от 2 съседа\.$/,'Generator (floor $1, slot $2) powers $3 of 2 neighbours.'],
+    [/^(.+) \(ниво (\d+)\) няма генератор до себе си\.$/,'$1 (floor $2) has no generator next to it.'],
+    [/^(\d+) сл\. · (\d+)\/(\d+) · зарежда се$/,'$1 cell · $2/$3 · powered'],[/^(\d+) сл\. · (\d+)\/(\d+)$/,'$1 cell · $2/$3'],
+    [/^(\d+) слота? · зарежда съседите си$/,'$1 cell · powers its neighbours'],[/^(\d+) слота? · генераторът я зарежда$/,'$1 cell · powered by generators'],[/^(\d+) слота? · генераторът не я зарежда$/,'$1 cell · not powered by generators'],
+    [/^(.+), ниво (\d+), слот (\d+)$/,'$1, floor $2, slot $3'],[/^Махни (.+)$/,'Remove $1']];
+  const tr=t=>{const k=t.trim();if(!k||!/[А-Яа-я]/.test(k))return null;let out=D[k];if(out==null){for(const [re,to] of R){if(re.test(k)){out=k.replace(re,to);break}}}
+    if(out!=null)out=out.replace(/^(\d+) cell\b/,(m,n)=>n==='1'?m:n+' cells');
+    return out==null?null:t.replace(k,out)};
+  const ATTR=['placeholder','aria-label','title','data-tip'];
+  const doNode=n=>{if(n.nodeType===3){const v=tr(n.nodeValue);if(v!=null&&v!==n.nodeValue)n.nodeValue=v;return}
+    if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE')return;
+    ATTR.forEach(a=>{if(n.hasAttribute&&n.hasAttribute(a)){const v=tr(n.getAttribute(a));if(v!=null&&v!==n.getAttribute(a))n.setAttribute(a,v)}});
+    if((n.tagName==='INPUT'||n.tagName==='TEXTAREA')&&n.readOnly)return;
+    n.childNodes.forEach(doNode)};
+  const hp=$('helpPop');hp.querySelector('h3').textContent='How to use';hp.querySelector('.helpbody').innerHTML='<p>Plan your Hero Zero hideout, try out variants and send them to your team. Everything is saved in this browser only.</p>'+
+    '<h4>Rooms</h4><ul><li><b>Place:</b> hover an empty cell and press the orange plus. The rooms drawer opens below. Click or drag a room.</li><li><b>Move:</b> drag the room. Green means it fits, red means it does not. Drop it on another room and they swap.</li><li><b>Remove:</b> hover the room and press the red X in its corner.</li><li>A room at its limit disappears from the drawer. Hover a room to see what it does.</li></ul>'+
+    '<h4>Floors and generators</h4><ul><li><b>Add floor</b> is the orange button at the bottom. The red minus on the left removes a floor together with its rooms.</li><li>A generator powers the rooms to its left and right. The turquoise current shows the power reaches them.</li><li>Settings → Summary lists problems in red.</li></ul>'+
+    '<h4>Variants and sharing</h4><ul><li>Settings → Variants: “+ Copy” makes a new variant. Double-click renames it, X deletes it.</li><li>The share icon at the top gives a link and a code. Whoever opens the link sees your layout.</li><li>Settings → Load a layout: paste a link or code from a teammate.</li></ul>';
+  doNode(document.body);
+  new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='characterData')doNode(m.target);else if(m.type==='attributes')doNode(m.target);else m.addedNodes.forEach(doNode)}))
+    .observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR});
+})();
+
+/* digging helpers */
+function setDug(f,n){if(!S.dug)S.dug=[];for(let i=0;i<S.floors;i++)if(S.dug[i]==null)S.dug[i]=S.cols;S.dug[f]=Math.max(0,Math.min(S.cols,n));if(S.dug.every(v=>v===S.cols))delete S.dug}
+function digCell(f,c,el){if(el)el.classList.add('digging');const fr=$('floors').getBoundingClientRect(),r=el?el.getBoundingClientRect():null;
+  if(r&&typeof puff==='function')puff(r.left-fr.left+r.width/2,r.top-fr.top+r.height*.7,16,r.width*.6);
+  setTimeout(()=>{if(f>=S.floors){S.floors++;setDug(S.floors-1,0)}setDug(f,dugOf(f)+1);render();const n=document.querySelector('.cell[data-f="'+f+'"][data-c="'+c+'"]');if(n){n.style.animation='cellPop .6s cubic-bezier(.34,1.7,.64,1) both'}},280)}
+let digSrc=null;findFile('dig',u=>{digSrc=u;if(u)document.documentElement.style.setProperty('--dig-img','url("'+u+'")')});
+
+/* add floor = dig a whole floor at once, or finish the last floor if it is only partly dug */
+function addFloorAction(btn){const last=S.floors-1;
+  if(last>=0&&dugOf(last)<S.cols){setDug(last,S.cols);render();const row=document.querySelectorAll('#floors .floor:not(.digrow)')[last];
+    if(row){row.querySelectorAll('.cell').forEach((c,i)=>{c.style.animation='cellPop .7s cubic-bezier(.34,1.7,.64,1) both';c.style.animationDelay=(i*.1)+'s'})}
+    if(btn){btn.classList.remove('squish');void btn.offsetWidth;btn.classList.add('squish')}return}
+  if(S.floors>=40){say('Стигнат е максимумът от 40 етажа.',true);return}
+  S.floors++;if(S.dug)S.dug[S.floors-1]=S.cols;say('Добавен е етаж '+S.floors+'.');render();newFloorFx(btn)}
+function buryCell(f){const n=dugOf(f)-1;
+  if(n<=0&&f===S.floors-1&&S.floors>1&&!S.rooms.some(r=>r.f===f)){if(S.dug)S.dug.splice(f,1);S.floors--;render();return}
+  setDug(f,Math.max(0,n));render()}
+/* the row under a fully dug last floor: only a shovel next to the elevator; digging it starts a new floor */
+function renderGhost(fl){const old=$('ghostFloor');if(old)old.remove();if(S.floors>=40||dugOf(S.floors-1)<S.cols)return;
+  const row=document.createElement('div');row.id='ghostFloor';row.className='floor digrow';const g=document.createElement('div');g.className='grid';g.style.setProperty('--cols',S.cols+1);g.style.setProperty('--rc',S.cols);
+  for(let c=0;c<S.cols;c++){const cell=document.createElement('div');cell.className='cell '+(c===S.cols-1?'dig':'dirt');cell.dataset.f=S.floors;cell.dataset.c=c;cell.style.gridColumn=(c+1);
+    if(c===S.cols-1)cell.title=window.HZ_LANG==='en'?'Dig a new cell':'Изкопай нова клетка';g.appendChild(cell)}
+  const sh=document.createElement('div');sh.className='shaft';sh.style.gridColumn=(S.cols+1);g.appendChild(sh);
+  row.appendChild(g);fl.appendChild(row)}
+
+/* rooms drawer search: filters the cards by name as you type */
+(()=>{const wrap=document.querySelector('.palwrap');if(!wrap)return;const box=document.createElement('label');box.className='palsearch';
+  box.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="palQ" placeholder="Търси стая..." aria-label="Търси стая" autocomplete="off">';
+  document.querySelector('.side-l').appendChild(box);const inp=box.querySelector('input');
+  const sync=()=>box.classList.toggle('open',document.activeElement===inp||!!inp.value);
+  box.addEventListener('click',()=>{box.classList.add('open');inp.focus()});inp.addEventListener('focus',sync);inp.addEventListener('blur',()=>setTimeout(sync,0));
+  window.filterPalette=()=>{const q=($('palQ').value||'').trim().toLowerCase();const pal=$('palette');let n=0;
+    pal.querySelectorAll('.pal-item').forEach(it=>{const nm=(it.querySelector('.pal-name')||{}).textContent||'';const hit=!q||nm.toLowerCase().includes(q);it.classList.toggle('nomatch',!hit);if(hit&&!it.classList.contains('full'))n++});
+    let none=pal.querySelector('.pal-none');if(q&&!n){if(!none){none=document.createElement('div');none.className='pal-none';pal.appendChild(none)}none.textContent=window.HZ_LANG==='en'?'No room matches.':'Няма такава стая.'}else if(none)none.remove();
+    pal.scrollLeft=0};
+  $('palQ').addEventListener('input',filterPalette);
+  $('palQ').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';filterPalette()}})})();
+</script>
+
+</body>
+</html>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://sppenev.github.io/Hideout-Planner/Hideout-Planner.html</loc>
-    <xhtml:link rel="alternate" hreflang="bg" href="https://sppenev.github.io/Hideout-Planner/Hideout-Planner.html?lang=bg"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sppenev.github.io/Hideout-Planner/Hideout-Planner.html?lang=en"/>
+    <loc>https://sppenev.github.io/Hideout-Planner/</loc>
+    <xhtml:link rel="alternate" hreflang="bg" href="https://sppenev.github.io/Hideout-Planner/?lang=bg"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sppenev.github.io/Hideout-Planner/?lang=en"/>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

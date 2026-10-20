@@ -187,7 +187,7 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
     <div class="bar-in">
       <h1><button class="btn" id="menuBtn" type="button" aria-controls="side">Меню</button> Стаи в планера</h1>
       <div class="btns">
-        <a class="btn" href="Hideout-Planner.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Отвори сайта ↗</a>
+        <a class="btn" href="./" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Отвори сайта ↗</a>
         <button class="btn" id="add" type="button">+ Нова стая</button>
         <button class="btn primary" id="ghSave" type="button">Запази в сайта</button>
       </div>
@@ -275,7 +275,7 @@ async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh
 let bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;
 let logoH=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.logoH)||56;
 let headerCfg=Object.assign({},(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{});
-function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до Hideout-Planner.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:headerCfg,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
+function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до index.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:headerCfg,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
   $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
@@ -368,7 +368,7 @@ let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textCon
 function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
 mergeEn(fromFile());
 if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header){headerCfg=Object.assign(headerCfg,g.header);renderHeaders()}if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
-else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като Hideout-Planner.html и rooms.js.';
+else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като index.html и rooms.js.';
 render();
 
 /* ---- pattern size: stored in rooms.js as bgSize, saved straight to the site when the slider is released ---- */
