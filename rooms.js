@@ -8,7 +8,7 @@ window.ROOMS_CONFIG={
   "en": "images/headers/header-mvds8m8f.jpg",
   "pl": "images/headers/header-mvg9k70s.jpg",
   "de": "images/headers/header-mvg9kdah.jpg",
-  "pt": "images/headers/header-mvds8m8f.jpg"
+  "pt": "images/headers/header-mvl81dtb.jpg"
  },
  "rooms": [
   {
