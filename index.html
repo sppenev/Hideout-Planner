@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hero Zero Hideout Planner - планер за скривалището | Delta Uno</title>
 <meta name="description" content="Неофициален планер за скривалището в Hero Zero. Подреди стаите по етажите, виж кои са заредени от генератора и сподели подредбата с отбора с един линк. Безплатно, без регистрация.">
-<meta name="keywords" content="Hero Zero, Hero Zero hideout, hideout planner, скривалище, планер за скривалище, Hero Zero скривалище, стаи, генератор, подредба на стаи, Delta Uno, kryjówka, planer kryjówki, Versteck, Versteck Planer, hideout layout, Hero Zero planner">
+<meta name="keywords" content="Hero Zero, Hero Zero hideout, hideout planner, скривалище, планер за скривалище, Hero Zero скривалище, стаи, генератор, подредба на стаи, Delta Uno, kryjówka, planer kryjówki, Versteck, Versteck Planer, esconderijo, planejador de esconderijo, hideout layout, Hero Zero planner">
 <meta name="author" content="eLeS">
 <meta name="robots" content="index,follow">
 <meta name="theme-color" content="#1d1712">
@@ -20,6 +20,7 @@
 <link rel="alternate" hreflang="en" href="https://sppenev.github.io/Hideout-Planner/?lang=en">
 <link rel="alternate" hreflang="pl" href="https://sppenev.github.io/Hideout-Planner/?lang=pl">
 <link rel="alternate" hreflang="de" href="https://sppenev.github.io/Hideout-Planner/?lang=de">
+<link rel="alternate" hreflang="pt-BR" href="https://sppenev.github.io/Hideout-Planner/?lang=pt">
 <link rel="alternate" hreflang="x-default" href="https://sppenev.github.io/Hideout-Planner/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hideout Planner · Delta Uno">
@@ -34,6 +35,7 @@
 <meta property="og:locale:alternate" content="bg_BG">
 <meta property="og:locale:alternate" content="pl_PL">
 <meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hero Zero Hideout Planner - plan your hideout">
 <meta name="twitter:description" content="Unofficial hideout planner for Hero Zero. Arrange rooms on floors, see which ones the generators power and share your layout with your team in one link. Free, no sign-up.">
@@ -426,6 +428,7 @@ body.tray-open .scroller{padding-bottom:280px!important}
 html[lang=en] .cpy.ok[data-tip]:hover::after{content:"Copied!"}
 html[lang=pl] .cpy.ok[data-tip]:hover::after{content:"Skopiowano!"}
 html[lang=de] .cpy.ok[data-tip]:hover::after{content:"Kopiert!"}
+html[lang=pt] .cpy.ok[data-tip]:hover::after{content:"Copiado!"}
 
 /* variant tabs: red x to delete (second click confirms), double-click name to rename */
 .tabw{position:relative;display:inline-flex}
@@ -755,7 +758,7 @@ body.dragging .floors .cell .bury{display:none}
 
 <script>
 /* language: ?lang=en|bg in the address wins, then the saved choice, default Bulgarian */
-(function(){var OK=/^(bg|en|pl|de)$/,q=(location.search.match(/[?&]lang=(bg|en|pl|de)\b/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
+(function(){var OK=/^(bg|en|pl|de|pt)$/,q=(location.search.match(/[?&]lang=(bg|en|pl|de|pt)\b/)||[])[1],L=q;if(!L){try{L=localStorage.getItem('hz-lang')}catch(e){}}
   /* no choice yet: the first browser language we support wins (bg, en, pl, de), everyone else gets English */
   if(!L||!OK.test(L)){L='en';var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);for(var i=0;i<langs.length;i++){var m=String(langs[i]||'').toLowerCase().slice(0,2);if(OK.test(m)){L=m;break}}}
   if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L;document.documentElement.lang=L})();
@@ -1343,9 +1346,9 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     setTimeout(done,720)},sinkEnd)}
 
 /* ===== Languages: room names come from the admin (name_xx / desc_xx), the interface is translated here ===== */
-(()=>{const LANGS=[['bg','Български'],['en','English'],['pl','Polski'],['de','Deutsch']],L=window.HZ_LANG,lb=$('langBtn'),lm=$('langMenu');
+(()=>{const LANGS=[['bg','Български'],['en','English'],['pl','Polski'],['de','Deutsch'],['pt','Português (Brasil)']],L=window.HZ_LANG,lb=$('langBtn'),lm=$('langMenu');
   lb.innerHTML=L.toUpperCase()+'<svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
-  lb.setAttribute('aria-label',{bg:'Език',en:'Language',pl:'Język',de:'Sprache'}[L]);
+  lb.setAttribute('aria-label',{bg:'Език',en:'Language',pl:'Język',de:'Sprache',pt:'Idioma'}[L]);
   lm.innerHTML=LANGS.map(([k,n])=>'<button type="button" role="menuitem" data-l="'+k+'" lang="'+k+'"'+(k===L?' aria-current="true"':'')+'><b>'+k.toUpperCase()+'</b>'+n+'</button>').join('');
   const open=v=>{lm.hidden=!v;lb.setAttribute('aria-expanded',v?'true':'false')};
   lb.onclick=e=>{e.stopPropagation();open(lm.hidden)};
@@ -1354,7 +1357,7 @@ function removeFloorFx(row,done){row.classList.add('leaving');
   lm.onclick=e=>{const b=e.target.closest('[data-l]');if(!b)return;const k=b.dataset.l;open(false);if(k===L)return;
     try{localStorage.setItem('hz-lang',k)}catch(err){}const q=location.search.replace(/([?&])lang=[a-z]+&?/,'$1').replace(/[?&]$/,'');location.href=location.pathname+q+location.hash};
   if(L==='bg')return;
-  const X={en:0,pl:1,de:2}[L];
+  const X={en:0,pl:1,de:2,pt:3}[L];
   /* Bulgarian text: [English, Polish, German] */
   const T={'Стаи':['Rooms','Pokoje','Räume'],'Настройки':['Settings','Ustawienia','Einstellungen'],'Затвори':['Close','Zamknij','Schließen'],'Скривалище':['Hideout','Kryjówka','Versteck'],
     'Нива':['Floors','Piętra','Etagen'],'Махни всички стаи':['Remove all rooms','Usuń wszystkie pokoje','Alle Räume entfernen'],'Натисни пак':['Press again','Kliknij ponownie','Nochmal drücken'],
@@ -1386,7 +1389,10 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     'Не притежавам правата върху картинките, имената на стаите и другите материали от играта. Hero Zero и всички свързани с нея имена, изображения и търговски марки са собственост на съответните им притежатели. Тук се използват само с информационна цел, за да помогнат на играчите да планират скривалището си.':['I do not own the rights to the images, room names or any other game material. Hero Zero and all related names, images and trademarks are the property of their respective owners. They are used here for informational purposes only, to help players plan their hideout.','Nie posiadam praw do obrazków, nazw pokoi ani innych materiałów z gry. Hero Zero oraz wszystkie powiązane nazwy, obrazy i znaki towarowe są własnością ich prawowitych właścicieli. Są tu używane wyłącznie w celach informacyjnych, aby pomóc graczom zaplanować kryjówkę.','Ich besitze keine Rechte an den Bildern, Raumnamen oder anderen Spielinhalten. Hero Zero und alle zugehörigen Namen, Bilder und Marken sind Eigentum ihrer jeweiligen Inhaber. Sie werden hier nur zu Informationszwecken verwendet, um Spielern bei der Planung ihres Verstecks zu helfen.'],
     'Ако сте притежател на права и искате нещо да бъде премахнато или променено, свържете се с мен през Behance и ще го махна веднага. Сайтът е безплатен, без реклами и без регистрация. Подредбите се пазят само във вашия браузър.':['If you are a rights holder and want something removed or changed, contact me through Behance and I will take it down right away. The site is free, has no ads and needs no sign-up. Layouts are stored only in your browser.','Jeśli jesteś właścicielem praw i chcesz, aby coś zostało usunięte lub zmienione, skontaktuj się ze mną przez Behance, a usunę to od razu. Strona jest darmowa, bez reklam i bez rejestracji. Układy są zapisywane tylko w twojej przeglądarce.','Wenn du Rechteinhaber bist und möchtest, dass etwas entfernt oder geändert wird, kontaktiere mich über Behance und ich entferne es sofort. Die Seite ist kostenlos, ohne Werbung und ohne Anmeldung. Layouts werden nur in deinem Browser gespeichert.'],
     'Изкопай нова клетка':['Dig a new cell','Wykop nowe pole','Neues Feld ausgraben'],'Няма такава стая.':['No room matches.','Brak takiego pokoju.','Kein passender Raum.']};
-  /* patterns: [regex, English, Polish, German]; §c is the cell count word */
+  /* Brazilian Portuguese, in the same order as T */
+  const TPT=["Salas", "Configurações", "Fechar", "Esconderijo", "Andares", "Remover todas as salas", "Clique de novo", "Variantes", "+ Copiar como nova variante", "Principal", "Resumo", "Carregar layout", "Cole um link ou código de um colega de time. O layout chega como uma nova variante e as suas continuam intactas.", "Cole um código ou link aqui", "Carregar", "Carregado ✓", "O campo está vazio", "Código inválido", "Copie do campo", "Compartilhar layout", "Seu layout é salvo automaticamente neste navegador. Mande o link para um colega de time e ele vai ver exatamente este layout. O código é a mesma coisa, só que mais curto, para você guardar.", "Link", "Código", "Copiar link", "Copiar código", "Como usar", "Solte aqui para remover uma sala", "Adicionar andar", "visitas", "online agora", "Todas as salas foram colocadas.", "Todos os geradores estão funcionando com força total.", "Falta a Base do Esconderijo.", "Excluir variante", "Clique de novo para excluir", "Excluir?", "Clique duas vezes para renomear", "Remover sala", "Remover?", "Remover andar", "Adicionar andar", "Esquerda", "Direita", "Código ou link do layout", "Link do layout", "Código do layout", "Resumo e configurações", "Alimentada por um gerador no momento", "Portfólio no Behance", "Esconder salas", "Buscar sala...", "Buscar sala", "Compartilhar", "O andar inteiro some junto com as salas dele. Se houver salas nele, clique duas vezes.", "Cavar este espaço", "Enterrar de novo", "Hideout Planner é um projeto de fã não oficial e sem fins comerciais. Não tem ligação com os criadores ou distribuidores de Hero Zero e não é aprovado nem patrocinado por eles.", "Não tenho os direitos sobre as imagens, os nomes das salas e outros materiais do jogo. Hero Zero e todos os nomes, imagens e marcas relacionados pertencem aos seus respectivos donos. Eles são usados aqui apenas para fins informativos, para ajudar os jogadores a planejar o esconderijo.", "Se você é titular de direitos e quer que algo seja removido ou alterado, fale comigo pelo Behance e eu removo na hora. O site é gratuito, sem anúncios e sem cadastro. Os layouts ficam salvos só no seu navegador.", "Cavar um novo espaço", "Nenhuma sala encontrada."];
+  Object.keys(T).forEach((k,i)=>{T[k][3]=TPT[i]});
+  /* patterns: [regex, English, Polish, German, Portuguese]; §c is the cell count word */
   const R=[[/^Махни етаж (\d+)$/,'Remove floor $1','Usuń piętro $1','Etage $1 entfernen'],[/^Изтрий „(.+)“$/,'Delete “$1”','Usuń „$1”','„$1“ löschen'],
     [/^Вариант (\d+)$/,'Variant $1','Wariant $1','Variante $1'],[/^Споделен (\d+)$/,'Shared $1','Udostępniony $1','Geteilt $1'],[/^Зареден (\d+)$/,'Loaded $1','Wczytany $1','Geladen $1'],
     [/^Генератор \(ниво (\d+), слот (\d+)\) зарежда (\d) от 2 съседа\.$/,'Generator (floor $1, slot $2) powers $3 of 2 neighbours.','Generator (piętro $1, pole $2) zasila $3 z 2 sąsiadów.','Generator (Etage $1, Feld $2) versorgt $3 von 2 Nachbarn.'],
@@ -1396,7 +1402,9 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     [/^(\d+) слота? · генераторът я зарежда$/,'$1 §c · powered by generators','$1 §c · zasilany przez generatory','$1 §c · von Generatoren versorgt'],
     [/^(\d+) слота? · генераторът не я зарежда$/,'$1 §c · not powered by generators','$1 §c · niezasilany przez generatory','$1 §c · nicht von Generatoren versorgt'],
     [/^(.+), ниво (\d+), слот (\d+)$/,'$1, floor $2, slot $3','$1, piętro $2, pole $3','$1, Etage $2, Feld $3'],[/^Махни (.+)$/,'Remove $1','Usuń $1','$1 entfernen']];
-  const cells=n=>L==='en'?(n===1?'cell':'cells'):L==='pl'?(n===1?'pole':(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?'pola':'pól'):(n===1?'Feld':'Felder');
+  ["Remover andar $1","Excluir “$1”","Variante $1","Compartilhado $1","Carregado $1","Gerador (andar $1, espaço $2) alimenta $3 de 2 vizinhos.","$1 (andar $2) não tem gerador ao lado.","$1 §c · $2/$3 · alimentada","$1 §c · $2/$3","$1 §c · alimenta os vizinhos","$1 §c · alimentada por geradores","$1 §c · não alimentada por geradores","$1, andar $2, espaço $3","Remover $1"].forEach((t,i)=>{R[i][4]=t});
+  const cells=n=>L==='pt'?(n===1?'espaço':'espaços'):cells0(n);
+  const cells0=n=>L==='en'?(n===1?'cell':'cells'):L==='pl'?(n===1?'pole':(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?'pola':'pól'):(n===1?'Feld':'Felder');
   const tr=t=>{const k=t.trim();if(!k||!/[А-Яа-я]/.test(k))return null;let out=T[k]?T[k][X]:null;if(out==null){for(const r of R){if(r[0].test(k)){out=k.replace(r[0],r[1+X]);break}}}
     if(out!=null)out=out.replace(/^(\d+) §c/,(m,n)=>n+' '+cells(+n));
     return out==null?null:t.replace(k,out)};
@@ -1415,6 +1423,10 @@ function removeFloorFx(row,done){row.classList.add('leaving');
       '<h4>Pokoje</h4><ul><li><b>Dodaj:</b> najedź na puste pole i kliknij pomarańczowy plus. Poniżej otworzy się szuflada z pokojami. Kliknij lub przeciągnij pokój.</li><li><b>Przenieś:</b> przeciągnij pokój. Zielony znaczy, że pasuje, czerwony, że nie. Upuść go na inny pokój, a zamienią się miejscami.</li><li><b>Usuń:</b> najedź na pokój i kliknij czerwony X w rogu.</li><li>Pokój, który osiągnął limit, znika z szuflady. Najedź na pokój, aby zobaczyć, co robi.</li></ul>'+
       '<h4>Piętra i generatory</h4><ul><li><b>Dodaj piętro</b> to pomarańczowy przycisk na dole. Czerwony minus po lewej usuwa piętro razem z pokojami.</li><li>Generator zasila pokoje po lewej i prawej stronie. Turkusowy prąd pokazuje, że zasilanie do nich dociera.</li><li>Ustawienia → Podsumowanie pokazuje problemy na czerwono.</li></ul>'+
       '<h4>Warianty i udostępnianie</h4><ul><li>Ustawienia → Warianty: „+ Kopia” tworzy nowy wariant. Podwójne kliknięcie zmienia nazwę, X usuwa.</li><li>Ikona udostępniania na górze daje link i kod. Kto otworzy link, zobaczy twój układ.</li><li>Ustawienia → Wczytaj układ: wklej link lub kod od członka drużyny.</li></ul>'],
+    pt:['Como usar','<p>Planeje seu esconderijo no Hero Zero, teste variantes e mande para o seu time. Tudo fica salvo só neste navegador.</p>'+
+      '<h4>Salas</h4><ul><li><b>Colocar:</b> passe o mouse sobre um espaço vazio e clique no mais laranja. A gaveta de salas abre embaixo. Clique ou arraste uma sala.</li><li><b>Mover:</b> arraste a sala. Verde quer dizer que cabe, vermelho que não cabe. Solte em cima de outra sala e elas trocam de lugar.</li><li><b>Remover:</b> passe o mouse sobre a sala e clique no X vermelho no canto.</li><li>Uma sala que chegou ao limite some da gaveta. Passe o mouse sobre uma sala para ver o que ela faz.</li></ul>'+
+      '<h4>Andares e geradores</h4><ul><li><b>Adicionar andar</b> é o botão laranja embaixo. O menos vermelho à esquerda remove um andar junto com as salas.</li><li>Um gerador alimenta as salas à esquerda e à direita dele. A corrente turquesa mostra que a energia chega até elas.</li><li>Configurações → Resumo mostra os problemas em vermelho.</li></ul>'+
+      '<h4>Variantes e compartilhamento</h4><ul><li>Configurações → Variantes: “+ Copiar” cria uma nova variante. Clique duas vezes para renomear, X para excluir.</li><li>O ícone de compartilhar no topo dá um link e um código. Quem abrir o link vê o seu layout.</li><li>Configurações → Carregar layout: cole um link ou código de um colega de time.</li></ul>'],
     de:['Anleitung','<p>Plane dein Versteck in Hero Zero, probiere Varianten aus und schick sie deinem Team. Alles wird nur in diesem Browser gespeichert.</p>'+
       '<h4>Räume</h4><ul><li><b>Platzieren:</b> fahre über ein leeres Feld und drück das orange Plus. Unten öffnet sich die Raumleiste. Klicke oder ziehe einen Raum.</li><li><b>Verschieben:</b> zieh den Raum. Grün heißt, er passt, rot heißt, er passt nicht. Lass ihn auf einem anderen Raum los und sie tauschen.</li><li><b>Entfernen:</b> fahre über den Raum und drück das rote X in der Ecke.</li><li>Ein Raum am Limit verschwindet aus der Leiste. Fahre über einen Raum, um zu sehen, was er macht.</li></ul>'+
       '<h4>Etagen und Generatoren</h4><ul><li><b>Etage hinzufügen</b> ist der orange Knopf unten. Das rote Minus links entfernt eine Etage samt Räumen.</li><li>Ein Generator versorgt die Räume links und rechts von ihm. Der türkise Strom zeigt, dass die Energie ankommt.</li><li>Einstellungen → Übersicht zeigt Probleme in Rot.</li></ul>'+
