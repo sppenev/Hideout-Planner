@@ -194,13 +194,20 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
 .hl-btn .car{display:inline-block;transition:transform .2s;margin-left:4px}
 .hl.open .hl-btn .car{transform:rotate(180deg)}
 .hl.open{border-color:var(--hero)}
-.hl-pick{display:none;padding:4px 8px 10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.hl-pick{display:none;padding:6px 10px 12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
 .hl.open .hl-pick{display:grid}
-.hl-opt{all:unset;box-sizing:border-box;cursor:pointer;border:2px solid var(--ink);border-radius:8px;overflow:hidden;background:#16120f;aspect-ratio:10/3;position:relative;display:grid;place-items:center;font-size:12px;color:var(--hint);font-weight:700}
-.hl-opt img{width:100%;height:100%;object-fit:cover;object-position:center bottom;display:block}
+.hl-opt{all:unset;box-sizing:border-box;cursor:pointer;border:2px solid var(--ink);border-radius:9px;overflow:hidden;background:var(--panel);display:flex;flex-direction:column;font-size:12px;color:var(--hint);font-weight:700;transition:border-color .15s,transform .15s}
+.hl-opt:hover{transform:translateY(-2px)}
+.hl-opt .oimg{aspect-ratio:10/3;background:#16120f;display:grid;place-items:center}
+.hl-opt .oimg img{width:100%;height:100%;object-fit:cover;object-position:center bottom;display:block}
+.hl-opt .ocap{padding:7px 9px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.hl-opt .ocap span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.hl-opt .ocap b{color:var(--hero);white-space:nowrap;font-size:11px}
+.hl-opt.on .ocap{background:var(--hero);color:var(--hero-ink)}
+.hl-opt.on .ocap b{color:var(--hero-ink)}
 .hl-opt:hover{border-color:var(--paper)}
 .hl-opt.on{border-color:var(--hero);box-shadow:0 0 0 2px var(--hero)}
-.hl-opt.fbopt{background:repeating-linear-gradient(45deg,#1d1712 0 8px,#231c16 8px 16px)}
+.hl-opt.fbopt .oimg{background:repeating-linear-gradient(45deg,#1d1712 0 8px,#231c16 8px 16px);font-size:13px}
 @media (max-width:700px){.hl-row{grid-template-columns:40px 1fr auto}.hl-name{display:none}}
 
 #logoRange{background:linear-gradient(90deg,var(--hero) 0 var(--p,20%),var(--panel-2) var(--p,20%) 100%)}
@@ -473,10 +480,10 @@ function renderHeaders(){const g=$('hdrGrid'),hl=$('hdrLangs');if(!g)return;cons
   /* one row per language */
   if(hl)hl.innerHTML=HLANGS.map(([k,c,n])=>{const p=headerCfg[k],fb=k==='bg'?null:(k==='en'?'bg':'en'),fbName=fb==='bg'?'българския':'английския';
     const th=p?'<div class="hl-thumb"><img alt="" src="'+hdrSrc(p)+'"></div>':'<div class="hl-thumb fb">като '+fbName+'</div>';
-    const opts=(fb?'<button type="button" class="hl-opt fbopt'+(p?'':' on')+'" data-pick="">Като '+fbName+'</button>':'')+
-      list.map(h=>'<button type="button" class="hl-opt'+(p===h.path?' on':'')+'" data-pick="'+esc(h.path)+'" title="'+esc(h.name)+'"><img alt="" src="'+hdrSrc(h.path)+'"></button>').join('');
+    const opts=
+      list.map(h=>{const us=HLANGS.filter(([q])=>headerCfg[q]===h.path).map(x=>x[1]);return '<button type="button" class="hl-opt'+(p===h.path?' on':'')+'" data-pick="'+esc(h.path)+'"><div class="oimg"><img alt="" src="'+hdrSrc(h.path)+'"></div><div class="ocap"><span>'+esc(h.name)+'</span>'+(p===h.path?'<b>✓ избран</b>':us.length?'<b>'+us.join(', ')+'</b>':'')+'</div></button>'}).join('');
     return '<div class="hl'+(hlOpen===k?' open':'')+'" data-k="'+k+'"><div class="hl-row"><span class="hl-code">'+c+'</span>'+th+
-      '<div class="hl-name">'+n+'<small>'+(p?esc(p.split('/').pop()):'няма избран')+'</small></div>'+
+      '<div class="hl-name">'+n+'<small>'+(p?esc(p.split('/').pop()):'няма избран, показва се '+(fb==='bg'?'българският':'английският'))+'</small></div>'+
       '<button type="button" class="btn hl-btn" aria-expanded="'+(hlOpen===k)+'">'+(p?'Смени':'Избери')+'<span class="car">▾</span></button></div>'+
       '<div class="hl-pick">'+(list.length?opts:'<p class="hint">'+(gh.ok?'Няма качени хедъри.':'Свържи админа с GitHub, за да видиш хедърите.')+'</p>')+'</div></div>'}).join('');
   /* library */
