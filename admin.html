@@ -181,10 +181,11 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
 .hfree:empty{display:none}
 .hcard .hrow{justify-content:space-between;align-items:flex-start}
 .hchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
-.hchip{display:inline-flex;align-items:center;gap:2px;background:var(--hero);color:var(--hero-ink);border:2px solid var(--ink);border-radius:8px;font-weight:900;font-size:12px;padding:3px 4px 3px 8px;letter-spacing:.03em}
-.hchip:not(:has(.hx)){padding-right:8px}
-.hx{all:unset;cursor:pointer;width:18px;height:18px;display:grid;place-items:center;border-radius:5px;font-size:15px;line-height:1}
-.hx:hover{background:rgba(0,0,0,.18)}
+.hchip{position:relative;display:inline-flex;align-items:center;background:var(--hero);color:var(--hero-ink);border:2px solid var(--ink);border-radius:8px;font-weight:900;font-size:12px;padding:3px 10px;letter-spacing:.03em}
+.hchip:has(.hx){margin-right:6px}
+.hchips{padding-top:6px}
+.hx{all:unset;cursor:pointer;position:absolute;top:-9px;right:-11px;width:17px;height:17px;border-radius:50%;background:#e8382a;color:#fff;border:2px solid var(--panel-2);display:grid;place-items:center;font-size:13px;font-weight:900;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.5);transition:transform .12s,background .12s}
+.hx:hover{background:#ff4b3c;transform:scale(1.15)}
 .hnone{font-size:12px;color:var(--hint);padding:4px 0}
 .hadd{background:var(--panel);color:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:4px 6px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;max-width:150px}
 
