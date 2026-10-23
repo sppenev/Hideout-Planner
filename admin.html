@@ -177,38 +177,16 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
 .hdel svg{width:16px;height:16px}
 .hdel[disabled]{opacity:.35;cursor:not-allowed}
 .hname .inuse{color:var(--hero);font-weight:700}
-.hlib-head{margin-top:6px;padding-top:14px;border-top:2px dashed var(--ink)}
-.hcard .hrow{justify-content:space-between}
-.hcard .hrow .hused{font-size:11px;color:var(--hint);font-weight:700}
-.hcard .hrow .hused b{color:var(--hero)}
-.hlangs{display:flex;flex-direction:column;gap:6px}
-.hl{background:var(--panel-2);border:2px solid var(--ink);border-radius:9px}
-.hl-row{display:grid;grid-template-columns:44px 200px 1fr auto;align-items:center;gap:12px;padding:6px 8px}
-.hl-code{font-weight:900;font-size:13px;letter-spacing:.04em;background:var(--panel);border:2px solid var(--ink);border-radius:7px;text-align:center;padding:4px 0}
-.hl-thumb{aspect-ratio:10/3;border-radius:6px;overflow:hidden;background:#16120f;display:grid;place-items:center;font-size:11px;color:var(--hint)}
-.hl-thumb img{width:100%;height:100%;object-fit:cover;object-position:center bottom;display:block}
-.hl-thumb.fb{background:repeating-linear-gradient(45deg,#1d1712 0 8px,#231c16 8px 16px);border:1px dashed var(--panel-line)}
-.hl-name{font-size:13px;min-width:0}
-.hl-name small{display:block;color:var(--hint);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hl-btn{white-space:nowrap}
-.hl-btn .car{display:inline-block;transition:transform .2s;margin-left:4px}
-.hl.open .hl-btn .car{transform:rotate(180deg)}
-.hl.open{border-color:var(--hero)}
-.hl-pick{display:none;padding:6px 10px 12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.hl.open .hl-pick{display:grid}
-.hl-opt{all:unset;box-sizing:border-box;cursor:pointer;border:2px solid var(--ink);border-radius:9px;overflow:hidden;background:var(--panel);display:flex;flex-direction:column;font-size:12px;color:var(--hint);font-weight:700;transition:border-color .15s,transform .15s}
-.hl-opt:hover{transform:translateY(-2px)}
-.hl-opt .oimg{aspect-ratio:10/3;background:#16120f;display:grid;place-items:center}
-.hl-opt .oimg img{width:100%;height:100%;object-fit:cover;object-position:center bottom;display:block}
-.hl-opt .ocap{padding:7px 9px;display:flex;justify-content:space-between;gap:8px;align-items:center}
-.hl-opt .ocap span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
-.hl-opt .ocap b{color:var(--hero);white-space:nowrap;font-size:11px}
-.hl-opt.on .ocap{background:var(--hero);color:var(--hero-ink)}
-.hl-opt.on .ocap b{color:var(--hero-ink)}
-.hl-opt:hover{border-color:var(--paper)}
-.hl-opt.on{border-color:var(--hero);box-shadow:0 0 0 2px var(--hero)}
-.hl-opt.fbopt .oimg{background:repeating-linear-gradient(45deg,#1d1712 0 8px,#231c16 8px 16px);font-size:13px}
-@media (max-width:700px){.hl-row{grid-template-columns:40px 1fr auto}.hl-name{display:none}}
+.hfree{display:block;margin-top:4px;color:var(--hero)}
+.hfree:empty{display:none}
+.hcard .hrow{justify-content:space-between;align-items:flex-start}
+.hchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.hchip{display:inline-flex;align-items:center;gap:2px;background:var(--hero);color:var(--hero-ink);border:2px solid var(--ink);border-radius:8px;font-weight:900;font-size:12px;padding:3px 4px 3px 8px;letter-spacing:.03em}
+.hchip:not(:has(.hx)){padding-right:8px}
+.hx{all:unset;cursor:pointer;width:18px;height:18px;display:grid;place-items:center;border-radius:5px;font-size:15px;line-height:1}
+.hx:hover{background:rgba(0,0,0,.18)}
+.hnone{font-size:12px;color:var(--hint);padding:4px 0}
+.hadd{background:var(--panel);color:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:4px 6px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;max-width:150px}
 
 #logoRange{background:linear-gradient(90deg,var(--hero) 0 var(--p,20%),var(--panel-2) var(--p,20%) 100%)}
 #logoRange::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff3b0,var(--hero) 60%,#c99400);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink),0 6px 14px rgba(0,0,0,.5);cursor:grab}
@@ -267,9 +245,7 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
         <h2 class="sec">Картинки на сцената</h2>
         <p class="hint">Избери файл и той се качва направо в сайта с правилното име. Може и .jpg, и .png.</p>
         <div class="hdr">
-          <div class="hdr-head"><div><b>Хедър по езици</b><span class="tag">Кой хедър да се показва на всеки език. Ако за даден език няма избран, се показва английският.</span></div></div>
-          <div class="hlangs" id="hdrLangs"></div>
-          <div class="hdr-head hlib-head"><div><b>Библиотека</b><span class="tag">Всички качени хедъри. Хедър, който се използва, не може да се изтрие.</span></div>
+          <div class="hdr-head"><div><b>Хедър</b><span class="tag">Под всеки хедър се виждат езиците, на които се показва. „+ Език“ го слага за още един език, а × го маха от езика. Език без хедър показва английския.</span><span class="tag hfree" id="hdrFree"></span></div>
             <span class="btn primary upbtn">+ Качи хедър<input type="file" accept="image/png,image/jpeg,image/webp" id="hdrFile" aria-label="Качи нов хедър"></span></div>
           <div class="hdr-grid" id="hdrGrid"><p class="hint">Зареждам...</p></div>
         </div>
@@ -474,36 +450,26 @@ async function loadHeaders(){const list=[];
   hdrList=list;renderHeaders()}
 /* every language the site supports; a new language only needs a new line here */
 const HLANGS=[['bg','БГ','Български'],['en','EN','English'],['pl','PL','Polski'],['de','DE','Deutsch'],['pt','PT','Português (Brasil)']];
-let hlOpen=null;
 const hdrSrc=p=>hdrLocal[p]||esc(p)+'?t='+(window._bgT||Date.now());
-function renderHeaders(){const g=$('hdrGrid'),hl=$('hdrLangs');if(!g)return;const list=hdrList;
-  /* one row per language */
-  if(hl)hl.innerHTML=HLANGS.map(([k,c,n])=>{const p=headerCfg[k],fb=k==='bg'?null:(k==='en'?'bg':'en'),fbName=fb==='bg'?'българския':'английския';
-    const th=p?'<div class="hl-thumb"><img alt="" src="'+hdrSrc(p)+'"></div>':'<div class="hl-thumb fb">като '+fbName+'</div>';
-    const opts=
-      list.map(h=>{const us=HLANGS.filter(([q])=>headerCfg[q]===h.path).map(x=>x[1]);return '<button type="button" class="hl-opt'+(p===h.path?' on':'')+'" data-pick="'+esc(h.path)+'"><div class="oimg"><img alt="" src="'+hdrSrc(h.path)+'"></div><div class="ocap"><span>'+esc(h.name)+'</span>'+(p===h.path?'<b>✓ избран</b>':us.length?'<b>'+us.join(', ')+'</b>':'')+'</div></button>'}).join('');
-    return '<div class="hl'+(hlOpen===k?' open':'')+'" data-k="'+k+'"><div class="hl-row"><span class="hl-code">'+c+'</span>'+th+
-      '<div class="hl-name">'+n+'<small>'+(p?esc(p.split('/').pop()):'няма избран, показва се '+(fb==='bg'?'българският':'английският'))+'</small></div>'+
-      '<button type="button" class="btn hl-btn" aria-expanded="'+(hlOpen===k)+'">'+(p?'Смени':'Избери')+'<span class="car">▾</span></button></div>'+
-      '<div class="hl-pick">'+(list.length?opts:'<p class="hint">'+(gh.ok?'Няма качени хедъри.':'Свържи админа с GitHub, за да видиш хедърите.')+'</p>')+'</div></div>'}).join('');
-  /* library */
+const LN=k=>(HLANGS.find(x=>x[0]===k)||[,k,k])[2];
+function renderHeaders(){const g=$('hdrGrid');if(!g)return;const list=hdrList;
+  const free=HLANGS.filter(([k])=>!headerCfg[k]).map(x=>x[1]);$('hdrFree').textContent=free.length?'Без собствен хедър (показват английския): '+free.join(', '):'';
   if(!list.length){g.innerHTML='<p class="hint">'+(gh.ok?'Няма качени хедъри. Качи първия с „+ Качи хедър“.':'Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.')+'</p>';return}
-  g.innerHTML=list.map(h=>{const on=HLANGS.filter(([k])=>headerCfg[k]===h.path).map(x=>x[1]),used=on.length>0;
+  g.innerHTML=list.map(h=>{const on=HLANGS.filter(([k])=>headerCfg[k]===h.path),off=HLANGS.filter(([k])=>headerCfg[k]!==h.path),used=on.length>0;
+    const chips=on.map(([k,c,n])=>'<span class="hchip" title="Показва се на '+esc(n)+'">'+c+(k==='bg'?'':'<button type="button" class="hx" data-off="'+k+'" title="Махни от '+esc(n)+'" aria-label="Махни от '+esc(n)+'">×</button>')+'</span>').join('');
+    const add=off.length?'<select class="hadd" aria-label="Сложи за още един език"><option value="">+ Език</option>'+off.map(([k,c,n])=>'<option value="'+k+'">'+c+' - '+esc(n)+(headerCfg[k]?' (смени)':'')+'</option>').join('')+'</select>':'';
     return '<div class="hcard'+(used?' on':'')+'" data-p="'+esc(h.path)+'"><div class="hprev"><img alt="" src="'+hdrSrc(h.path)+'"></div>'+
-      '<div class="hname">'+esc(h.name)+'</div><div class="hrow"><span class="hused">'+(used?'Използва се за <b>'+on.join(', ')+'</b>':'Не се използва')+'</span>'+
-      '<button type="button" class="hdel" '+(used?'disabled title="Използва се. Първо избери друг хедър за '+on.join(', ')+'."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
-$('hdrLangs').addEventListener('click',async e=>{const row=e.target.closest('.hl');if(!row)return;const k=row.dataset.k;
-  if(e.target.closest('.hl-btn')){hlOpen=hlOpen===k?null:k;renderHeaders();return}
-  const op=e.target.closest('.hl-opt');if(!op)return;
-  if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub.',true);return}
-  const path=op.dataset.pick||null,old=headerCfg[k];if((old||null)===path){hlOpen=null;renderHeaders();return}
-  if(path)headerCfg[k]=path;else delete headerCfg[k];hlOpen=null;renderHeaders();
-  const nm=(HLANGS.find(x=>x[0]===k)||[])[2];say('Записвам хедъра за '+nm+'...');
-  try{await saveHeaderCfg('Хедър ('+k+'): '+(path?path.split('/').pop():'по подразбиране'));say('Хедърът е сменен. До около минута се вижда на сайта.')}
-  catch(err){if(old)headerCfg[k]=old;else delete headerCfg[k];renderHeaders();say(err.message,true)}});
+      '<div class="hname">'+esc(h.name)+'</div><div class="hrow"><div class="hchips">'+(chips||'<span class="hnone">Не се показва никъде</span>')+add+'</div>'+
+      '<button type="button" class="hdel" '+(used?'disabled title="Показва се на '+on.map(x=>x[1]).join(', ')+'. Първо го махни от тези езици."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
+async function setLangHeader(k,path){if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub.',true);return}
+  const old=headerCfg[k];if(path)headerCfg[k]=path;else delete headerCfg[k];renderHeaders();say('Записвам хедъра за '+LN(k)+'...');
+  try{await saveHeaderCfg('Хедър ('+k+'): '+(path?path.split('/').pop():'по подразбиране'));say('Готово. До около минута се вижда на сайта.')}
+  catch(err){if(old)headerCfg[k]=old;else delete headerCfg[k];renderHeaders();say(err.message,true)}}
+$('hdrGrid').addEventListener('change',e=>{const sel=e.target.closest('.hadd');if(!sel)return;const k=sel.value;if(!k)return;setLangHeader(k,sel.closest('.hcard').dataset.p)});
 async function saveHeaderCfg(msg){const cur=await ghGet();const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),
   body:JSON.stringify({message:msg,content:b64e(fileText(cur.rooms)),sha:cur.sha,branch:gh.branch||'main'})});if(!r.ok)throw new Error(ghErr(r))}
 $('hdrGrid').addEventListener('click',async e=>{const card=e.target.closest('.hcard');if(!card)return;const path=card.dataset.p;
+  const x=e.target.closest('[data-off]');if(x){setLangHeader(x.dataset.off,null);return}
   if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub.',true);return}
   const del=e.target.closest('.hdel');if(del&&!del.disabled){if(!del.classList.contains('armed')){del.classList.add('armed');del.title='Натисни пак за изтриване';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.title='Изтрий този хедър'}},3000);return}
     const h=hdrList.find(x=>x.path===path);say('Трия хедъра...');
@@ -514,7 +480,7 @@ $('hdrFile').addEventListener('change',async e=>{const f=e.target.files[0];e.tar
   const ext=f.type==='image/jpeg'?'jpg':f.type==='image/webp'?'webp':'png';const path='images/headers/header-'+Date.now().toString(36)+'.'+ext;
   say('Качвам хедъра...');try{const dataUrl=await new Promise((res,rej)=>{const rd=new FileReader();rd.onload=()=>res(rd.result);rd.onerror=()=>rej(new Error('Файлът не може да се прочете.'));rd.readAsDataURL(f)});
     await ghPutFile(path,dataUrl.split(',')[1],'Нов хедър: '+f.name);hdrLocal[path]=dataUrl;hdrList.push({path,name:path.split('/').pop()+' ('+f.name+')',sha:null});
-    loadHeaders().catch(()=>renderHeaders());say('Хедърът е качен. Избери го за някой език от „Хедър по езици“.')}catch(err){say(err.message,true)}});
+    loadHeaders().catch(()=>renderHeaders());say('Хедърът е качен. Избери с „+ Език“ на кой език да се показва.')}catch(err){say(err.message,true)}});
 renderHeaders();loadHeaders().catch(e=>say(e.message,true));
 
 /* ---- logo size: stored in rooms.js as logoH ---- */
