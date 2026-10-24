@@ -817,10 +817,10 @@ function arcLoop(ts){const dt=Math.min(.05,(ts-(lastT||ts))/1000);lastT=ts;const
     if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
     const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
     /* two lines: a wider, faint one (20%) underneath and the main one on top */
-    let st=ARCS.get(cv);if(!st){st={ph:Math.random()*6,k:3+Math.random()*1.5,amp:3.4,nt:0,flick:1,b:{ph:Math.random()*6,k:2.4+Math.random()*1.2,amp:6.5}};ARCS.set(cv,st)}
+    let st=ARCS.get(cv);if(!st){st={ph:Math.random()*6,k:3+Math.random()*1.5,amp:3.4,nt:0,flick:1,b:{ph:Math.random()*6,k:2.4+Math.random()*1.2,amp:5}};ARCS.set(cv,st)}
     if(!calm){st.ph+=dt*9;st.b.ph-=dt*7.5;st.nt-=dt;if(st.nt<=0){st.nt=.03+Math.random()*.05;st.flick=Math.random()<.08?.5:.85+Math.random()*.15}}
     const len=h*.6,y=(h-len)/2,f=calm?1:st.flick;
-    const lb=h*.8;g.filter='blur(1.6px)';drawLine(g,wavePts(st.b,11,calm?0:7,w/2-2),(h-lb)/2,lb,w/2,f*.2,false,2.2);g.filter='none';
+    const lb=h*.8;g.filter='blur(1.6px)';drawLine(g,wavePts(st.b,11,calm?0:5.5,w/2-4),(h-lb)/2,lb,w/2,f*.2,false,2.2);g.filter='none';
     drawLine(g,wavePts(st,9,calm?0:4.5,w/2-4),y,len,w/2,f)});
   if(!calm||!arcLoop.once){arcLoop.once=true;requestAnimationFrame(arcLoop)}}
 requestAnimationFrame(arcLoop);
