@@ -381,7 +381,7 @@ function rowHTML(r,i){const isNew=!!r._new;const L=cardLang[r.id]||'bg';
    '<label class="wide" data-lng="pl">Описание (PL)<textarea data-k="desc_pl" maxlength="240" lang="pl" placeholder="Opis po polsku">'+esc(r.desc_pl||'')+'</textarea></label>'+
    '<label class="wide" data-lng="de">Описание (DE)<textarea data-k="desc_de" maxlength="240" lang="de" placeholder="Beschreibung auf Deutsch">'+esc(r.desc_de||'')+'</textarea></label>'+
    '<label class="wide" data-lng="pt">Описание (PT-BR)<textarea data-k="desc_pt" maxlength="240" lang="pt-BR" placeholder="Descrição em português">'+esc(r.desc_pt||'')+'</textarea></label>'+
-   '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+
+   '<div class="foot">'+(r.gen?'<div class="tag">Генератор: зарежда съседите си</div>':'<label class="check"><input type="checkbox" data-k="boost"'+(r.boost?' checked':'')+'> Генераторът я зарежда</label>')+(r.id==='hq'?'':'<label class="check"><input type="checkbox" data-k="team"'+(r.team?' checked':'')+'> Изисква Щаб на отбора</label>')+
    '<div class="btns"><span class="btn upbtn">Качи картинка<input type="file" accept="image/*" data-up aria-label="Качи картинка за '+esc(r.name)+'"></span><button class="btn danger delbtn" type="button" data-del title="Изтрий стаята" aria-label="Изтрий стаята"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'+
    '</div></div>'}
 function render(){$('list').innerHTML=rooms.map(rowHTML).join('');document.querySelectorAll('.row').forEach(row=>{const r=rooms[+row.dataset.i];thumbImg(row.querySelector('.thumb'),r.id)});filterRooms()}
@@ -408,7 +408,7 @@ $('list').addEventListener('change',async e=>{if(!e.target.matches('[data-up]'))
     say('Картинката на „'+(r.name||r.id)+'“ е качена. До около минута се вижда на сайта.')}
   catch(err){say(err.message,true)}
   finally{th.classList.remove('busy');th.querySelector('.upover span').textContent='Смени картинката'}});
-$('list').addEventListener('change',e=>{const row=e.target.closest('.row');if(!row)return;const r=rooms[+row.dataset.i];if(e.target.dataset.k==='boost'){r.boost=e.target.checked;keep()}});
+$('list').addEventListener('change',e=>{const row=e.target.closest('.row');if(!row)return;const r=rooms[+row.dataset.i];if(e.target.dataset.k==='boost'){r.boost=e.target.checked;keep()}else if(e.target.dataset.k==='team'){if(e.target.checked)r.team=true;else delete r.team;keep()}});
 $('list').addEventListener('click',e=>{const row=e.target.closest('.row');if(!row)return;const lt=e.target.closest('[data-lt]');if(lt){const rr=rooms[+row.dataset.i];cardLang[rr.id]=lt.dataset.lt;row.dataset.l=lt.dataset.lt;return}const i=+row.dataset.i,r=rooms[i];
   const sb=e.target.closest('[data-size]');if(sb){r.size=+sb.dataset.size;keep();render();return}
   const del=e.target.closest('[data-del]');if(del){if(!del.classList.contains('armed')){del.classList.add('armed');const ico=del.innerHTML;del.textContent='Изтрий?';del.title='Натисни пак за изтриване';setTimeout(()=>{if(del.isConnected){del.classList.remove('armed');del.innerHTML=ico;del.title='Изтрий стаята'}},3000);return}
@@ -420,7 +420,7 @@ ghShow();renderScene();
 let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Натисни пак: ще се загубят незапазените промени';setTimeout(()=>{armed=false;$('reset').textContent='Започни отначало от rooms.js'},3000);return}
   armed=false;try{localStorage.removeItem(KEY)}catch(e){}
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
-function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en','name_pl','desc_pl','name_de','desc_de','name_pt','desc_pt'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
+function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en','name_pl','desc_pl','name_de','desc_de','name_pt','desc_pt','team'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
 mergeEn(fromFile());
 if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header){headerCfg=Object.assign(headerCfg,g.header);renderHeaders()}if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
 else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като index.html и rooms.js.';

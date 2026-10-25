@@ -377,7 +377,8 @@ window.ROOMS_CONFIG={
    "name_pl": "Plantacja Melonów",
    "desc_pl": "Uprawia melony, którymi możesz rzucać podczas walk drużynowych.",
    "name_de": "Melonenplantage",
-   "desc_de": "Baut Melonen an, die du in Teamkämpfen werfen kannst."
+   "desc_de": "Baut Melonen an, die du in Teamkämpfen werfen kannst.",
+   "team": true
   },
   {
    "id": "room2",
@@ -393,7 +394,8 @@ window.ROOMS_CONFIG={
    "name_pl": "Kwatera Konkursu Drużyn",
    "desc_pl": "Zbiera fragmenty punktów Con.",
    "name_de": "Team-Wettbewerb-Hauptquartier",
-   "desc_de": "Sammelt Con-Punkt-Fragmente."
+   "desc_de": "Sammelt Con-Punkt-Fragmente.",
+   "team": true
   },
   {
    "id": "room3",
@@ -409,7 +411,8 @@ window.ROOMS_CONFIG={
    "name_pl": "Fabryka Apteczek",
    "desc_pl": "Produkuje apteczki.",
    "name_de": "Medikit-Fabrik",
-   "desc_de": "Produziert Medikits."
+   "desc_de": "Produziert Medikits.",
+   "team": true
   },
   {
    "id": "room4",
@@ -425,7 +428,8 @@ window.ROOMS_CONFIG={
    "name_pl": "Siłownia",
    "desc_pl": "Obniża cenę punktu umiejętności na siłowni w porównaniu z bezpośrednim zakupem.",
    "name_de": "Fitnessstudio",
-   "desc_de": "Senkt den Preis eines Fertigkeitspunkts im Fitnessstudio im Vergleich zum Direktkauf."
+   "desc_de": "Senkt den Preis eines Fertigkeitspunkts im Fitnessstudio im Vergleich zum Direktkauf.",
+   "team": true
   },
   {
    "id": "room5",
@@ -441,7 +445,8 @@ window.ROOMS_CONFIG={
    "name_pl": "Fabryka Dopalaczy Rakietowych",
    "desc_pl": "Zamienia niepotrzebne przedmioty w dopalacze rakietowe.",
    "name_de": "Raketen-Booster-Fabrik",
-   "desc_de": "Verwandelt Gegenstände, die du nicht mehr brauchst, in Raketen-Booster."
+   "desc_de": "Verwandelt Gegenstände, die du nicht mehr brauchst, in Raketen-Booster.",
+   "team": true
   },
   {
    "id": "room6",
@@ -457,7 +462,8 @@ window.ROOMS_CONFIG={
    "name_pl": "Studio Kaskaderów",
    "desc_pl": "Produkuje dublerów kaskaderskich.",
    "name_de": "Stuntdouble-Studio",
-   "desc_de": "Produziert Stuntdoubles."
+   "desc_de": "Produziert Stuntdoubles.",
+   "team": true
   }
  ]
 };
