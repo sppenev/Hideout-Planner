@@ -334,6 +334,10 @@ body.dragging .fdel{display:none}
 .room .plate,.room .sz{display:none}
 .room .art{background:none;border-radius:0}
 .room.sel{outline:none}
+/* team room without the Team HQ: black and white, dimmed, with a lock */
+.room.inactive>*:not(.room-off):not(.rdel){filter:grayscale(1) brightness(.55)}
+.room-off{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;width:44px;height:44px;border-radius:50%;background:rgba(22,18,15,.85);border:3px solid #fff4dc;color:#fff4dc;display:grid;place-items:center;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.6)}
+.room-off svg{width:22px;height:22px}
 .floors .cell{border:0;background:none;border-radius:0}
 .floors .cell::after{display:none}
 /* empty cell picture (images/empty.png or uploaded), drawn under the drag highlight */
@@ -997,6 +1001,7 @@ function render(){
       el.style.gridColumn=(r.c+1)+' / span '+t.size;el.dataset.id=r.id;el.tabIndex=0;
       el.setAttribute('aria-label',t.name+', ниво '+(f+1)+', слот '+(r.c+1));
       if(r.id===selId)el.classList.add('sel');if(t.isGen)el.classList.add('is-gen');
+      if(teamLocked(r.t)){el.classList.add('inactive');el.insertAdjacentHTML('beforeend','<span class="room-off" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>')}
       if(boosted.has(r.id))el.insertAdjacentHTML('beforeend','<span class="bolt" title="Заредена от генератор">'+BOLT+'</span>');
       if(t.isGen){const gi=gens.find(x=>x.g.id===r.id);
         if(r.c>0&&gi.lOk)el.insertAdjacentHTML('beforeend','<span class="cable l on">'+ARC+'</span>');
