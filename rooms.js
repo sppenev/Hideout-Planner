@@ -10,6 +10,8 @@ window.ROOMS_CONFIG={
   "de": "images/headers/header-mvg9kdah.jpg",
   "pt": "images/headers/header-mvl81dtb.jpg"
  },
+ "header2": {},
+ "v2on": true,
  "rooms": [
   {
    "id": "base",
