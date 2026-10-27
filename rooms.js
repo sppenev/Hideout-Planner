@@ -29,7 +29,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Baza Kryjówki",
    "desc_pl": "Produkuje monety. Jej poziom określa maksymalny poziom pozostałych pokoi oraz ile superkleju i zeronitu możesz przechowywać.",
    "name_de": "Versteck-Basis",
-   "desc_de": "Produziert Münzen. Ihre Stufe bestimmt die Maximalstufe der anderen Räume und wie viel Superkleber und Zeronit du lagern kannst."
+   "desc_de": "Produziert Münzen. Ihre Stufe bestimmt die Maximalstufe der anderen Räume und wie viel Superkleber und Zeronit du lagern kannst.",
+   "name_pt": "Base do Esconderijo",
+   "desc_pt": "Produz moedas. O nível dela define o nível máximo das outras salas e quanto supercola e zeronita você pode guardar."
   },
   {
    "id": "gen",
@@ -45,7 +47,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Generator",
    "desc_pl": "Zasila pokoje po lewej i prawej stronie: większa produkcja i większy magazyn.",
    "name_de": "Generatorraum",
-   "desc_de": "Versorgt die Räume links und rechts: mehr Produktion und größeres Lager."
+   "desc_de": "Versorgt die Räume links und rechts: mehr Produktion und größeres Lager.",
+   "name_pt": "Sala do Gerador",
+   "desc_pt": "Alimenta as salas à esquerda e à direita: mais produção e mais armazenamento."
   },
   {
    "id": "glue",
@@ -61,7 +65,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Fabryka Superkleju",
    "desc_pl": "Produkuje superklej, jeden z dwóch surowców budowlanych.",
    "name_de": "Superkleber-Fabrik",
-   "desc_de": "Produziert Superkleber, einen der beiden Baurohstoffe."
+   "desc_de": "Produziert Superkleber, einen der beiden Baurohstoffe.",
+   "name_pt": "Fábrica de Supercola",
+   "desc_pt": "Produz supercola, um dos dois recursos de construção."
   },
   {
    "id": "stone",
@@ -77,7 +83,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Kopalnia Zeronitu",
    "desc_pl": "Wydobywa zeronit, drugi surowiec budowlany.",
    "name_de": "Zeronit-Mine",
-   "desc_de": "Baut Zeronit ab, den anderen Baurohstoff."
+   "desc_de": "Baut Zeronit ab, den anderen Baurohstoff.",
+   "name_pt": "Mina de Zeronita",
+   "desc_pt": "Extrai zeronita, o outro recurso de construção."
   },
   {
    "id": "xp",
@@ -93,7 +101,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Pokój Nieskończonej Wiedzy",
    "desc_pl": "Produkuje doświadczenie (XP).",
    "name_de": "Raum des unendlichen Wissens",
-   "desc_de": "Produziert Erfahrung (XP)."
+   "desc_de": "Produziert Erfahrung (XP).",
+   "name_pt": "Sala do Conhecimento Infinito",
+   "desc_pt": "Produz experiência (XP)."
   },
   {
    "id": "work",
@@ -109,7 +119,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Warsztat",
    "desc_pl": "Tworzy modyfikacje do twojego ekwipunku.",
    "name_de": "Werkstatt",
-   "desc_de": "Stellt Modifikationen für deine Ausrüstung her."
+   "desc_de": "Stellt Modifikationen für deine Ausrüstung her.",
+   "name_pt": "Oficina",
+   "desc_pt": "Cria modificações para o seu equipamento."
   },
   {
    "id": "forge",
@@ -125,7 +137,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Kuźnia Bohatera",
    "desc_pl": "Tworzy przedmioty z surowców kryjówki.",
    "name_de": "Heldenschmiede",
-   "desc_de": "Stellt Gegenstände aus Versteck-Rohstoffen her."
+   "desc_de": "Stellt Gegenstände aus Versteck-Rohstoffen her.",
+   "name_pt": "Forja do Herói",
+   "desc_pt": "Cria itens com os recursos do esconderijo."
   },
   {
    "id": "atk",
@@ -141,7 +155,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Fabryka Atako-Botów",
    "desc_pl": "Produkuje boty atakujące do napadów na inne kryjówki.",
    "name_de": "Angriffs-Bot-Fabrik",
-   "desc_de": "Produziert Angriffs-Bots für Überfälle auf andere Verstecke."
+   "desc_de": "Produziert Angriffs-Bots für Überfälle auf andere Verstecke.",
+   "name_pt": "Fábrica de Robôs de Ataque",
+   "desc_pt": "Produz robôs de ataque para invadir outros esconderijos."
   },
   {
    "id": "def",
@@ -157,7 +173,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Fabryka Obrono-Botów",
    "desc_pl": "Produkuje boty obronne, które strzegą twojej kryjówki.",
    "name_de": "Verteidigungs-Bot-Fabrik",
-   "desc_de": "Produziert Verteidigungs-Bots, die dein Versteck bewachen."
+   "desc_de": "Produziert Verteidigungs-Bots, die dein Versteck bewachen.",
+   "name_pt": "Fábrica de Robôs de Defesa",
+   "desc_pt": "Produz robôs de defesa que protegem o seu esconderijo."
   },
   {
    "id": "post",
@@ -173,7 +191,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Posterunek Straży",
    "desc_pl": "Broni kryjówki razem z botami obronnymi.",
    "name_de": "Wachposten",
-   "desc_de": "Verteidigt das Versteck zusammen mit den Verteidigungs-Bots."
+   "desc_de": "Verteidigt das Versteck zusammen mit den Verteidigungs-Bots.",
+   "name_pt": "Posto de Guarda",
+   "desc_pt": "Defende o esconderijo junto com os robôs de defesa."
   },
   {
    "id": "store",
@@ -189,7 +209,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Magazyn Robotów",
    "desc_pl": "Zwiększa liczbę botów atakujących i obronnych, które możesz mieć.",
    "name_de": "Roboterlager",
-   "desc_de": "Erhöht, wie viele Angriffs- und Verteidigungs-Bots du haben kannst."
+   "desc_de": "Erhöht, wie viele Angriffs- und Verteidigungs-Bots du haben kannst.",
+   "name_pt": "Depósito de Robôs",
+   "desc_pt": "Aumenta quantos robôs de ataque e de defesa você pode ter."
   },
   {
    "id": "cbu",
@@ -205,7 +227,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Ulepszacz Botów Bojowych",
    "desc_pl": "Podnosi poziom i atrybuty botów bojowych.",
    "name_de": "Kampfbot-Aufwerter",
-   "desc_de": "Erhöht Stufe und Attribute der Kampfbots."
+   "desc_de": "Erhöht Stufe und Attribute der Kampfbots.",
+   "name_pt": "Melhorador de Robôs de Combate",
+   "desc_pt": "Aumenta o nível e os atributos dos robôs de combate."
   },
   {
    "id": "robot",
@@ -221,7 +245,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Ulepszacz Robota Roboczego",
    "desc_pl": "Przyspiesza robota roboczego, który buduje i rozbudowuje pokoje.",
    "name_de": "Arbeitsroboter-Aufwerter",
-   "desc_de": "Beschleunigt den Arbeitsroboter, der Räume baut und ausbaut."
+   "desc_de": "Beschleunigt den Arbeitsroboter, der Räume baut und ausbaut.",
+   "name_pt": "Melhorador do Robô Operário",
+   "desc_pt": "Acelera o robô operário que constrói e amplia as salas."
   },
   {
    "id": "spec",
@@ -237,7 +263,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Centrum Maklerskie",
    "desc_pl": "Obniża koszt ulepszania pokoi w monetach.",
    "name_de": "Maklerzentrum",
-   "desc_de": "Senkt die Münzkosten für das Aufwerten von Räumen."
+   "desc_de": "Senkt die Münzkosten für das Aufwerten von Räumen.",
+   "name_pt": "Centro de Corretagem",
+   "desc_pt": "Reduz o custo em moedas para melhorar as salas."
   },
   {
    "id": "trade",
@@ -253,7 +281,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Pokój Wymiany",
    "desc_pl": "Wymienia zeronit na superklej i odwrotnie. Wyższe poziomy wymieniają więcej surowców.",
    "name_de": "Tauschraum",
-   "desc_de": "Tauscht Zeronit gegen Superkleber und umgekehrt. Höhere Stufen tauschen mehr Rohstoffe."
+   "desc_de": "Tauscht Zeronit gegen Superkleber und umgekehrt. Höhere Stufen tauschen mehr Rohstoffe.",
+   "name_pt": "Sala de Troca",
+   "desc_pt": "Troca zeronita por supercola e vice-versa. Níveis mais altos trocam mais recursos."
   },
   {
    "id": "r42",
@@ -269,7 +299,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Pokój 42.0 Beta",
    "desc_pl": "Wzmacnia Pokój Nieskończonej Wiedzy.",
    "name_de": "Raum 42.0 Beta",
-   "desc_de": "Verstärkt den Raum des unendlichen Wissens."
+   "desc_de": "Verstärkt den Raum des unendlichen Wissens.",
+   "name_pt": "Sala 42.0 Beta",
+   "desc_pt": "Potencializa a Sala do Conhecimento Infinito."
   },
   {
    "id": "cyber",
@@ -285,7 +317,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Laboratorium Cyberbadań",
    "desc_pl": "Poprawia podstawowe umiejętności i atrybuty nowych przedmiotów.",
    "name_de": "Cyber-Forschungslabor",
-   "desc_de": "Verbessert Grundfähigkeiten und Attribute neuer Gegenstände."
+   "desc_de": "Verbessert Grundfähigkeiten und Attribute neuer Gegenstände.",
+   "name_pt": "Laboratório de Pesquisa Cibernética",
+   "desc_pt": "Melhora as habilidades básicas e os atributos dos novos itens."
   },
   {
    "id": "troph",
@@ -301,7 +335,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Sala Trofeów",
    "desc_pl": "Zwiększa nagrody z pojedynków i ligi.",
    "name_de": "Trophäenhalle",
-   "desc_de": "Erhöht die Belohnungen aus Duellen und der Liga."
+   "desc_de": "Erhöht die Belohnungen aus Duellen und der Liga.",
+   "name_pt": "Salão de Troféus",
+   "desc_pt": "Aumenta as recompensas dos duelos e da liga."
   },
   {
    "id": "club",
@@ -317,7 +353,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Prywatny Klub Walki",
    "desc_pl": "Zwiększa odwagę (pojedynki) i adrenalinę (liga).",
    "name_de": "Privater Fight Club",
-   "desc_de": "Erhöht Mut (Duelle) und Adrenalin (Liga)."
+   "desc_de": "Erhöht Mut (Duelle) und Adrenalin (Liga).",
+   "name_pt": "Clube de Luta Privado",
+   "desc_pt": "Aumenta a coragem (duelos) e a adrenalina (liga)."
   },
   {
    "id": "bar",
@@ -333,7 +371,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Bar Sportowy",
    "desc_pl": "Zwiększa doświadczenie z misji.",
    "name_de": "Sportbar",
-   "desc_de": "Erhöht die Erfahrung aus Missionen."
+   "desc_de": "Erhöht die Erfahrung aus Missionen.",
+   "name_pt": "Bar Esportivo",
+   "desc_pt": "Aumenta a experiência das missões."
   },
   {
    "id": "scout",
@@ -349,7 +389,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Centrum Zwiadowcze",
    "desc_pl": "Zwiększa nagrody w monetach z misji.",
    "name_de": "Späherzentrum",
-   "desc_de": "Erhöht die Münzbelohnungen aus Missionen."
+   "desc_de": "Erhöht die Münzbelohnungen aus Missionen.",
+   "name_pt": "Centro de Exploração",
+   "desc_pt": "Aumenta as recompensas em moedas das missões."
   },
   {
    "id": "hq",
@@ -365,7 +407,9 @@ window.ROOMS_CONFIG={
    "name_pl": "Kwatera Drużyny",
    "desc_pl": "Odblokowuje pokoje drużynowe.",
    "name_de": "Team-Hauptquartier",
-   "desc_de": "Schaltet die Teamräume frei."
+   "desc_de": "Schaltet die Teamräume frei.",
+   "name_pt": "Quartel-General do Time",
+   "desc_pt": "Desbloqueia as salas do time."
   },
   {
    "id": "room1",
@@ -382,7 +426,9 @@ window.ROOMS_CONFIG={
    "desc_pl": "Uprawia melony, którymi możesz rzucać podczas walk drużynowych.",
    "name_de": "Melonenplantage",
    "desc_de": "Baut Melonen an, die du in Teamkämpfen werfen kannst.",
-   "team": true
+   "team": true,
+   "name_pt": "Plantação de Melancias",
+   "desc_pt": "Cultiva melancias que você pode arremessar nas lutas de time."
   },
   {
    "id": "room2",
@@ -399,7 +445,9 @@ window.ROOMS_CONFIG={
    "desc_pl": "Zbiera fragmenty punktów Con.",
    "name_de": "Team-Wettbewerb-Hauptquartier",
    "desc_de": "Sammelt Con-Punkt-Fragmente.",
-   "team": true
+   "team": true,
+   "name_pt": "QG da Competição de Times",
+   "desc_pt": "Coleta fragmentos de pontos Con."
   },
   {
    "id": "room3",
@@ -416,7 +464,9 @@ window.ROOMS_CONFIG={
    "desc_pl": "Produkuje apteczki.",
    "name_de": "Medikit-Fabrik",
    "desc_de": "Produziert Medikits.",
-   "team": true
+   "team": true,
+   "name_pt": "Fábrica de Kits Médicos",
+   "desc_pt": "Produz kits médicos."
   },
   {
    "id": "room4",
@@ -433,7 +483,9 @@ window.ROOMS_CONFIG={
    "desc_pl": "Obniża cenę punktu umiejętności na siłowni w porównaniu z bezpośrednim zakupem.",
    "name_de": "Fitnessstudio",
    "desc_de": "Senkt den Preis eines Fertigkeitspunkts im Fitnessstudio im Vergleich zum Direktkauf.",
-   "team": true
+   "team": true,
+   "name_pt": "Academia",
+   "desc_pt": "Reduz o preço de um ponto de habilidade na academia em comparação com a compra direta."
   },
   {
    "id": "room5",
@@ -450,7 +502,9 @@ window.ROOMS_CONFIG={
    "desc_pl": "Zamienia niepotrzebne przedmioty w dopalacze rakietowe.",
    "name_de": "Raketen-Booster-Fabrik",
    "desc_de": "Verwandelt Gegenstände, die du nicht mehr brauchst, in Raketen-Booster.",
-   "team": true
+   "team": true,
+   "name_pt": "Fábrica de Propulsores de Foguete",
+   "desc_pt": "Transforma itens que você não precisa mais em propulsores de foguete."
   },
   {
    "id": "room6",
@@ -467,7 +521,9 @@ window.ROOMS_CONFIG={
    "desc_pl": "Produkuje dublerów kaskaderskich.",
    "name_de": "Stuntdouble-Studio",
    "desc_de": "Produziert Stuntdoubles.",
-   "team": true
+   "team": true,
+   "name_pt": "Estúdio de Dublês",
+   "desc_pt": "Produz dublês."
   }
  ]
 };
