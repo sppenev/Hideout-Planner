@@ -100,7 +100,7 @@ window.ROOMS_CONFIG={
    "name": "Работилница",
    "size": 2,
    "limit": 1,
-   "boost": true,
+   "boost": false,
    "gen": false,
    "desc": "Изработва модификации за екипировката.",
    "cat": "prod",
