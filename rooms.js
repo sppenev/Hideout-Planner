@@ -387,7 +387,7 @@ window.ROOMS_CONFIG={
    "name": "Централа за отборно състезание",
    "size": 1,
    "limit": 1,
-   "boost": true,
+   "boost": false,
    "gen": false,
    "desc": "Събира фрагмени от Con точки",
    "cat": "cus",
