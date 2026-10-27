@@ -10,7 +10,9 @@ window.ROOMS_CONFIG={
   "de": "images/headers/header-mvg9kdah.jpg",
   "pt": "images/headers/header-mvl81dtb.jpg"
  },
- "header2": {},
+ "header2": {
+  "bg": "images/headers/header-mvqna796.jpg"
+ },
  "v2on": true,
  "rooms": [
   {
