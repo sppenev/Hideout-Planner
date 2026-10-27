@@ -210,6 +210,21 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
 .ogside{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .ogspec{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:var(--hint);font-size:13px}
 .ogspec b{color:var(--paper)}
+
+/* design switch: classic / new */
+.dsw{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;padding:0 0 12px;border-bottom:2px dashed var(--ink)}
+.dsw-l{font-size:12px;color:var(--hint);font-weight:700}
+.dsw-seg{display:flex;gap:4px;background:var(--panel-2);border:2px solid var(--ink);border-radius:9px;padding:3px}
+.dsw-seg button{flex:1;border:0;background:transparent;color:var(--hint);font:inherit;font-weight:800;font-size:13px;padding:7px 0;border-radius:6px;cursor:pointer}
+.dsw-seg button:hover{color:var(--paper)}
+body[data-ds="classic"] .dsw-seg [data-ds="classic"]{background:var(--hero);color:var(--hero-ink)}
+body[data-ds="v2"] .dsw-seg [data-ds="v2"]{background:#4fd1c5;color:#10201e}
+.v2bar{background:#123a37;border:2px solid #4fd1c5;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.5;display:flex;flex-direction:column;gap:8px}
+.v2bar b{color:#7ff0e4}
+.v2bar a{color:#7ff0e4}
+body[data-ds="v2"] .thumb,body[data-ds="v2"] .sc-prev{outline:2px solid #4fd1c5;outline-offset:2px}
+.thumb img.fb,.sc-prev img.fb{opacity:.35;filter:grayscale(1)}
+.fbtag{position:absolute;left:6px;top:6px;z-index:2;background:rgba(0,0,0,.75);color:#fff;font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;pointer-events:none}
 </style>
 </head>
 <body>
@@ -228,12 +243,15 @@ input[type=password]{font:inherit;font-size:13px;color:var(--paper);background:v
   <div class="layout">
     <nav class="side" id="side" aria-label="Раздели">
       <div class="side-head"><h2>Админ</h2><button class="btn" id="sideClose" type="button">Затвори</button></div>
+      <div class="dsw" role="group" aria-label="Дизайн"><span class="dsw-l">Дизайн</span><div class="dsw-seg"><button type="button" data-ds="classic">Класически</button><button type="button" data-ds="v2">Нов</button></div></div>
       <button type="button" class="nav on" data-sec="rooms">Стаи</button>
       <button type="button" class="nav" data-sec="scene">Картинки на сцената</button>
       <button type="button" class="nav" data-sec="social">Социални мрежи</button>
       <button type="button" class="nav" data-sec="gh">Връзка с GitHub <span id="ghStatus" class="tag"></span></button>
     </nav>
     <main class="main">
+      <div class="v2bar" id="v2bar" hidden><b>Редактираш новия дизайн.</b> Картинките, които качваш тук, отиват в отделна папка и класическите не се пипат. Където няма нова картинка, сайтът показва класическата.
+        <label class="check"><input type="checkbox" id="v2on"> Покажи превключвателя на дизайна в сайта</label><span class="tag">Докато не е отметнато, новият дизайн се вижда само на <a id="v2link" href="./?theme=v2" target="_blank" rel="noopener">./?theme=v2</a></span></div>
       <section class="pane" id="sec-rooms">
         <h2 class="sec">Стаи</h2>
         <p class="hint">„Запази в сайта“ записва промените направо в GitHub и до около минута се виждат на сайта.</p>
@@ -320,22 +338,27 @@ function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorizati
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,''))));
 function ghErr(r){return r.status===401?'Ключът не е валиден или е изтекъл.':r.status===403?'Ключът няма право да записва в това хранилище.':r.status===404?'Не намирам хранилището или файла rooms.js в него. Провери потребителя, хранилището и клона.':r.status===409?'Някой друг е записал междувременно. Опитай пак.':'GitHub върна грешка '+r.status+'.'}
 async function ghGet(){const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});if(!r.ok)throw new Error(ghErr(r));const j=await r.json();
-  const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[],bgSize:cfg&&+cfg.bgSize||null,header:cfg&&cfg.header||null,logoH:cfg&&+cfg.logoH||null}}
+  const cfg=(new Function('window',b64d(j.content)+';return window.ROOMS_CONFIG'))({});return {sha:j.sha,rooms:(cfg&&cfg.rooms)||[],bgSize:cfg&&+cfg.bgSize||null,header:cfg&&cfg.header||null,header2:cfg&&cfg.header2||null,v2on:!!(cfg&&cfg.v2on),logoH:cfg&&+cfg.logoH||null}}
 let bgSize=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.bgSize)||300;
 let logoH=+(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.logoH)||56;
 let headerCfg=Object.assign({},(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{});
-function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до index.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:headerCfg,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
+/* design being edited: classic pictures live in images/, the new design in images/v2/ and its headers in header2 */
+let DS='classic';try{if(localStorage.getItem('hz-admin-ds')==='v2')DS='v2'}catch(e){}
+const HCFG={classic:headerCfg,v2:Object.assign({},(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header2)||{})};
+let v2on=!!(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.v2on);
+const IMGP=()=>DS==='v2'?'images/v2/':'images/';
+function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до index.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:HCFG.classic,header2:HCFG.v2,v2on,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
   $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
   if(!gh.owner||!gh.repo||!gh.token){say('Попълни потребител, хранилище и ключ.',true);return}
   say('Свързвам се...');try{const g=await ghGet();gh.ok=true;try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}
-    rooms=g.rooms;if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header)headerCfg=Object.assign(headerCfg,g.header);renderHeaders();try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
+    rooms=g.rooms;if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header)Object.assign(HCFG.classic,g.header);if(g.header2)Object.assign(HCFG.v2,g.header2);v2on=g.v2on;showV2();renderHeaders();try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
 $('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
 /* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
 const SCENE=[['logo','Лого','горе вляво в лентата, PNG с прозрачен фон'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['dig','Неизкопана клетка','542 x 305, разкопана пръст с лопата'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
-function renderScene(){$('sceneGrid').innerHTML=SCENE.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'">няма картинка<img alt="" src="images/'+k+'.png?t='+Date.now()+'" onerror="this.remove()"></div>'+
+function renderScene(){const list=DS==='v2'?SCENE.filter(x=>x[0]!=='logo'&&x[0]!=='favicon'):SCENE;$('sceneGrid').innerHTML=list.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'" style="position:relative">няма картинка<img alt="" src="'+IMGP()+k+'.png?t='+Date.now()+'" onerror="'+(DS==='v2'?'scFb(this)':'this.remove()')+'"></div>'+
   '<div class="tag"><b>'+t+'</b> · '+h+'</div><span class="btn">Смени<input type="file" accept="image/*" aria-label="'+t+'"></span></div>').join('')}
 function fileToPngB64(file){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej(new Error('Файлът не може да се прочете.'));
   if(file.type==='image/png'){rd.onload=()=>res(String(rd.result).split(',')[1]);rd.readAsDataURL(file);return}
@@ -349,8 +372,8 @@ async function ghPutFile(path,b64,msg){const url='https://api.github.com/repos/'
 $('sceneGrid').addEventListener('change',async e=>{const box=e.target.closest('.sc');if(!box)return;const f=e.target.files[0];e.target.value='';if(!f)return;
   if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да качваш картинки.',true);return}
   const k=box.dataset.k,name=SCENE.find(x=>x[0]===k)[1];say('Качвам „'+name+'“...');
-  try{const b64=await fileToPngB64(f);await ghPutFile('images/'+k+'.png',b64,'Картинка: '+name);
-    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';if(k==='logo'){$('logoPrev').src='data:image/png;base64,'+b64}if(k==='bg'){$('bgPrev').style.backgroundImage='url("data:image/png;base64,'+b64+'")'}say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
+  try{const b64=await fileToPngB64(f);await ghPutFile(IMGP()+k+'.png',b64,(DS==='v2'?'Нов дизайн, картинка: ':'Картинка: ')+name);
+    const prev=box.querySelector('.sc-prev');prev.innerHTML='<img alt="" src="data:image/png;base64,'+b64+'">';if(k==='logo'){$('logoPrev').src='data:image/png;base64,'+b64}if(k==='bg'&&DS==='classic'){$('bgPrev').style.backgroundImage='url("data:image/png;base64,'+b64+'")'}say('„'+name+'“ е качена. Обикновено до минута се вижда на сайта.')}
   catch(err){say(err.message,true)}});
 $('ghSave').onclick=async()=>{if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub: попълни ключа и натисни „Свържи“.',true);saveBtnState('fail','Свържи GitHub');return}const bad=rooms.find(r=>!/^[a-z0-9_-]+$/.test(r.id));if(bad){say('Поправи името на файла на „'+bad.name+'“ преди да запазиш.',true);return}
   const sb=$('ghSave');clearTimeout(sb._t);sb.classList.remove('done','fail');sb.classList.add('busy');sb.disabled=true;sb.textContent='Записвам...';say('Записвам в GitHub...');
@@ -361,8 +384,12 @@ $('ghSave').onclick=async()=>{if(!gh.ok){showSec('gh');say('Първо свър�
   catch(e){say(e.message,true);saveBtnState('fail','Грешка, опитай пак')}finally{sb.disabled=false;sb.classList.remove('busy')}};
 function saveBtnState(cls,txt){const sb=$('ghSave');sb.classList.add(cls);sb.textContent=txt;clearTimeout(sb._t);sb._t=setTimeout(()=>{sb.classList.remove('done','fail');sb.textContent='Запази в сайта'},cls==='fail'?4000:2500)}
 const EXTS=['png','jpg','jpeg','webp'];
-function thumbImg(el,id,i=0){if(i>=EXTS.length){el.querySelector('img')?.remove();return}const im=el.querySelector('img')||el.appendChild(document.createElement('img'));im.alt='';
-  im.onerror=()=>thumbImg(el,id,i+1);im.src='images/'+id+'.'+EXTS[i]}
+function thumbImg(el,id,i=0,fb){el.style.position=el.style.position||'relative';el.querySelector('.fbtag')?.remove();
+  const base=fb?'images/':IMGP();if(i>=EXTS.length){if(DS==='v2'&&!fb)return thumbImg(el,id,0,true);el.querySelector('img')?.remove();return}
+  const im=el.querySelector('img')||el.appendChild(document.createElement('img'));im.alt='';im.classList.toggle('fb',!!fb);
+  im.onload=()=>{if(fb&&!el.querySelector('.fbtag'))el.insertAdjacentHTML('beforeend','<span class="fbtag">Класическа, няма нова</span>')};
+  im.onerror=()=>thumbImg(el,id,i+1,fb);im.src=base+id+'.'+EXTS[i]+'?t='+(window._bgT||(window._bgT=Date.now()))}
+window.scFb=img=>{img.onerror=()=>img.remove();img.classList.add('fb');img.src=img.src.replace('images/v2/','images/');img.onload=()=>{const b=img.closest('.sc-prev');if(b&&!b.querySelector('.fbtag'))b.insertAdjacentHTML('beforeend','<span class="fbtag">Класическа, няма нова</span>')}};
 const cardLang={};
 function rowHTML(r,i){const isNew=!!r._new;const L=cardLang[r.id]||'bg';
   return '<div class="row" data-i="'+i+'" data-l="'+L+'">'+
@@ -403,7 +430,7 @@ $('list').addEventListener('change',async e=>{if(!e.target.matches('[data-up]'))
   if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub, за да качваш картинки.',true);return}
   if(!/^[a-z0-9_-]+$/.test(r.id)){say('Първо напиши име на файла (малки латински букви, цифри, - или _).',true);return}
   const th=row.querySelector('.thumb');th.classList.add('busy');th.querySelector('.upover span').textContent='Качвам...';say('Качвам картинката на „'+(r.name||r.id)+'“...');
-  try{const b64=await fileToPngB64(f);await ghPutFile('images/'+r.id+'.png',b64,'Картинка на стая: '+(r.name||r.id));
+  try{const b64=await fileToPngB64(f);await ghPutFile(IMGP()+r.id+'.png',b64,(DS==='v2'?'Нов дизайн, стая: ':'Картинка на стая: ')+(r.name||r.id));
     const im=th.querySelector('img')||th.appendChild(document.createElement('img'));im.onerror=null;im.alt='';im.src='data:image/png;base64,'+b64;
     say('Картинката на „'+(r.name||r.id)+'“ е качена. До около минута се вижда на сайта.')}
   catch(err){say(err.message,true)}
@@ -422,7 +449,7 @@ let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textCon
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
 function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en','name_pl','desc_pl','name_de','desc_de','name_pt','desc_pt','team'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
 mergeEn(fromFile());
-if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header){headerCfg=Object.assign(headerCfg,g.header);renderHeaders()}if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
+if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header)Object.assign(HCFG.classic,g.header);if(g.header2)Object.assign(HCFG.v2,g.header2);v2on=g.v2on;showV2();renderHeaders();if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
 else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като index.html и rooms.js.';
 render();
 
@@ -447,21 +474,21 @@ async function loadHeaders(){const list=[];
     const t=await fetch(repoApi('images/top.png')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
     if(t.ok){const j=await t.json();list.push({path:'images/top.png',name:'top.png',sha:j.sha})}const r=await fetch(repoApi('images/headers')+'?ref='+encodeURIComponent(gh.branch||'main')+'&t='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
     if(r.ok){(await r.json()).filter(f=>f.type==='file'&&/\.(png|jpe?g|webp)$/i.test(f.name)).forEach(f=>list.push({path:f.path,name:f.name,sha:f.sha}))}else if(r.status!==404)throw new Error(ghErr(r))}
-  if(!gh.ok)HLANGS.map(x=>headerCfg[x[0]]).forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
+  if(!gh.ok)HLANGS.flatMap(x=>[HCFG.classic[x[0]],HCFG.v2[x[0]]]).forEach(p=>{if(p&&!list.some(x=>x.path===p))list.push({path:p,name:p.split('/').pop(),sha:null})});
   hdrList=list;renderHeaders()}
 /* every language the site supports; a new language only needs a new line here */
 const HLANGS=[['bg','БГ','Български'],['en','EN','English'],['pl','PL','Polski'],['de','DE','Deutsch'],['pt','PT','Português (Brasil)']];
 const hdrSrc=p=>hdrLocal[p]||esc(p)+'?t='+(window._bgT||Date.now());
 const LN=k=>(HLANGS.find(x=>x[0]===k)||[,k,k])[2];
 function renderHeaders(){const g=$('hdrGrid');if(!g)return;const list=hdrList;
-  const free=HLANGS.filter(([k])=>!headerCfg[k]).map(x=>x[1]);$('hdrFree').textContent=free.length?'Без собствен хедър (показват английския): '+free.join(', '):'';
+  const free=HLANGS.filter(([k])=>!headerCfg[k]).map(x=>x[1]);$('hdrFree').textContent=free.length?(DS==='v2'?'Без хедър в новия дизайн (показват класическия): ':'Без собствен хедър (показват английския): ')+free.join(', '):'';
   if(!list.length){g.innerHTML='<p class="hint">'+(gh.ok?'Няма качени хедъри. Качи първия с „+ Качи хедър“.':'Свържи админа с GitHub, за да видиш и качваш варианти на хедъра.')+'</p>';return}
-  g.innerHTML=list.map(h=>{const on=HLANGS.filter(([k])=>headerCfg[k]===h.path),off=HLANGS.filter(([k])=>headerCfg[k]!==h.path),used=on.length>0;
-    const chips=on.map(([k,c,n])=>'<span class="hchip" title="Показва се на '+esc(n)+'">'+c+(k==='bg'?'':'<button type="button" class="hx" data-off="'+k+'" title="Махни от '+esc(n)+'" aria-label="Махни от '+esc(n)+'">×</button>')+'</span>').join('');
+  const OTH=HCFG[DS==='v2'?'classic':'v2'];g.innerHTML=list.map(h=>{const on=HLANGS.filter(([k])=>headerCfg[k]===h.path),off=HLANGS.filter(([k])=>headerCfg[k]!==h.path),oth=HLANGS.filter(([k])=>OTH[k]===h.path).map(x=>x[1]),used=on.length>0||oth.length>0;
+    const chips=on.map(([k,c,n])=>'<span class="hchip" title="Показва се на '+esc(n)+'">'+c+(k==='bg'&&DS==='classic'?'':'<button type="button" class="hx" data-off="'+k+'" title="Махни от '+esc(n)+'" aria-label="Махни от '+esc(n)+'">×</button>')+'</span>').join('');
     const add=off.length?'<select class="hadd" aria-label="Сложи за още един език"><option value="">+ Език</option>'+off.map(([k,c,n])=>'<option value="'+k+'">'+c+' - '+esc(n)+(headerCfg[k]?' (смени)':'')+'</option>').join('')+'</select>':'';
     return '<div class="hcard'+(used?' on':'')+'" data-p="'+esc(h.path)+'"><div class="hprev"><img alt="" src="'+hdrSrc(h.path)+'"></div>'+
-      '<div class="hname">'+esc(h.name)+'</div><div class="hrow"><div class="hchips">'+(chips||'<span class="hnone">Не се показва никъде</span>')+add+'</div>'+
-      '<button type="button" class="hdel" '+(used?'disabled title="Показва се на '+on.map(x=>x[1]).join(', ')+'. Първо го махни от тези езици."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
+      '<div class="hname">'+esc(h.name)+(oth.length?' · <b class="inuse">'+(DS==='v2'?'в класическия':'в новия дизайн')+': '+oth.join(', ')+'</b>':'')+'</div><div class="hrow"><div class="hchips">'+(chips||'<span class="hnone">Не се показва никъде</span>')+add+'</div>'+
+      '<button type="button" class="hdel" '+(used?'disabled title="Използва се'+(on.length?' на '+on.map(x=>x[1]).join(', '):'')+(oth.length?(DS==='v2'?' в класическия дизайн':' в новия дизайн')+' за '+oth.join(', '):'')+'. Първо го махни от тези езици."':'title="Изтрий този хедър"')+' aria-label="Изтрий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div>'}).join('')}
 async function setLangHeader(k,path){if(!gh.ok){showSec('gh');say('Първо свържи админа с GitHub.',true);return}
   const old=headerCfg[k];if(path)headerCfg[k]=path;else delete headerCfg[k];renderHeaders();say('Записвам хедъра за '+LN(k)+'...');
   try{await saveHeaderCfg('Хедър ('+k+'): '+(path?path.split('/').pop():'по подразбиране'));say('Готово. До около минута се вижда на сайта.')}
@@ -504,6 +531,15 @@ $('ogFile').addEventListener('change',async e=>{const f=e.target.files[0];e.targ
     say('Качвам картинката за социалните мрежи...');await ghPutFile('images/og.jpg',out.split(',')[1],'Картинка за социалните мрежи');
     $('ogPrev').src=out;say('Качено ('+Math.round(out.length*0.75/1024)+' KB). Нови споделяния ще я показват след около минута.')}
   catch(err){say(err.message,true)}});
+
+/* ---- design switch ---- */
+function showV2(){$('v2bar').hidden=DS!=='v2';$('v2on').checked=!!v2on}
+function setDS(v){DS=v;try{localStorage.setItem('hz-admin-ds',v)}catch(e){}document.body.dataset.ds=v;headerCfg=HCFG[v];showV2();
+  window._bgT=Date.now();renderScene();render();renderHeaders()}
+document.querySelector('.dsw-seg').addEventListener('click',e=>{const b=e.target.closest('[data-ds]');if(b&&b.dataset.ds!==DS){setDS(b.dataset.ds);say(DS==='v2'?'Редактираш новия дизайн.':'Редактираш класическия дизайн.')}});
+$('v2on').addEventListener('change',async()=>{if(!gh.ok){$('v2on').checked=v2on;showSec('gh');say('Първо свържи админа с GitHub.',true);return}
+  const old=v2on;v2on=$('v2on').checked;say('Записвам...');try{await saveHeaderCfg(v2on?'Превключвател за нов дизайн: показан':'Превключвател за нов дизайн: скрит');say(v2on?'Превключвателят ще се вижда в сайта до около минута.':'Превключвателят е скрит от сайта.')}catch(err){v2on=old;showV2();say(err.message,true)}});
+setDS(DS);
 </script>
 </body>
 </html>

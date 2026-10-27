@@ -605,6 +605,7 @@ body.dragging .floors .cell .bury{display:none}
 .langbtn[aria-expanded="true"] .car{transform:rotate(180deg)}
 .langmenu{position:absolute;top:calc(100% + 10px);left:0;min-width:170px;background:#1d1712;border:solid #fff4dc;border-width:2px 3px 4px 2.5px;border-radius:16px 12px 18px 11px / 12px 18px 11px 16px;padding:6px;box-shadow:0 10px 24px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:2px;z-index:40;animation:lmIn .16s ease-out}
 .langmenu[hidden]{display:none}
+.fab .themebtn[aria-pressed="true"]{background:#4fd1c5;color:#10201e}
 @keyframes lmIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .langmenu button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;color:#fff4dc;font-size:14px;font-weight:600}
 .langmenu button b{font-weight:900;font-size:12px;letter-spacing:.04em;width:22px;color:#FBB437}
@@ -621,6 +622,7 @@ body.dragging .floors .cell .bury{display:none}
   <img class="toplogo" id="topLogo" alt="Hideout Planner" src="images/logo.png" onerror="this.remove()">
   <div class="langwrap"><button class="btn langbtn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu"></button>
     <div class="langmenu" id="langMenu" role="menu" hidden></div></div>
+  <button class="btn iconbtn themebtn" id="themeBtn" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
 </div>
 <div class="fab">
   <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Как се ползва" aria-expanded="false" aria-controls="helpPop" data-tip="Как се ползва"><b style="font-size:19px;line-height:1">?</b></button>
@@ -779,6 +781,13 @@ body.dragging .floors .cell .bury{display:none}
   if(q){try{localStorage.setItem('hz-lang',q)}catch(e){}}window.HZ_LANG=L;document.documentElement.lang=L})();
 </script>
 <script src="rooms.js"></script>
+<script>
+/* design: classic pictures in images/, the new design in images/v2/ (falls back to classic where a picture is missing).
+   ?theme=v2|classic in the address wins; the saved choice counts only while the switch is shown on the site */
+(function(){var c=window.ROOMS_CONFIG||{},q=(location.search.match(/[?&]theme=(v2|classic)\b/)||[])[1],t=null;
+  if(q){t=q;try{localStorage.setItem('hz-theme',q)}catch(e){}}else if(c.v2on){try{t=localStorage.getItem('hz-theme')}catch(e){}}
+  window.HZ_THEME=t==='v2'?'v2':'classic';window.HZ_THEME_SW=!!c.v2on||!!q;document.documentElement.dataset.theme=window.HZ_THEME})();
+</script>
 <script>if(window.ROOMS_CONFIG&&+window.ROOMS_CONFIG.logoH)document.documentElement.style.setProperty('--logo-h',(+window.ROOMS_CONFIG.logoH)+'px');
 </script>
 <script src="firebase-config.js"></script>
@@ -927,10 +936,12 @@ function say(msg,err){const s=$('status');s.textContent=msg||'';s.className=err?
 function icon(t){return ICONS[t.icon]||ICONS.box}
 /* pictures: own upload first, then images/<id>.png|jpg|webp next to this file, then the built-in drawing */
 const EXTS=['png','jpg','jpeg','webp'],FOUND={},MISSING=new Set();
+const IMG_DIRS=window.HZ_THEME==='v2'?['images/v2/','images/']:['images/'];
+const imgCands=n=>IMG_DIRS.flatMap(d=>EXTS.map(e=>d+n+'.'+e));
 function picHTML(id){if(D.imgs[id])return '<img class="pic" alt="" src="'+D.imgs[id]+'">';if(MISSING.has(id))return '';
-  const i=FOUND[id]!=null?FOUND[id]:0;return '<img class="pic" alt="" src="images/'+id+'.'+EXTS[i]+'" data-id="'+id+'" data-i="'+i+'" onload="picOk(this)" onerror="picFail(this)">'}
+  const i=FOUND[id]!=null?FOUND[id]:0;return '<img class="pic" alt="" src="'+imgCands(id)[i]+'" data-id="'+id+'" data-i="'+i+'" onload="picOk(this)" onerror="picFail(this)">'}
 window.picOk=img=>{FOUND[img.dataset.id]=+img.dataset.i};
-window.picFail=img=>{const id=img.dataset.id,i=+img.dataset.i+1;if(i<EXTS.length&&FOUND[id]==null){img.dataset.i=i;img.src='images/'+id+'.'+EXTS[i]}else{MISSING.add(id);delete FOUND[id];img.remove()}};
+window.picFail=img=>{const id=img.dataset.id,i=+img.dataset.i+1,c=imgCands(id);if(i<c.length&&FOUND[id]==null){img.dataset.i=i;img.src=c[i]}else{MISSING.add(id);delete FOUND[id];img.remove()}};
 
 function occupant(f,c){return S.rooms.find(r=>r.f===f&&c>=r.c&&c<r.c+typeOf(r.t).size)}
 /* digging: each floor has `dug` cells counted from the elevator (right); the next one left is the shovel, the rest is soil */
@@ -1261,12 +1272,13 @@ $('loadBtn').onclick=()=>{let v=$('io').value.trim();if(!v){flash($('loadBtn'),'
 function readImg(file,max,cb){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const cv=document.createElement('canvas');
   cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);let u=cv.toDataURL('image/webp',.85);if(!u.startsWith('data:image/webp'))u=cv.toDataURL('image/jpeg',.85);cb(u)};
   im.onerror=()=>say('Този файл не е картинка, която браузърът може да отвори.',true);im.src=rd.result};rd.readAsDataURL(file)}
-function findFile(name,cb,i=0){if(i>=EXTS.length)return cb(null);const t=new Image();const u='images/'+name+'.'+EXTS[i];t.onload=()=>cb(u);t.onerror=()=>findFile(name,cb,i+1);t.src=u}
+function findFile(name,cb,i=0){const c=imgCands(name);if(i>=c.length)return cb(null);const t=new Image();const u=c[i];t.onload=()=>cb(u);t.onerror=()=>findFile(name,cb,i+1);t.src=u}
 function applyScene(){
   const top=$('topside');top.querySelectorAll('img.scene').forEach(e=>e.remove());top.classList.remove('hasimg');const set=src=>{if(!src)return;top.classList.add('hasimg');const im=document.createElement('img');im.className='scene';im.alt='';im.src=src;top.insertBefore(im,top.querySelector('.scene-ctl'))};
   $('topNo').hidden=!D.imgs.__top;if(D.imgs.__top){set(D.imgs.__top);top.classList.remove('loading')}else{top.classList.add('loading');const done=src=>{set(src);top.classList.remove('loading')};
     /* header picked in the admin for this language, else images/top.* */
-    const hc=(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.header)||{},want=hc[window.HZ_LANG]||(window.HZ_LANG!=='bg'&&hc.en)||hc.bg;
+    const CF=window.ROOMS_CONFIG||{},L=window.HZ_LANG,pick=hc=>hc?hc[L]||(L!=='bg'&&hc.en)||hc.bg:null;
+    const want=(window.HZ_THEME==='v2'&&pick(CF.header2))||pick(CF.header);
     if(want){const t=new Image();t.onload=()=>done(want);t.onerror=()=>findFile('top',done);t.src=want}else findFile('top',done)}
   const sc=$('scroller');const bg=src=>{if(src){sc.style.backgroundImage='url("'+src+'")';sc.style.backgroundSize=(D.bgSize||300)+'px auto';sc.classList.add('hasbg')}else{sc.style.backgroundImage='';sc.style.backgroundSize='';sc.classList.remove('hasbg')}};
   $('bgSize').value=D.bgSize||300;$('bgSizeVal').textContent=(D.bgSize||300)+' px';
@@ -1375,6 +1387,12 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     row.style.height=row.offsetHeight+'px';void row.offsetHeight;row.style.transition='height .7s cubic-bezier(.65,0,.35,1),opacity .5s';row.style.height='0px';row.style.opacity='0';
     setTimeout(done,720)},sinkEnd)}
 
+
+/* design switch next to the language (shown when enabled in the admin) */
+(()=>{const b=$('themeBtn');if(!b||!window.HZ_THEME_SW)return;const v2=window.HZ_THEME==='v2';b.hidden=false;b.setAttribute('aria-pressed',v2?'true':'false');
+  const t=v2?'Класически дизайн':'Нов дизайн';b.dataset.tip=t;b.setAttribute('aria-label',t);
+  b.onclick=()=>{try{localStorage.setItem('hz-theme',v2?'classic':'v2')}catch(e){}const q=location.search.replace(/([?&])theme=[a-z0-9]+&?/,'$1').replace(/[?&]$/,'');
+    location.href=location.pathname+(q||'')+((q?'&':'?')+'theme='+(v2?'classic':'v2'))+location.hash}})();
 /* ===== Languages: room names come from the admin (name_xx / desc_xx), the interface is translated here ===== */
 (()=>{const LANGS=[['bg','Български'],['en','English'],['pl','Polski'],['de','Deutsch'],['pt','Português (Brasil)']],L=window.HZ_LANG,lb=$('langBtn'),lm=$('langMenu');
   lb.innerHTML=L.toUpperCase()+'<svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
@@ -1426,9 +1444,11 @@ function removeFloorFx(row,done){row.classList.add('leaving');
     'Не работи без Щаб на отбора':['Does not work without the Team HQ','Nie działa bez Kwatery Drużyny','Funktioniert nicht ohne Team-Hauptquartier'],
     'Изисква Щаб на отбора':['Requires the Team HQ','Wymaga Kwatery Drużyny','Benötigt das Team-Hauptquartier'],
     'Сложи Щаб на отбора в скривалището, за да работи тази стая.':['Place the Team HQ in your hideout to make this room work.','Postaw Kwaterę Drużyny w kryjówce, aby ten pokój działał.','Platziere das Team-Hauptquartier im Versteck, damit dieser Raum funktioniert.'],
-    'Първо сложи Щаб на отбора, за да строиш тази стая.':['Place the Team HQ first to build this room.','Najpierw postaw Kwaterę Drużyny, aby zbudować ten pokój.','Platziere zuerst das Team-Hauptquartier, um diesen Raum zu bauen.']};
+    'Първо сложи Щаб на отбора, за да строиш тази стая.':['Place the Team HQ first to build this room.','Najpierw postaw Kwaterę Drużyny, aby zbudować ten pokój.','Platziere zuerst das Team-Hauptquartier, um diesen Raum zu bauen.'],
+    'Нов дизайн':['New design','Nowy wygląd','Neues Design'],
+    'Класически дизайн':['Classic design','Klasyczny wygląd','Klassisches Design']};
   /* Brazilian Portuguese, in the same order as T */
-  const TPT=["Salas", "Configurações", "Fechar", "Esconderijo", "Andares", "Remover todas as salas", "Clique de novo", "Variantes", "+ Copiar como nova variante", "Principal", "Resumo", "Carregar layout", "Cole um link ou código de um colega de time. O layout chega como uma nova variante e as suas continuam intactas.", "Cole um código ou link aqui", "Carregar", "Carregado ✓", "O campo está vazio", "Código inválido", "Copie do campo", "Compartilhar layout", "Seu layout é salvo automaticamente neste navegador. Mande o link para um colega de time e ele vai ver exatamente este layout. O código é a mesma coisa, só que mais curto, para você guardar.", "Link", "Código", "Copiar link", "Copiar código", "Como usar", "Solte aqui para remover uma sala", "Adicionar andar", "visitas", "online agora", "Todas as salas foram colocadas.", "Todos os geradores estão funcionando com força total.", "Falta a Base do Esconderijo.", "Excluir variante", "Clique de novo para excluir", "Excluir?", "Clique duas vezes para renomear", "Remover sala", "Remover?", "Remover andar", "Adicionar andar", "Esquerda", "Direita", "Código ou link do layout", "Link do layout", "Código do layout", "Resumo e configurações", "Alimentada por um gerador no momento", "Portfólio no Behance", "Esconder salas", "Buscar sala...", "Buscar sala", "Compartilhar", "O andar inteiro some junto com as salas dele. Se houver salas nele, clique duas vezes.", "Cavar este espaço", "Enterrar de novo", "Hideout Planner é um projeto de fã não oficial e sem fins comerciais. Não tem ligação com os criadores ou distribuidores de Hero Zero e não é aprovado nem patrocinado por eles.", "Não tenho os direitos sobre as imagens, os nomes das salas e outros materiais do jogo. Hero Zero e todos os nomes, imagens e marcas relacionados pertencem aos seus respectivos donos. Eles são usados aqui apenas para fins informativos, para ajudar os jogadores a planejar o esconderijo.", "Se você é titular de direitos e quer que algo seja removido ou alterado, fale comigo pelo Behance e eu removo na hora. O site é gratuito, sem anúncios e sem cadastro. Os layouts ficam salvos só no seu navegador.", "Cavar um novo espaço", "Nenhuma sala encontrada.","Coloque o Quartel-General do Time primeiro.","Precisa do Quartel-General do Time. Coloque o QG primeiro para construir as salas do time.","Não funciona sem o Quartel-General do Time.","As salas do time não funcionam sem o Quartel-General do Time.","Não funciona sem o Quartel-General do Time","Precisa do Quartel-General do Time","Coloque o Quartel-General do Time no esconderijo para esta sala funcionar.","Coloque o Quartel-General do Time primeiro para construir esta sala."];
+  const TPT=["Salas", "Configurações", "Fechar", "Esconderijo", "Andares", "Remover todas as salas", "Clique de novo", "Variantes", "+ Copiar como nova variante", "Principal", "Resumo", "Carregar layout", "Cole um link ou código de um colega de time. O layout chega como uma nova variante e as suas continuam intactas.", "Cole um código ou link aqui", "Carregar", "Carregado ✓", "O campo está vazio", "Código inválido", "Copie do campo", "Compartilhar layout", "Seu layout é salvo automaticamente neste navegador. Mande o link para um colega de time e ele vai ver exatamente este layout. O código é a mesma coisa, só que mais curto, para você guardar.", "Link", "Código", "Copiar link", "Copiar código", "Como usar", "Solte aqui para remover uma sala", "Adicionar andar", "visitas", "online agora", "Todas as salas foram colocadas.", "Todos os geradores estão funcionando com força total.", "Falta a Base do Esconderijo.", "Excluir variante", "Clique de novo para excluir", "Excluir?", "Clique duas vezes para renomear", "Remover sala", "Remover?", "Remover andar", "Adicionar andar", "Esquerda", "Direita", "Código ou link do layout", "Link do layout", "Código do layout", "Resumo e configurações", "Alimentada por um gerador no momento", "Portfólio no Behance", "Esconder salas", "Buscar sala...", "Buscar sala", "Compartilhar", "O andar inteiro some junto com as salas dele. Se houver salas nele, clique duas vezes.", "Cavar este espaço", "Enterrar de novo", "Hideout Planner é um projeto de fã não oficial e sem fins comerciais. Não tem ligação com os criadores ou distribuidores de Hero Zero e não é aprovado nem patrocinado por eles.", "Não tenho os direitos sobre as imagens, os nomes das salas e outros materiais do jogo. Hero Zero e todos os nomes, imagens e marcas relacionados pertencem aos seus respectivos donos. Eles são usados aqui apenas para fins informativos, para ajudar os jogadores a planejar o esconderijo.", "Se você é titular de direitos e quer que algo seja removido ou alterado, fale comigo pelo Behance e eu removo na hora. O site é gratuito, sem anúncios e sem cadastro. Os layouts ficam salvos só no seu navegador.", "Cavar um novo espaço", "Nenhuma sala encontrada.","Coloque o Quartel-General do Time primeiro.","Precisa do Quartel-General do Time. Coloque o QG primeiro para construir as salas do time.","Não funciona sem o Quartel-General do Time.","As salas do time não funcionam sem o Quartel-General do Time.","Não funciona sem o Quartel-General do Time","Precisa do Quartel-General do Time","Coloque o Quartel-General do Time no esconderijo para esta sala funcionar.","Coloque o Quartel-General do Time primeiro para construir esta sala.","Novo visual","Visual clássico"];
   Object.keys(T).forEach((k,i)=>{T[k][3]=TPT[i]});
   /* patterns: [regex, English, Polish, German, Portuguese]; §c is the cell count word */
   const R=[[/^Махни етаж (\d+)$/,'Remove floor $1','Usuń piętro $1','Etage $1 entfernen'],[/^Изтрий „(.+)“$/,'Delete “$1”','Usuń „$1”','„$1“ löschen'],
