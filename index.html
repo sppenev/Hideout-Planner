@@ -390,6 +390,15 @@ body.dragging .fdel{display:none}
 .floors .room .rdel:hover{transform:scale(1.1)}
 @media (hover:none){.floors .room .rdel{opacity:.9;transform:none}}
 body.dragging .floors .room .rdel{display:none}
+/* hover: orange-yellow corner brackets like in the game */
+.floors .room .rc{position:absolute;inset:-9px;z-index:8;pointer-events:none;opacity:0;transition:opacity .15s ease,inset .18s ease;filter:drop-shadow(0 2px 0 rgba(0,0,0,.55)) drop-shadow(0 0 1px rgba(0,0,0,.8))}
+.floors .room .rc i{position:absolute;width:min(32%,150px);height:40%;border:0 solid #f39a1d}
+.floors .room .rc i:nth-child(1){top:0;left:0;border-width:7px 0 0 7px;border-top-color:#ffc83a;border-radius:7px 0 0 0}
+.floors .room .rc i:nth-child(2){top:0;right:0;border-width:7px 7px 0 0;border-top-color:#ffc83a;border-radius:0 7px 0 0}
+.floors .room .rc i:nth-child(3){bottom:0;left:0;border-width:0 0 7px 7px;border-bottom-color:#f08a16;border-radius:0 0 0 7px}
+.floors .room .rc i:nth-child(4){bottom:0;right:0;border-width:0 7px 7px 0;border-bottom-color:#f08a16;border-radius:0 0 7px 0}
+@media (hover:hover){.floors .room:hover .rc{opacity:1;inset:-4px}}
+body.dragging .floors .room .rc{display:none}
 
 /* rooms drawer: bigger cards, picture on top, name under it */
 .side-l .pal-item{width:210px;flex-direction:column;align-items:stretch;gap:6px;padding:6px}
@@ -1021,6 +1030,7 @@ function render(){
       el.style.gridColumn=(r.c+1)+' / span '+t.size;el.dataset.id=r.id;el.tabIndex=0;
       el.setAttribute('aria-label',t.name+', ниво '+(f+1)+', слот '+(r.c+1));
       if(r.id===selId)el.classList.add('sel');if(t.isGen)el.classList.add('is-gen');
+      el.insertAdjacentHTML('beforeend','<span class="rc" aria-hidden="true"><i></i><i></i><i></i><i></i></span>');
       if(teamLocked(r.t)){el.classList.add('inactive');el.insertAdjacentHTML('beforeend','<span class="room-off" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>')}
       if(boosted.has(r.id))el.insertAdjacentHTML('beforeend','<span class="bolt" title="Заредена от генератор">'+BOLT+'</span>');
       if(t.isGen){const gi=gens.find(x=>x.g.id===r.id);
