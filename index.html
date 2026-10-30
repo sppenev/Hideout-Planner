@@ -390,14 +390,16 @@ body.dragging .fdel{display:none}
 .floors .room .rdel:hover{transform:scale(1.1)}
 @media (hover:none){.floors .room .rdel{opacity:.9;transform:none}}
 body.dragging .floors .room .rdel{display:none}
-/* hover: orange-yellow corner brackets like in the game */
-.floors .room .rc{position:absolute;inset:-9px;z-index:8;pointer-events:none;opacity:0;transition:opacity .15s ease,inset .18s ease;filter:drop-shadow(0 2px 0 rgba(0,0,0,.55)) drop-shadow(0 0 1px rgba(0,0,0,.8))}
-.floors .room .rc i{position:absolute;width:min(32%,150px);height:40%;border:0 solid #f39a1d}
-.floors .room .rc i:nth-child(1){top:0;left:0;border-width:7px 0 0 7px;border-top-color:#ffc83a;border-radius:7px 0 0 0}
-.floors .room .rc i:nth-child(2){top:0;right:0;border-width:7px 7px 0 0;border-top-color:#ffc83a;border-radius:0 7px 0 0}
-.floors .room .rc i:nth-child(3){bottom:0;left:0;border-width:0 0 7px 7px;border-bottom-color:#f08a16;border-radius:0 0 0 7px}
-.floors .room .rc i:nth-child(4){bottom:0;right:0;border-width:0 7px 7px 0;border-bottom-color:#f08a16;border-radius:0 0 7px 0}
-@media (hover:hover){.floors .room:hover .rc{opacity:1;inset:-4px}}
+/* hover: orange-yellow corner brackets like in the game, inside the room, thick at the corner and thinning towards the ends */
+.floors .room .rc{position:absolute;inset:14px;z-index:8;pointer-events:none;opacity:0;transition:opacity .15s ease,inset .18s ease;filter:drop-shadow(0 2px 0 rgba(0,0,0,.6)) drop-shadow(0 0 1px rgba(0,0,0,.9))}
+.floors .room .rc i{position:absolute;top:0;left:0;width:min(34%,160px);height:44%}
+.floors .room .rc i::before,.floors .room .rc i::after{content:"";position:absolute;top:0;left:0;background:linear-gradient(135deg,#ffe066,#ffb92e 35%,#f2850f)}
+.floors .room .rc i::before{width:100%;height:9px;clip-path:polygon(0 0,100% 0,100% 22%,0 100%);border-radius:5px 0 0 0}
+.floors .room .rc i::after{width:9px;height:100%;clip-path:polygon(0 0,100% 0,22% 100%,0 100%);border-radius:5px 0 0 0}
+.floors .room .rc i:nth-child(2){left:auto;right:0;transform:scaleX(-1)}
+.floors .room .rc i:nth-child(3){top:auto;bottom:0;transform:scaleY(-1)}
+.floors .room .rc i:nth-child(4){top:auto;left:auto;bottom:0;right:0;transform:scale(-1,-1)}
+@media (hover:hover){.floors .room:hover .rc{opacity:1;inset:7px}}
 body.dragging .floors .room .rc{display:none}
 
 /* rooms drawer: bigger cards, picture on top, name under it */
