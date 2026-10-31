@@ -238,6 +238,10 @@ body.locked .lockscr{display:grid;place-items:center;position:fixed;inset:0;z-in
 .gbtn:hover{background:#f1f1f1}
 .lockerr{color:#ff7a6b!important;font-weight:600}
 .lockerr:empty{display:none}
+
+.ghok-row{display:flex;align-items:center;gap:12px}
+.ghok-row b{display:block;font-size:15px}
+.ghok-dot{width:14px;height:14px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 4px rgba(61,220,132,.2);flex:none}
 </style>
 </head>
 <body class="locked">
@@ -317,6 +321,8 @@ body.locked .lockscr{display:grid;place-items:center;position:fixed;inset:0;z-in
       </section>
       <section class="pane" id="sec-gh" hidden>
         <h2 class="sec">Връзка с GitHub</h2>
+        <div class="gh ghok" id="ghOk" hidden><div class="ghok-row"><span class="ghok-dot"></span><div><b>Свързано</b><span class="tag" id="ghOkTxt"></span></div></div>
+          <div class="btns"><button class="btn" id="ghChange" type="button">Смени ключа</button><button class="btn" id="ghOut" type="button">Изход</button></div></div>
         <div class="gh" id="ghBox">
           <p class="hint">Попълни веднъж. Ключът се пази във Firebase и се чете само след вход с твоя Google акаунт, така че работи от всеки браузър и не се губи, ако изчистиш браузъра.</p>
           <div class="ghgrid">
@@ -371,7 +377,12 @@ let v2on=!!(window.ROOMS_CONFIG&&window.ROOMS_CONFIG.v2on);
 const IMGP=()=>DS==='v2'?'images/v2/':'images/';
 function fileText(list){return '/* Стаите в планера. Направен с admin.html. Сложи този файл до index.html. */\nwindow.ROOMS_CONFIG='+JSON.stringify({version:1,bgSize,logoH,header:HCFG.classic,header2:HCFG.v2,v2on,rooms:(list||rooms).map(({_new,...r})=>r)},null,1)+';\n'}
 function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';$('ghBranch').value=gh.branch||'main';$('ghToken').value=gh.token||'';
-  $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
+  $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh');
+  /* connected: only a short status; the fields show up when there is no key yet or after "Смени ключа" */
+  const u=window.firebase&&firebase.auth&&firebase.auth().currentUser;$('ghOk').hidden=!gh.ok;$('ghBox').hidden=!!gh.ok;
+  $('ghOkTxt').textContent=gh.ok?'Хранилище '+gh.owner+'/'+gh.repo+(u?' · влязъл като '+u.email:''):'';if(gh.ok)$('ghToken').value=''}
+$('ghChange').onclick=()=>{$('ghBox').hidden=false;$('ghToken').value='';$('ghToken').focus()};
+$('ghOut').onclick=()=>$('ghForget').click();
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
   if(!gh.owner||!gh.repo||!gh.token){say('Попълни потребител, хранилище и ключ.',true);return}
   say('Свързвам се...');try{const g=await ghGet();gh.ok=true;await saveGhCloud();
