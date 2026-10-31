@@ -225,9 +225,24 @@ body[data-ds="v2"] .dsw-seg [data-ds="v2"]{background:#4fd1c5;color:#10201e}
 body[data-ds="v2"] .thumb,body[data-ds="v2"] .sc-prev{outline:2px solid #4fd1c5;outline-offset:2px}
 .thumb img.fb,.sc-prev img.fb{opacity:.35;filter:grayscale(1)}
 .fbtag{position:absolute;left:6px;top:6px;z-index:2;background:rgba(0,0,0,.75);color:#fff;font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;pointer-events:none}
+
+/* login screen: the admin is hidden until the owner signs in with Google */
+body.locked>*:not(.lockscr){display:none!important}
+.lockscr{display:none}
+body.locked .lockscr{display:grid;place-items:center;position:fixed;inset:0;z-index:100;padding:16px;overflow:auto}
+.lockbox{background:var(--panel);border:3px solid var(--ink);border-radius:16px;box-shadow:6px 6px 0 var(--ink);padding:28px 26px;max-width:360px;width:100%;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.lockbox h1{font-family:var(--f-display);font-weight:400;color:var(--hero);margin:0;font-size:26px}
+.lockbox p{margin:0;color:var(--hint);font-size:14px}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#1f1f1f;font-weight:700;padding:10px 18px}
+.gbtn svg{width:20px;height:20px}
+.gbtn:hover{background:#f1f1f1}
+.lockerr{color:#ff7a6b!important;font-weight:600}
+.lockerr:empty{display:none}
 </style>
 </head>
-<body>
+<body class="locked">
+<div class="lockscr" id="lockScr"><div class="lockbox"><h1>Админ</h1><p id="lockMsg">Влез с Google акаунта си.</p>
+  <button class="btn gbtn" id="gLogin" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Вход с Google</button><p class="lockerr" id="lockErr" role="alert"></p></div></div>
 <div class="wrap">
   <div class="bar" id="bar">
     <div class="bar-in">
@@ -303,14 +318,14 @@ body[data-ds="v2"] .thumb,body[data-ds="v2"] .sc-prev{outline:2px solid #4fd1c5;
       <section class="pane" id="sec-gh" hidden>
         <h2 class="sec">Връзка с GitHub</h2>
         <div class="gh" id="ghBox">
-          <p class="hint">Попълни веднъж. Ключът се пази само в този браузър и не се записва в никой файл.</p>
+          <p class="hint">Попълни веднъж. Ключът се пази във Firebase и се чете само след вход с твоя Google акаунт, така че работи от всеки браузър и не се губи, ако изчистиш браузъра.</p>
           <div class="ghgrid">
             <label>Потребител в GitHub<input type="text" id="ghOwner" autocomplete="off" placeholder="напр. stilian"></label>
             <label>Хранилище<input type="text" id="ghRepo" autocomplete="off" placeholder="напр. hideout-planner"></label>
             <label>Клон<input type="text" id="ghBranch" autocomplete="off" value="main"></label>
             <label>Ключ (token)<input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_..."></label>
           </div>
-          <div class="btns"><button class="btn primary" id="ghConnect" type="button">Свържи</button><button class="btn danger" id="ghForget" type="button">Забрави ключа</button></div>
+          <div class="btns"><button class="btn primary" id="ghConnect" type="button">Свържи</button><button class="btn" id="ghForget" type="button">Изход</button></div>
         </div>
       </section>
     </main>
@@ -318,6 +333,7 @@ body[data-ds="v2"] .thumb,body[data-ds="v2"] .sc-prev{outline:2px solid #4fd1c5;
 </div>
 
 <script src="rooms.js"></script>
+<script src="firebase-config.js"></script>
 <script>
 const KEY='hz-hideout-admin-v1';
 const $=id=>document.getElementById(id);
@@ -331,7 +347,8 @@ function keep(msg){try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){
 function showSec(k){$('side').classList.remove('open');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n.dataset.sec===k));document.querySelectorAll('.pane').forEach(p=>p.hidden=p.id!=='sec-'+k);try{localStorage.setItem('hz-admin-sec',k)}catch(e){}}
 $('menuBtn').onclick=()=>$('side').classList.toggle('open');$('sideClose').onclick=()=>$('side').classList.remove('open');
 document.querySelector('.side').addEventListener('click',e=>{const n=e.target.closest('.nav');if(n)showSec(n.dataset.sec)});
-const GHKEY='hz-hideout-gh-v1';let gh={};try{gh=JSON.parse(localStorage.getItem(GHKEY)||'{}')||{}}catch(e){gh={}}
+const GHKEY='hz-hideout-gh-v1';let LEGACY={};try{LEGACY=JSON.parse(localStorage.getItem(GHKEY)||'{}')||{}}catch(e){}
+let gh={owner:LEGACY.owner,repo:LEGACY.repo,branch:LEGACY.branch};
 (function guess(){const m=location.hostname.match(/^([^.]+)\.github\.io$/);if(m&&!gh.owner){gh.owner=m[1];const seg=location.pathname.split('/').filter(Boolean);if(seg.length>1)gh.repo=seg[0]}})();
 function ghUrl(){return 'https://api.github.com/repos/'+encodeURIComponent(gh.owner)+'/'+encodeURIComponent(gh.repo)+'/contents/rooms.js'}
 function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+gh.token,'X-GitHub-Api-Version':'2022-11-28'}}
@@ -357,10 +374,10 @@ function ghShow(){$('ghOwner').value=gh.owner||'';$('ghRepo').value=gh.repo||'';
   $('ghStatus').textContent=gh.ok?'свързан с '+gh.owner+'/'+gh.repo:'не е свързан';if(!gh.ok)showSec('gh')}
 $('ghConnect').onclick=async()=>{gh={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()};
   if(!gh.owner||!gh.repo||!gh.token){say('Попълни потребител, хранилище и ключ.',true);return}
-  say('Свързвам се...');try{const g=await ghGet();gh.ok=true;try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}
+  say('Свързвам се...');try{const g=await ghGet();gh.ok=true;await saveGhCloud();
     rooms=g.rooms;if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header)Object.assign(HCFG.classic,g.header);if(g.header2)Object.assign(HCFG.v2,g.header2);v2on=g.v2on;showV2();renderHeaders();try{localStorage.setItem(KEY,JSON.stringify(rooms))}catch(e){}render();ghShow();say('Свързано. Заредих стаите от сайта.')}
   catch(e){gh.ok=false;ghShow();say(e.message,true)}};
-$('ghForget').onclick=()=>{gh={owner:gh.owner,repo:gh.repo,branch:gh.branch};try{localStorage.setItem(GHKEY,JSON.stringify(gh))}catch(e){}ghShow();say('Ключът е забравен в този браузър.')};
+$('ghForget').onclick=()=>{try{firebase.auth().signOut().then(()=>location.reload())}catch(e){location.reload()}};
 /* ---- scene pictures: uploaded straight into images/ on GitHub ---- */
 const SCENE=[['logo','Лого','горе вляво в лентата, PNG с прозрачен фон'],['bg','Фон под земята','патърнът, повтаря се'],['elevator','Асансьор','144 x 305, повтаря се надолу'],['empty','Празна клетка','542 x 305'],['dig','Неизкопана клетка','542 x 305, разкопана пръст с лопата'],['favicon','Фавикона','иконката в таба, квадрат 512 x 512']];
 function renderScene(){const list=DS==='v2'?SCENE.filter(x=>x[0]!=='logo'&&x[0]!=='favicon'):SCENE;$('sceneGrid').innerHTML=list.map(([k,t,h])=>'<div class="sc" data-k="'+k+'"><div class="sc-prev'+(k==='bg'?' tile':'')+'" style="position:relative">няма картинка<img alt="" src="'+IMGP()+k+'.png?t='+Date.now()+'" onerror="'+(DS==='v2'?'scFb(this)':'this.remove()')+'"></div>'+
@@ -454,8 +471,8 @@ let armed=false;$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textCon
   if(gh.ok){ghGet().then(g=>{rooms=g.rooms;render();say('Заредено наново от сайта.')}).catch(e=>say(e.message,true))}else{rooms=fromFile();say('Заредено наново от rooms.js.')}$('reset').textContent='Започни отначало от rooms.js';render()};
 function mergeEn(src){(src||[]).forEach(s=>{const r=rooms.find(x=>x.id===s.id);if(!r)return;['name_en','desc_en','name_pl','desc_pl','name_de','desc_de','name_pt','desc_pt','team'].forEach(k=>{if(r[k]==null&&s[k]!=null)r[k]=s[k]})})}
 mergeEn(fromFile());
-if(gh.ok)ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header)Object.assign(HCFG.classic,g.header);if(g.header2)Object.assign(HCFG.v2,g.header2);v2on=g.v2on;showV2();renderHeaders();if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true));
-else if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като index.html и rooms.js.';
+function syncFromGh(){ghGet().then(g=>{if(g.bgSize){bgSize=g.bgSize;showBg()}if(g.header)Object.assign(HCFG.classic,g.header);if(g.header2)Object.assign(HCFG.v2,g.header2);v2on=g.v2on;showV2();renderHeaders();if(g.logoH){logoH=g.logoH;showLogo()}mergeEn(g.rooms);let draft=null;try{draft=localStorage.getItem(KEY)}catch(e){}if(!draft||draft===JSON.stringify(g.rooms)){rooms=g.rooms;render()}}).catch(e=>say(e.message,true))}
+if(!window.ROOMS_CONFIG)$('state').textContent='Не намирам rooms.js до тази страница. Сложи admin.html в същата папка като index.html и rooms.js.';
 render();
 
 /* ---- pattern size: stored in rooms.js as bgSize, saved straight to the site when the slider is released ---- */
@@ -545,6 +562,32 @@ document.querySelector('.dsw-seg').addEventListener('click',e=>{const b=e.target
 $('v2on').addEventListener('change',async()=>{if(!gh.ok){$('v2on').checked=v2on;showSec('gh');say('Първо свържи админа с GitHub.',true);return}
   const old=v2on;v2on=$('v2on').checked;say('Записвам...');try{await saveHeaderCfg(v2on?'Превключвател за нов дизайн: показан':'Превключвател за нов дизайн: скрит');say(v2on?'Превключвателят ще се вижда в сайта до около минута.':'Превключвателят е скрит от сайта.')}catch(err){v2on=old;showV2();say(err.message,true)}});
 setDS(DS);
+
+/* ---- login with Google (Firebase). Only the owner's account gets in; the GitHub key is kept in the database under admin/gh,
+   which the database Rules let only that account read and write ---- */
+const ADMIN_EMAILS=['stilian.penev@gmail.com'];
+function lockErr(m){$('lockErr').textContent=m||''}
+async function saveGhCloud(){await firebase.database().ref('admin/gh').set({owner:gh.owner,repo:gh.repo,branch:gh.branch||'main',token:gh.token});try{localStorage.removeItem(GHKEY)}catch(e){}}
+(()=>{const cfg=window.FIREBASE_CONFIG;if(!cfg){lockErr('Липсва firebase-config.js до admin.html.');$('gLogin').disabled=true;return}
+  const load=src=>new Promise((res,rej)=>{const t=document.createElement('script');t.src=src;t.onload=res;t.onerror=rej;document.head.appendChild(t)});
+  const B='https://www.gstatic.com/firebasejs/10.12.2/';$('gLogin').disabled=true;$('lockMsg').textContent='Зареждам...';
+  load(B+'firebase-app-compat.js').then(()=>Promise.all([load(B+'firebase-auth-compat.js'),load(B+'firebase-database-compat.js')])).then(()=>{
+    if(!firebase.apps.length)firebase.initializeApp(cfg);const auth=firebase.auth(),db=firebase.database();
+    $('gLogin').disabled=false;$('lockMsg').textContent='Влез с Google акаунта си.';
+    $('gLogin').onclick=()=>{lockErr('');auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>{
+      const c=e&&e.code||'';lockErr(c==='auth/unauthorized-domain'?'Този адрес не е разрешен във Firebase (Authentication → Settings → Authorized domains).':
+        c==='auth/operation-not-allowed'?'Входът с Google не е пуснат във Firebase (Authentication → Sign-in method → Google).':
+        c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request'?'':'Входът не стана: '+(e.message||c))})};
+    auth.onAuthStateChanged(async u=>{if(!u){document.body.classList.add('locked');return}
+      const em=(u.email||'').toLowerCase();if(!ADMIN_EMAILS.includes(em)){lockErr('Акаунтът '+u.email+' няма достъп до админа.');auth.signOut();return}
+      let v=null;try{v=(await db.ref('admin/gh').get()).val()}catch(e){lockErr(/permission/i.test(e.message||'')?'Нямаш достъп до ключа. Провери правилата (Rules) на базата във Firebase.':e.message);auth.signOut();return}
+      document.body.classList.remove('locked');lockErr('');
+      if(!v&&LEGACY.token){v={owner:LEGACY.owner,repo:LEGACY.repo,branch:LEGACY.branch||'main',token:LEGACY.token}}
+      if(v&&v.token){gh={owner:v.owner,repo:v.repo,branch:v.branch||'main',token:v.token};
+        try{await ghGet();gh.ok=true;if(LEGACY.token)await saveGhCloud();ghShow();syncFromGh();say('Влезе като '+u.email+'.')}
+        catch(e){gh.ok=false;ghShow();say('Ключът за GitHub не работи (може да е изтекъл). Въведи нов в „Връзка с GitHub“.',true)}}
+      else{ghShow();say('Влезе. Попълни ключа за GitHub веднъж и натисни „Свържи“.')}})
+  }).catch(()=>{lockErr('Не мога да заредя входа с Google. Провери интернета и презареди.')})})();
 </script>
 </body>
 </html>
