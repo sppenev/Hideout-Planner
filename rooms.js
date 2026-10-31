@@ -37,7 +37,7 @@ window.ROOMS_CONFIG={
    "id": "gen",
    "name": "Генераторна стая",
    "size": 1,
-   "limit": 3,
+   "limit": 20,
    "boost": false,
    "gen": true,
    "desc": "Зарежда стаите вляво и вдясно от себе си: повече продукция и по-голям склад.",
